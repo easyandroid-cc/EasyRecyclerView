@@ -9,6 +9,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -240,10 +241,11 @@ public class EasyRecyclerView extends RecyclerView {
             BaseRecyclerAdapter baseRecyclerAdapter = (BaseRecyclerAdapter) adapter;
             baseRecyclerAdapter.addHeaderView(mRefreshHeaderContainer);
             TextView textView = new TextView(getContext());
-            textView.setBackgroundColor(Color.BLACK);
+            textView.setBackgroundColor(Color.RED);
             textView.setText("测试");
             textView.setHeight(100);
-            textView.setTextSize(100);
+            textView.setGravity(Gravity.TOP);
+            textView.setTextSize(10);
             baseRecyclerAdapter.addHeaderView(textView);
             baseRecyclerAdapter.addFooterView(mLoadMoreFooterContainer);
         }
@@ -378,6 +380,7 @@ public class EasyRecyclerView extends RecyclerView {
 
 
                     }
+                    super.onTouchEvent(e);
                     fingerMove(dy);//TODO 移出来，让刷新的时候也可以拉动
                     return true;
                 }
@@ -444,20 +447,27 @@ public class EasyRecyclerView extends RecyclerView {
      */
     private void fingerMove(int dy) {
         int ratioDy = (int) (dy * 0.5f + 0.5);//减速
-        int offset = mRefreshHeaderContainer.getMeasuredHeight();
-        int finalDragOffset = mRefreshFinalMoveOffset;
-
-        int nextOffset = offset + ratioDy;
-        if (finalDragOffset > 0) {
-            if (nextOffset > finalDragOffset) {
-                ratioDy = finalDragOffset - offset;
-            }
+//        int offset = mRefreshHeaderContainer.getMeasuredHeight();
+//        int finalDragOffset = mRefreshFinalMoveOffset;
+//
+//        int nextOffset = offset + ratioDy;
+//        if (finalDragOffset > 0) {
+//            if (nextOffset > finalDragOffset) {
+//                ratioDy = finalDragOffset - offset;
+//            }
+//        }
+//
+//        if (nextOffset < 0) {
+//            ratioDy = -offset;
+//        }
+        int movedx=0;
+        if (dy > 0) {
+            movedx = (int) ((float) ((600 + getScrollY()) / (float) 600) * dy / 1.6);
+        } else {
+//                movedx= (int) dy;
+            movedx = (int) ((float) ((600 - getScrollY()) / (float) 600) * dy / 1.6);
         }
-
-        if (nextOffset < 0) {
-            ratioDy = -offset;
-        }
-        doMove(ratioDy);
+        doMove(movedx);
     }
 
     /**
@@ -468,6 +478,7 @@ public class EasyRecyclerView extends RecyclerView {
     private void doMove(int dy) {
         if (dy != 0) {
             int height = mRefreshHeaderContainer.getHeight() + dy;//改变header高度
+            System.out.println("EasyRecyclerView mRefreshHeaderContainer.getHeight() =" + height);
             setRefreshHeaderContainerHeight(height);
 //            mRefreshTrigger.onMove(false, false, height);//回调 TODO
         }
@@ -479,8 +490,11 @@ public class EasyRecyclerView extends RecyclerView {
      * @param height
      */
     private void setRefreshHeaderContainerHeight(int height) {
-        mRefreshHeaderContainer.getLayoutParams().height = height;
-        mRefreshHeaderContainer.requestLayout();
+//        mRefreshHeaderContainer.getLayoutParams().height = height;
+//        mRefreshHeaderContainer.requestLayout();
+        LayoutParams lp = (LayoutParams) mRefreshHeaderContainer.getLayoutParams();
+        lp.height = height;
+        mRefreshHeaderContainer.setLayoutParams(lp);
 //        System.out.println("EasyRecyclerView setRefreshHeaderContainerHeight height=" + height);
     }
 
@@ -491,20 +505,25 @@ public class EasyRecyclerView extends RecyclerView {
         int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
         mScroller.startScroll(0, mRefreshHeaderContainer.getHeight(), 0, mRefreshHeaderView.getHeight(), 400);
 //        startScrollAnimation(400, new AccelerateInterpolator(), currentHeight, targetHeight);
+
+
     }
 
     private void startScrollSwipingToRefreshStatusToDefaultStatus() {
         final int targetHeight = 0;
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
         System.out.println("EasyRecyclerView currentHeight=" + currentHeight);
-        System.out.println("EasyRecyclerView currentHeight getHeight=" +  mRefreshHeaderContainer.getY());
+        System.out.println("EasyRecyclerView currentHeight getHeight=" +  mRefreshHeaderContainer.getBottom());
+        System.out.println("EasyRecyclerView currentHeight getTop=" + getTop());
 //        startScrollAnimation(300, new DecelerateInterpolator(), currentHeight, targetHeight);
         mScroller.startScroll(0, currentHeight, 0, -currentHeight, 400);
-
+//        smoothToPosition(1);
+//        smoothScrollToPosition(10);
+//        postInvalidate();
     }
 
     /**
-     * 复位到header =0 的位置
+     * 复位到正在刷新 的位置
      */
     private void startScrollReleaseStatusToRefreshingStatus() {
 //        mRefreshTrigger.onRelease();
@@ -513,6 +532,8 @@ public class EasyRecyclerView extends RecyclerView {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
 //        startScrollAnimation(300, new DecelerateInterpolator(), currentHeight, targetHeight);
         mScroller.startScroll(0, currentHeight, 0, targetHeight - currentHeight, 400);
+
+
 //        System.out.println("IRecyclerView startScrollReleaseStatusToRefreshingStatus=" + 2222);
 //        System.out.println("IRecyclerView currentHeight=" + currentHeight + " ---  targetHeight=" + targetHeight);
     }
@@ -532,6 +553,7 @@ public class EasyRecyclerView extends RecyclerView {
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
+//            scrollTo(0, mScroller.getCurrY()- mRefreshHeaderContainer.getHeight());
 //            if (mScrollBack == SCROLLBACK_HEADER) {
 //                mHeaderView.setVisiableHeight(mScroller.getCurrY());
 //            int height = mRefreshHeaderContainer.getHeight() + mScroller.getCurrY();//改变header高度
@@ -541,7 +563,7 @@ public class EasyRecyclerView extends RecyclerView {
 //            } else {
 //                mFooterView.setBottomMargin(mScroller.getCurrY());
 //            }
-            postInvalidate();
+//            postInvalidate();
 //            invokeOnScrolling();
         }
         super.computeScroll();
