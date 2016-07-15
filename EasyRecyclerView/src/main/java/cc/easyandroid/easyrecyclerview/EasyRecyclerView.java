@@ -1,5 +1,6 @@
 package cc.easyandroid.easyrecyclerview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
@@ -28,16 +30,18 @@ import cc.easyandroid.easyrecyclerview.listener.RefreshHeaderLayout;
 /**
  * Created by aspsine on 16/3/3.
  */
-public class EasyRecyclerView extends RecyclerView {
+public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     private static final String TAG = EasyRecyclerView.class.getSimpleName();
 
-    private static final int STATUS_DEFAULT = 0;
+    private static final int STATUS_DEFAULT = 0;//默认
 
-    private static final int STATUS_SWIPING_TO_REFRESH = 1;
+    private static final int STATUS_SWIPING_TO_REFRESH = 1;//下拉刷新
 
-    private static final int STATUS_RELEASE_TO_REFRESH = 2;
+    private static final int STATUS_RELEASE_TO_REFRESH = 2;//松开加载
 
-    private static final int STATUS_REFRESHING = 3;
+    private static final int STATUS_REFRESHING = 3;//正在刷新状态
+
+    private static final int STATUS_COMPLETE = 4;//刷新或者加载完成的状态
 
     private static final boolean DEBUG = false;
 
@@ -67,6 +71,7 @@ public class EasyRecyclerView extends RecyclerView {
     private View mLoadMoreFooterView;
 
     Scroller mScroller;
+    private int mHeaderViewHeight; // header view's height
 
     public EasyRecyclerView(Context context) {
         this(context, null);
@@ -191,6 +196,19 @@ public class EasyRecyclerView extends RecyclerView {
             ensureRefreshHeaderContainer();
             mRefreshHeaderContainer.addView(refreshHeaderView);
         }
+        // init header height
+        mRefreshHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onGlobalLayout() {
+                mHeaderViewHeight = mRefreshHeaderView.getHeight();
+                if (android.os.Build.VERSION.SDK_INT >= 16) {
+                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+            }
+        });
     }
 
     public void setRefreshHeaderView(@LayoutRes int refreshHeaderLayoutRes) {
@@ -201,7 +219,10 @@ public class EasyRecyclerView extends RecyclerView {
         }
     }
 
+    DragHander mHeaderHander;
+
     public void setHeader(DragHander headerHander) {
+        mHeaderHander = headerHander;
         setRefreshHeaderView(headerHander.getView());
     }
 
@@ -303,6 +324,7 @@ public class EasyRecyclerView extends RecyclerView {
             break;
 
             case MotionEvent.ACTION_POINTER_DOWN: {
+
                 mActivePointerId = MotionEventCompat.getPointerId(e, actionIndex);
                 mLastTouchX = (int) (MotionEventCompat.getX(e, actionIndex) + 0.5f);
                 mLastTouchY = (int) (MotionEventCompat.getY(e, actionIndex) + 0.5f);
@@ -318,6 +340,8 @@ public class EasyRecyclerView extends RecyclerView {
         return super.onInterceptTouchEvent(e);
     }
 
+    boolean needResetAnim;
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         final int action = MotionEventCompat.getActionMasked(e);
@@ -331,6 +355,7 @@ public class EasyRecyclerView extends RecyclerView {
             break;
 
             case MotionEvent.ACTION_MOVE: {
+                needResetAnim = false;      //按下的时候关闭回弹
                 final int index = MotionEventCompat.findPointerIndex(e, mActivePointerId);
                 if (index < 0) {
                     Log.e(TAG, "Error processing scroll; pointer index for id " + index + " not found. Did any MotionEvents get skipped?");
@@ -350,38 +375,43 @@ public class EasyRecyclerView extends RecyclerView {
 //                System.out.println("EasyRecyclerView mRefreshHeaderView=" + mRefreshHeaderView);
 //                System.out.println("EasyRecyclerView isFingerDragging()=" + isFingerDragging());
 //                System.out.println("EasyRecyclerView canTriggerRefresh()=" + canTriggerRefresh());
-                final boolean triggerCondition = isEnabled() && mRefreshEnabled && mRefreshHeaderView != null && isFingerDragging() && canTriggerRefresh();
+                boolean triggerCondition = isEnabled() && mRefreshEnabled && mRefreshHeaderView != null && isFingerDragging() && canTriggerRefresh();
                 if (DEBUG) {
                     Log.i(TAG, "triggerCondition = " + triggerCondition + "; mStatus = " + mStatus + "; dy = " + dy);
                 }
+                triggerCondition = getFirstVisiblePosition() == 0;
                 if (triggerCondition) {//是否是在临界点，也就是可以下来的位置
 
                     final int refreshHeaderContainerHeight = mRefreshHeaderContainer.getMeasuredHeight();
-                    final int refreshHeaderViewHeight = mRefreshHeaderView.getMeasuredHeight();
+                    final int refreshHeaderViewHeight = mHeaderViewHeight;
 
                     if (dy > 0 && mStatus == STATUS_DEFAULT) {
                         setStatus(STATUS_SWIPING_TO_REFRESH);
+                        mHeaderHander.onDropAnim(mRefreshHeaderView, dy);
 //                        mRefreshTrigger.onStart(false, refreshHeaderViewHeight, mRefreshFinalMoveOffset);
                     } else if (dy < 0) {
+
                         if (mStatus == STATUS_SWIPING_TO_REFRESH && refreshHeaderContainerHeight <= 0) {
                             setStatus(STATUS_DEFAULT);
-                        }
-                        if (mStatus == STATUS_DEFAULT) {
                             break;
                         }
                     }
 
                     if (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH) {
-                        if (refreshHeaderContainerHeight >= refreshHeaderViewHeight) {
+                        if (refreshHeaderContainerHeight >= refreshHeaderViewHeight) {//两种状态切换
                             setStatus(STATUS_RELEASE_TO_REFRESH);
                         } else {
                             setStatus(STATUS_SWIPING_TO_REFRESH);
                         }
 
-
+                        boolean upORdown = refreshHeaderContainerHeight <= refreshHeaderViewHeight;
+                        mHeaderHander.onLimitDes(mRefreshHeaderView, upORdown, this);
                     }
-                    super.onTouchEvent(e);
+
+//                    e.setAction(MotionEvent.ACTION_CANCEL);
+
                     fingerMove(dy);//TODO 移出来，让刷新的时候也可以拉动
+                    super.onTouchEvent(e);
                     return true;
                 }
             }
@@ -397,21 +427,50 @@ public class EasyRecyclerView extends RecyclerView {
 
             case MotionEventCompat.ACTION_POINTER_UP:
                 onPointerUp(e);
-
+                System.out.println("EasyRecyclerView MotionEventCompat.ACTION_POINTER_UP=" + 1111);
                 break;
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                final boolean triggerCondition = isEnabled() && mRefreshEnabled && mRefreshHeaderView != null && isFingerDragging() && canTriggerRefresh();
-                if (triggerCondition) {//是否是在临界点，也就是可以下来的位置
+            default:
+                needResetAnim = true;      //松开的时候打开回弹
+                System.out.println("EasyRecyclerView MotionEventCompat.ACTION_UP=" + 222);
+                System.out.println("EasyRecyclerView getFirstVisiblePosition()=" + getFirstVisiblePosition());
+//                final boolean triggerCondition = isEnabled() && mRefreshEnabled && mRefreshHeaderView != null && isFingerDragging() && canTriggerRefresh();
+//                if (triggerCondition) {//是否是在临界点，也就是可以下来的位置
+//                    onFingerUpStartAnimating();
+//                }
+                if (getFirstVisiblePosition() == 0) {
                     onFingerUpStartAnimating();
+                    return true;
+                    // invoke refresh
+//                    if (mEnablePullRefresh && mHeaderView.getVisiableHeight() > mHeaderViewHeight) {
+//                        startRefresh();
+//                    }
+//                    resetHeaderHeight();
                 }
+//                else if (getLastVisiblePosition() == mTotalItemCount - 1) {
+//                    // invoke load more.
+//                    if (mEnablePullLoad && mFooterView.getBottomMargin() > PULL_LOAD_MORE_DELTA) {
+//                        startLoadMore();
+//                    }
+//                    resetFooterHeight();
+//                }
+
 
                 break;
         }
         return super.onTouchEvent(e);
     }
 
+    private int getFirstVisiblePosition() {
+//        switch (){
+//            default:
+//        }
+        //getLayoutManager().getChildAt(0) 第一个显示的item
+        int firstVisiblePosition = ((RecyclerView.LayoutParams) getLayoutManager().getChildAt(0).getLayoutParams()).getViewLayoutPosition();
+        return firstVisiblePosition;
+    }
 
     private boolean isFingerDragging() {
         return getScrollState() == SCROLL_STATE_DRAGGING;
@@ -446,7 +505,7 @@ public class EasyRecyclerView extends RecyclerView {
      * @param dy 移动的偏移量
      */
     private void fingerMove(int dy) {
-        int ratioDy = (int) (dy * 0.5f + 0.5);//减速
+        int ratioDy = (int) (dy / 2);//减速
 //        int offset = mRefreshHeaderContainer.getMeasuredHeight();
 //        int finalDragOffset = mRefreshFinalMoveOffset;
 //
@@ -460,14 +519,14 @@ public class EasyRecyclerView extends RecyclerView {
 //        if (nextOffset < 0) {
 //            ratioDy = -offset;
 //        }
-        int movedx=0;
-        if (dy > 0) {
-            movedx = (int) ((float) ((600 + getScrollY()) / (float) 600) * dy / 1.6);
-        } else {
-//                movedx= (int) dy;
-            movedx = (int) ((float) ((600 - getScrollY()) / (float) 600) * dy / 1.6);
-        }
-        doMove(movedx);
+//        int movedx=0;
+//        if (dy > 0) {
+//            movedx = (int) ((float) ((600 + getScrollY()) / (float) 600) * dy / 1.6);
+//        } else {
+////                movedx= (int) dy;
+//            movedx = (int) ((float) ((600 - getScrollY()) / (float) 600) * dy / 1.6);
+//        }
+        doMove(ratioDy);
     }
 
     /**
@@ -478,10 +537,25 @@ public class EasyRecyclerView extends RecyclerView {
     private void doMove(int dy) {
         if (dy != 0) {
             int height = mRefreshHeaderContainer.getHeight() + dy;//改变header高度
-            System.out.println("EasyRecyclerView mRefreshHeaderContainer.getHeight() =" + height);
+//            System.out.println("EasyRecyclerView mRefreshHeaderContainer.getHeight() =" + height);
             setRefreshHeaderContainerHeight(height);
 //            mRefreshTrigger.onMove(false, false, height);//回调 TODO
         }
+    }
+
+    @Override
+    public int computeVerticalScrollOffset() {
+        int overScrollDistance = 0;
+
+//        overScrollDistance = mScroller.getCurrY();
+//        System.out.println("EasyRecyclerView  mScroller.getCurrY() =" + mScroller.getCurrY());
+//        getLayoutManager().
+        return super.computeVerticalScrollOffset() - overScrollDistance;
+    }
+
+    @Override
+    public int computeVerticalScrollRange() {
+        return super.computeVerticalScrollRange();
     }
 
     /**
@@ -492,9 +566,13 @@ public class EasyRecyclerView extends RecyclerView {
     private void setRefreshHeaderContainerHeight(int height) {
 //        mRefreshHeaderContainer.getLayoutParams().height = height;
 //        mRefreshHeaderContainer.requestLayout();
+        if (height < 0) {
+            height = 0;
+        }
         LayoutParams lp = (LayoutParams) mRefreshHeaderContainer.getLayoutParams();
         lp.height = height;
         mRefreshHeaderContainer.setLayoutParams(lp);
+        getLayoutManager().scrollToPosition(0);//让回滚的时候先让header缩回去
 //        System.out.println("EasyRecyclerView setRefreshHeaderContainerHeight height=" + height);
     }
 
@@ -503,23 +581,39 @@ public class EasyRecyclerView extends RecyclerView {
         System.out.println("EasyRecyclerView startScrollRefreshingStatusToDefaultStatus=" + 1111);
         int targetHeight = mRefreshHeaderView.getMeasuredHeight();
         int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
-        mScroller.startScroll(0, mRefreshHeaderContainer.getHeight(), 0, mRefreshHeaderView.getHeight(), 400);
+        mScroller.startScroll(0, mRefreshHeaderContainer.getHeight(), 0, mHeaderViewHeight, 200);
 //        startScrollAnimation(400, new AccelerateInterpolator(), currentHeight, targetHeight);
 
 
     }
 
+    @Override
+    public boolean fling(int velocityX, int velocityY) {
+        velocityY *= 1;
+//        flin
+        return super.fling(velocityX, velocityY);
+//        return false;
+    }
+
+    /**
+     * 回到关闭状态
+     */
     private void startScrollSwipingToRefreshStatusToDefaultStatus() {
         final int targetHeight = 0;
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
         System.out.println("EasyRecyclerView currentHeight=" + currentHeight);
-        System.out.println("EasyRecyclerView currentHeight getHeight=" +  mRefreshHeaderContainer.getBottom());
-        System.out.println("EasyRecyclerView currentHeight getTop=" + getTop());
+        System.out.println("EasyRecyclerView currentHeight getHeight=" + mRefreshHeaderContainer.getBottom());
+        System.out.println("EasyRecyclerView  startScroll start");
 //        startScrollAnimation(300, new DecelerateInterpolator(), currentHeight, targetHeight);
-        mScroller.startScroll(0, currentHeight, 0, -currentHeight, 400);
+        setStatus(STATUS_DEFAULT);
+//        mScroller.a
+        mScroller.startScroll(0, currentHeight, 0, -currentHeight, 200);
+        System.out.println("EasyRecyclerView  startScroll end");
+//        stopNestedScroll();
 //        smoothToPosition(1);
 //        smoothScrollToPosition(10);
 //        postInvalidate();
+        invalidate();//这里必须调用invalidate()才能保证computeScroll()会被调用，否则不一定会刷新界面，看不到滚动效果
     }
 
     /**
@@ -531,11 +625,47 @@ public class EasyRecyclerView extends RecyclerView {
         final int targetHeight = mRefreshHeaderView.getMeasuredHeight();
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
 //        startScrollAnimation(300, new DecelerateInterpolator(), currentHeight, targetHeight);
-        mScroller.startScroll(0, currentHeight, 0, targetHeight - currentHeight, 400);
+        mScroller.startScroll(0, currentHeight, 0, mHeaderViewHeight - currentHeight, 200);
 
+        invalidate();
+        mHeaderHander.onStartAnim();
+        refresh();
 
 //        System.out.println("IRecyclerView startScrollReleaseStatusToRefreshingStatus=" + 2222);
 //        System.out.println("IRecyclerView currentHeight=" + currentHeight + " ---  targetHeight=" + targetHeight);
+    }
+
+    boolean refreshIng;
+    private OnRefreshListener listener;         //监听回调
+
+    //正在刷新时候就不再进行第二次回调
+    void refresh() {
+        if (!isRefreshIng()) {
+            refreshIng = true;//标记正在刷新
+//            System.out.println("SpringView refreshIng=" + refreshIng);
+            if (listener != null) {
+                listener.onRefresh();
+            }
+        }
+
+    }
+
+    /**
+     * 重置控件位置，暴露给外部的方法，用于在刷新或者加载完成后调用
+     */
+    public void onFinishFreshAndLoad() {
+        setStatus(STATUS_COMPLETE);//完成标识
+        System.out.println("cgp=needResetAnim="+needResetAnim);
+        if (getFirstVisiblePosition() == 0&&needResetAnim) {
+            startScrollSwipingToRefreshStatusToDefaultStatus();
+        }
+        refreshIng = false;
+        if (mHeaderHander != null) mHeaderHander.onFinishAnim();
+
+    }
+
+    public void setListener(OnRefreshListener listener) {
+        this.listener = listener;
     }
 
     private void startScrollRefreshingStatusToDefaultStatus() {
@@ -545,7 +675,7 @@ public class EasyRecyclerView extends RecyclerView {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
 //        startScrollAnimation(400, new DecelerateInterpolator(), currentHeight, targetHeight);
 
-        mScroller.startScroll(0, mRefreshHeaderContainer.getHeight(), 0, 0, 400);
+        mScroller.startScroll(0, mRefreshHeaderContainer.getHeight(), 0, 0, 200);
 
         System.out.println("EasyRecyclerView startScrollRefreshingStatusToDefaultStatus=" + 44444444);
     }
@@ -570,9 +700,10 @@ public class EasyRecyclerView extends RecyclerView {
     }
 
     private void onFingerUpStartAnimating() {
+        System.out.println("EasyRecyclerView mStatus=" + mStatus);
         if (mStatus == STATUS_RELEASE_TO_REFRESH) {
             startScrollReleaseStatusToRefreshingStatus();
-        } else if (mStatus == STATUS_SWIPING_TO_REFRESH) {
+        } else if (needResetAnim && (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE||mStatus == STATUS_DEFAULT)) {
             startScrollSwipingToRefreshStatusToDefaultStatus();
         }
     }
@@ -590,9 +721,16 @@ public class EasyRecyclerView extends RecyclerView {
 
     private void setStatus(int status) {
         this.mStatus = status;
-        if (DEBUG) {
-//            printStatusLog();
-        }
+    }
+
+    @Override
+    public boolean isLoadIng() {
+        return false;
+    }
+
+    @Override
+    public boolean isRefreshIng() {
+        return refreshIng;
     }
 
     public interface DragHander {

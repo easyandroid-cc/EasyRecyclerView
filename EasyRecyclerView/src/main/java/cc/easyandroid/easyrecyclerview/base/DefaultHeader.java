@@ -117,6 +117,7 @@ public class DefaultHeader extends BaseHeader {
 
     @Override
     public void onFinishAnim() {
+        headerTitle.setText("刷新成功");
         headerArrow.setVisibility(View.VISIBLE);
         headerProgressbar.setVisibility(View.INVISIBLE);
     }

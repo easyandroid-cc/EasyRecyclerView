@@ -13,6 +13,7 @@ import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.base.DefaultHeader;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
+import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
 /**
  * A fragment representing a list of Items.
@@ -62,7 +63,7 @@ public class ItemFragment extends Fragment {
         // Set the adapter
         if (view instanceof EasyRecyclerView) {
             Context context = view.getContext();
-            EasyRecyclerView recyclerView = (EasyRecyclerView) view;
+           final EasyRecyclerView recyclerView = (EasyRecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
                 recyclerView.setHeader(new DefaultHeader(getContext()));
@@ -70,6 +71,17 @@ public class ItemFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setListener(new OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    recyclerView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.onFinishFreshAndLoad();
+                        }
+                    },3000);
+                }
+            });
         }
         return view;
     }
