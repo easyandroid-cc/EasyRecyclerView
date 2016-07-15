@@ -355,6 +355,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             break;
 
             case MotionEvent.ACTION_MOVE: {
+                System.out.println("IRecyclerView ACTION_MOVE start");
                 needResetAnim = false;      //按下的时候关闭回弹
                 final int index = MotionEventCompat.findPointerIndex(e, mActivePointerId);
                 if (index < 0) {
@@ -381,23 +382,25 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
                 }
                 triggerCondition = getFirstVisiblePosition() == 0;
                 if (triggerCondition) {//是否是在临界点，也就是可以下来的位置
-
+                    System.out.println("IRecyclerView ACTION_MOVE end  11");
                     final int refreshHeaderContainerHeight = mRefreshHeaderContainer.getMeasuredHeight();
                     final int refreshHeaderViewHeight = mHeaderViewHeight;
                     mHeaderHander.onPreDrag(mRefreshHeaderView);
                     if (dy > 0 && mStatus == STATUS_DEFAULT) {
+                        System.out.println("IRecyclerView ACTION_MOVE end  2222");
                         setStatus(STATUS_SWIPING_TO_REFRESH);
                         mHeaderHander.onDropAnim(mRefreshHeaderView, dy);
 //                        mRefreshTrigger.onStart(false, refreshHeaderViewHeight, mRefreshFinalMoveOffset);
                     } else if (dy < 0) {
-
+                        System.out.println("IRecyclerView ACTION_MOVE end  3333");
                         if (mStatus == STATUS_SWIPING_TO_REFRESH && refreshHeaderContainerHeight <= 0) {
                             setStatus(STATUS_DEFAULT);
                             break;
                         }
                     }
-
-                    if (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH) {
+                    System.out.println("IRecyclerView ACTION_MOVE end  4444");
+                    if (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH|| mStatus == STATUS_DEFAULT) {
+                        System.out.println("IRecyclerView ACTION_MOVE end  555");
                         if (refreshHeaderContainerHeight >= refreshHeaderViewHeight) {//两种状态切换
                             setStatus(STATUS_RELEASE_TO_REFRESH);
                         } else {
@@ -412,8 +415,10 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
                     fingerMove(dy);//TODO 移出来，让刷新的时候也可以拉动
                     super.onTouchEvent(e);
+                    System.out.println("IRecyclerView ACTION_MOVE end888");
                     return true;
                 }
+                System.out.println("IRecyclerView ACTION_MOVE end22");
             }
             break;
 
