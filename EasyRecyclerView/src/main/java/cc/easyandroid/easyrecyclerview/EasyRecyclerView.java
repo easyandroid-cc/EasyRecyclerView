@@ -384,7 +384,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
                     final int refreshHeaderContainerHeight = mRefreshHeaderContainer.getMeasuredHeight();
                     final int refreshHeaderViewHeight = mHeaderViewHeight;
-
+                    mHeaderHander.onPreDrag(mRefreshHeaderView);
                     if (dy > 0 && mStatus == STATUS_DEFAULT) {
                         setStatus(STATUS_SWIPING_TO_REFRESH);
                         mHeaderHander.onDropAnim(mRefreshHeaderView, dy);
@@ -742,7 +742,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
         int getDragSpringHeight(View rootView);
 
-        void onPreDrag(View rootView);
+        void onPreDrag(View rootView);//初始化时间操作
 
         /**
          * 手指拖动控件过程中的回调，用户可以根据拖动的距离添加拖动过程动画
