@@ -41,13 +41,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     private static final int STATUS_COMPLETE = 4;//刷新或者加载完成的状态
 
-//    private static final int STATUS_RESET = 5;//状态复位
-
     private int mStatus = STATUS_DEFAULT;//当前的状态
 
     private boolean mIsAutoRefreshing;
 
-    private boolean mRefreshEnabled = true;
+    private boolean mRefreshEnabled = false;
 
     private boolean mLoadMoreEnabled;
 
@@ -191,42 +189,9 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
                 mLastTouchX = x;
                 mLastTouchY = y;
 
-                boolean triggerCondition = getFirstVisiblePosition() == 0 && isFingerDragging();//第一个item显示
+                boolean triggerCondition = getFirstVisiblePosition() == 0 && isFingerDragging() && mRefreshEnabled;//第一个item显示
                 if (triggerCondition) {//是否是在临界点，也就是可以下来的位置
-                    final int refreshHeaderContainerHeight = mRefreshHeaderContainer.getMeasuredHeight();
-                    final int refreshHeaderViewHeight = mHeaderViewHeight;
-                    mHeaderHander.onPreDrag(mRefreshHeaderView);
-                    if (dy > 0 && mStatus == STATUS_SWIPING_TO_REFRESH) {//下拉
-                        mHeaderHander.onDropAnim(mRefreshHeaderView, dy);
-                    } else if (dy < 0) {//上拉
-                        if ((mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE || mStatus == STATUS_REFRESHING) && refreshHeaderContainerHeight <= 0) {//这几种状态要跳出，让至空间自己移动，不然会卡住
-                            if (mStatus == STATUS_COMPLETE) {//完成上拉 再下来一个是下拉刷新  //完成后再往上拉要恢复到默认状态
-                                setStatus(STATUS_DEFAULT);
-                            }
-                            break;
-                        }
-                    }
-                    Log.e(TAG, "mStatus =" + mStatus);
-                    if (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH || mStatus == STATUS_DEFAULT) {//完成后不能出现在这里，完成后上下拉动应该还是显示完成状态
-                        if (refreshHeaderContainerHeight >= refreshHeaderViewHeight) {//两种状态切换
-                            if (mStatus != STATUS_RELEASE_TO_REFRESH) {
-                                setStatus(STATUS_RELEASE_TO_REFRESH);//释放刷新
-                                mHeaderHander.onLimitDes(mRefreshHeaderView, false, this);//改变header 的文字箭头  释放刷新
-                            }
-                        } else {
-                            Log.e(TAG, " 11111111111mStatus =" + mStatus);
-                            if (mStatus != STATUS_SWIPING_TO_REFRESH) {
-//                                if (mStatus != STATUS_DEFAULT) {
-                                mHeaderHander.onLimitDes(mRefreshHeaderView, true, this);//改变header 的文字箭头  下拉刷新
-//                                }
-                                setStatus(STATUS_SWIPING_TO_REFRESH);//下拉刷新
-                            }
-                        }
-                    }
-                    fingerMove(dy);//TODO 移出来，让刷新的时候也可以拉动
-                    firstMove = false;
-                    super.onTouchEvent(e);
-                    return true;
+                    return handlePull(e,dy);
                 }
             }
             break;
@@ -273,6 +238,49 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     private int getMotionEventY(MotionEvent e, int pointerIndex) {
         return (int) (MotionEventCompat.getY(e, pointerIndex) + 0.5f);
+    }
+
+    /**
+     * 处理下拉拖动
+     * @param e  事件e
+     * @param dy  拖动距离
+     * @return  是否自己处理
+     */
+    private boolean handlePull(MotionEvent e,int dy){
+        final int refreshHeaderContainerHeight = mRefreshHeaderContainer.getMeasuredHeight();
+        final int refreshHeaderViewHeight = mHeaderViewHeight;
+        mHeaderHander.onPreDrag(mRefreshHeaderView);
+        if (dy > 0 && mStatus == STATUS_SWIPING_TO_REFRESH) {//下拉
+            mHeaderHander.onDropAnim(mRefreshHeaderView, dy);
+        } else if (dy < 0) {//上拉
+            if ((mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE || mStatus == STATUS_REFRESHING) && refreshHeaderContainerHeight <= 0) {//这几种状态要跳出，让至空间自己移动，不然会卡住
+                if (mStatus == STATUS_COMPLETE) {//完成上拉 再下来一个是下拉刷新  //完成后再往上拉要恢复到默认状态
+                    setStatus(STATUS_DEFAULT);
+                }
+                return super.onTouchEvent(e);
+            }
+        }
+        Log.e(TAG, "mStatus =" + mStatus);
+        if (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH || mStatus == STATUS_DEFAULT) {//完成后不能出现在这里，完成后上下拉动应该还是显示完成状态
+            if (refreshHeaderContainerHeight >= refreshHeaderViewHeight) {//两种状态切换
+                if (mStatus != STATUS_RELEASE_TO_REFRESH) {
+                    setStatus(STATUS_RELEASE_TO_REFRESH);//释放刷新
+                    mHeaderHander.onLimitDes(mRefreshHeaderView, false, this);//改变header 的文字箭头  释放刷新
+                }
+            } else {
+                if (mStatus != STATUS_SWIPING_TO_REFRESH) {
+                    mHeaderHander.onLimitDes(mRefreshHeaderView, true, this);//改变header 的文字箭头  下拉刷新
+                    setStatus(STATUS_SWIPING_TO_REFRESH);//下拉刷新
+                }
+            }
+        }
+
+        fingerMove(dy);//TODO 移出来，让刷新的时候也可以拉动
+
+
+        firstMove = false;
+        super.onTouchEvent(e);
+        return  true;
     }
 
     /**
@@ -494,8 +502,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public void setAdapter(Adapter adapter) {
         ensureRefreshHeaderContainer();
         ensureLoadMoreFooterContainer();
-        System.out.println("BaseRecyclerAdapter=" + adapter);
-        System.out.println("BaseRecyclerAdapter ddd =" + (adapter instanceof BaseRecyclerAdapter));
+
         if (adapter instanceof BaseRecyclerAdapter) {
             BaseRecyclerAdapter baseRecyclerAdapter = (BaseRecyclerAdapter) adapter;
             baseRecyclerAdapter.addHeaderView(mRefreshHeaderContainer);
