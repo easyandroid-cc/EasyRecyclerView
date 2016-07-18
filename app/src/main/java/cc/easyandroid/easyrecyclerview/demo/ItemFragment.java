@@ -63,7 +63,7 @@ public class ItemFragment extends Fragment {
         // Set the adapter
         if (view instanceof EasyRecyclerView) {
             Context context = view.getContext();
-           final EasyRecyclerView recyclerView = (EasyRecyclerView) view;
+            final EasyRecyclerView recyclerView = (EasyRecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
                 recyclerView.setHeader(new DefaultHeader(getContext()));
@@ -71,18 +71,29 @@ public class ItemFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-            recyclerView.setListener(new OnRefreshListener() {
+            recyclerView.setOnRefreshListener(new OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    System.out.println("EasyRecyclerView 刷新开始");
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             recyclerView.onFinishFreshAndLoad();
+                            System.out.println("EasyRecyclerView 刷结束");
                         }
-                    },3000);
+                    }, 3000);
+                }
+
+            });
+            recyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    recyclerView.autoRefresh();
                 }
             });
+
         }
+
         return view;
     }
 

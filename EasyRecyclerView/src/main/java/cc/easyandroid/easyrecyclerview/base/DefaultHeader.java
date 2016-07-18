@@ -54,14 +54,12 @@ public class DefaultHeader extends BaseHeader {
     }
 
     @Override
-    public View getView( ) {
+    public View getView() {
         View view = LayoutInflater.from(context).inflate(R.layout.default_header, null, true);
-//        View view = inflater.inflate(R.layout.default_header, viewGroup, true);
         headerTitle = (TextView) view.findViewById(R.id.default_header_title);
         headerTime = (TextView) view.findViewById(R.id.default_header_time);
         headerArrow = (ImageView) view.findViewById(R.id.default_header_arrow);
         headerProgressbar = (ProgressBar) view.findViewById(R.id.default_header_progressbar);
-//        headerProgressbar.setIndeterminateDrawable(ContextCompat.getDrawable(context, rotationSrc));
         headerArrow.setImageResource(arrowSrc);
         return view;
     }
@@ -92,16 +90,17 @@ public class DefaultHeader extends BaseHeader {
 
     @Override
     public void onLimitDes(View rootView, boolean upORdown, PullViewHandle pullViewHandle) {
-        System.out.println("SpringView pullViewHandle.isRefreshIng()="+pullViewHandle.isRefreshIng());
         if (!pullViewHandle.isRefreshIng()) {
             if (!upORdown) {
                 headerTitle.setText("松开刷新数据");
-                if (headerArrow.getVisibility() == View.VISIBLE)
-                    headerArrow.startAnimation(mRotateUpAnim);
+                headerArrow.setVisibility(View.VISIBLE);
+                headerArrow.startAnimation(mRotateUpAnim);
             } else {
                 headerTitle.setText("下拉刷新");
-                if (headerArrow.getVisibility() == View.VISIBLE)
+                headerArrow.setVisibility(View.VISIBLE);
+                if(!pullViewHandle.isFirstMove()){//第一次移动时候监听不旋转
                     headerArrow.startAnimation(mRotateDownAnim);
+                }
             }
         }
     }
@@ -118,7 +117,12 @@ public class DefaultHeader extends BaseHeader {
     @Override
     public void onFinishAnim() {
         headerTitle.setText("刷新成功");
-        headerArrow.setVisibility(View.VISIBLE);
+        headerArrow.setVisibility(View.INVISIBLE);
         headerProgressbar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public int getDragMaxHeight(View rootView) {
+        return 1500;
     }
 }

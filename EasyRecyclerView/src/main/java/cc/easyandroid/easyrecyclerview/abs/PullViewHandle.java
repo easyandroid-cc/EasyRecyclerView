@@ -7,4 +7,6 @@ public interface PullViewHandle {
     boolean isLoadIng();
 
     boolean isRefreshIng();
+
+    boolean isFirstMove();
 }
