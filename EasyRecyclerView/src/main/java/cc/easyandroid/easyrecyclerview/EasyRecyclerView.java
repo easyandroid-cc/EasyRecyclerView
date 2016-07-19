@@ -98,7 +98,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         boolean loadMoreEnabled;
         try {
             refreshEnabled = a.getBoolean(R.styleable.EasyRecyclerView_refreshEnabled, true);
-            loadMoreEnabled = a.getBoolean(R.styleable.EasyRecyclerView_loadMoreEnabled, false);
+            loadMoreEnabled = a.getBoolean(R.styleable.EasyRecyclerView_loadMoreEnabled, true);
 
         } finally {
             a.recycle();
