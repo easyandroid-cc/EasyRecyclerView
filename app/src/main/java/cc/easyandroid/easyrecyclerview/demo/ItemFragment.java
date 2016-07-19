@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
-import cc.easyandroid.easyrecyclerview.base.DefaultHeader;
+import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
+import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
+import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
 import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
 /**
@@ -66,19 +68,27 @@ public class ItemFragment extends Fragment {
             final EasyRecyclerView recyclerView = (EasyRecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                recyclerView.setHeader(new DefaultHeader(getContext()));
+                recyclerView.setHeader(new DefaultHeaderHander(getContext()));
+                recyclerView.setFooter(new DefaultFooterHander(getContext()));
+                recyclerView.addItemDecoration(new RecycleViewDivider(view.getContext(), LinearLayoutManager.HORIZONTAL));
+//                recyclerView.setdr
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            final MyItemRecyclerViewAdapter adapter = new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+            recyclerView.setAdapter(adapter);
             recyclerView.setOnRefreshListener(new OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     System.out.println("EasyRecyclerView 刷新开始");
+                    recyclerView.finishLoadMore();
+
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            recyclerView.onFinishFreshAndLoad();
+                            adapter.clear();
+                            adapter.addDatas(DummyContent.ITEMS);
+                            recyclerView.finishRefresh();
                             System.out.println("EasyRecyclerView 刷结束");
                         }
                     }, 3000);
@@ -91,12 +101,27 @@ public class ItemFragment extends Fragment {
                     recyclerView.autoRefresh();
                 }
             });
+            recyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore(final EasyRecyclerView.FooterHander loadMoreView) {
+                    System.out.println("EasyRecyclerView loadmore开始");
+                    recyclerView.finishRefresh();
+                    recyclerView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.addDatas(DummyContent.ITEMS);
+                            loadMoreView.loadingCompleted();
+
+                            System.out.println("EasyRecyclerView loadmore结束");
+                        }
+                    }, 3000);
+                }
+            });
 
         }
 
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {

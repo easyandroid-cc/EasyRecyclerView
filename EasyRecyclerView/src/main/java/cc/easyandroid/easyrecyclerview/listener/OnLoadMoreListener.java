@@ -1,12 +1,9 @@
 package cc.easyandroid.easyrecyclerview.listener;
 
-import android.view.View;
+import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 
-/**
- * Created by aspsine on 16/3/13.
- */
 public interface OnLoadMoreListener {
 
-    void onLoadMore(View loadMoreView);
+    void onLoadMore(EasyRecyclerView.FooterHander loadMoreView);
 
 }

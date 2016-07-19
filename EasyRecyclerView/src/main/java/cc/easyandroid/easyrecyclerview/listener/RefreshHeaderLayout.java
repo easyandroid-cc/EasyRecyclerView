@@ -5,9 +5,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by aspsine on 16/3/7.
- */
 public class RefreshHeaderLayout extends ViewGroup {
 
     public RefreshHeaderLayout(Context context) {

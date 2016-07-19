@@ -1,4 +1,4 @@
-package cc.easyandroid.easyrecyclerview.base;
+package cc.easyandroid.easyrecyclerview.core;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,14 +9,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.R;
-import cc.easyandroid.easyrecyclerview.abs.PullViewHandle;
 
 
 /**
  * Created by Administrator on 2016/3/21.
  */
-public class DefaultHeader extends BaseHeader {
+public class DefaultHeaderHander implements EasyRecyclerView.HeaderHander {
     private Context context;
     private int rotationSrc;
     private int arrowSrc;
@@ -32,11 +32,11 @@ public class DefaultHeader extends BaseHeader {
     private ImageView headerArrow;
     private ProgressBar headerProgressbar;
 
-    public DefaultHeader(Context context) {
+    public DefaultHeaderHander(Context context) {
         this(context, R.drawable.progress_small, R.drawable.arrow);
     }
 
-    public DefaultHeader(Context context, int rotationSrc, int arrowSrc) {
+    public DefaultHeaderHander(Context context, int rotationSrc, int arrowSrc) {
         this.context = context;
         this.rotationSrc = rotationSrc;
         this.arrowSrc = arrowSrc;
@@ -124,5 +124,10 @@ public class DefaultHeader extends BaseHeader {
     @Override
     public int getDragMaxHeight(View rootView) {
         return 1500;
+    }
+
+    @Override
+    public int getDragSpringHeight(View rootView) {
+        return 0;
     }
 }

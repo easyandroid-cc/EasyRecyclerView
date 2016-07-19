@@ -1,4 +1,4 @@
-package cc.easyandroid.easyrecyclerview.abs;
+package cc.easyandroid.easyrecyclerview.core;
 
 /**
  * Created by cgpllx on 2016/7/7.
