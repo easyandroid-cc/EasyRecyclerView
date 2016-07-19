@@ -8,7 +8,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import cc.easyandroid.easyrecyclerview.BaseRecyclerAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
@@ -52,9 +54,9 @@ public class ItemFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+//        if (getArguments() != null) {
+            mColumnCount =3;//= getArguments().getInt(ARG_COLUMN_COUNT);
+//        }
     }
 
     @Override
@@ -74,18 +76,27 @@ public class ItemFragment extends Fragment {
 //                recyclerView.setdr
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                recyclerView.setHeader(new DefaultHeaderHander(getContext()));
+                recyclerView.setFooter(new DefaultFooterHander(getContext()));
+                recyclerView.addItemDecoration(new RecycleViewDivider(view.getContext(), LinearLayoutManager.HORIZONTAL));
             }
             final MyItemRecyclerViewAdapter adapter = new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+            adapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<DummyItem>() {
+                @Override
+                public void onItemClick(int position, DummyItem data) {
+                    Toast.makeText(getContext(),position+"",Toast.LENGTH_SHORT).show();
+                }
+            });
             recyclerView.setAdapter(adapter);
             recyclerView.setOnRefreshListener(new OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     System.out.println("EasyRecyclerView 刷新开始");
-                    recyclerView.finishLoadMore();
 
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
+//                            recyclerView.finishLoadMore();
                             adapter.clear();
                             adapter.addDatas(DummyContent.ITEMS);
                             recyclerView.finishRefresh();

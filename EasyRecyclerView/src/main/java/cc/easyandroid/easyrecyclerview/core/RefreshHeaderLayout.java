@@ -1,4 +1,4 @@
-package cc.easyandroid.easyrecyclerview.listener;
+package cc.easyandroid.easyrecyclerview.core;
 
 import android.content.Context;
 import android.util.AttributeSet;

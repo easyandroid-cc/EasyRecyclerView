@@ -7,7 +7,6 @@
     android:id="@+id/content"
 
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="cc.easyandroid.demo.MainActivity"
     tools:showIn="@layout/activity_main">
 
 </RelativeLayout>

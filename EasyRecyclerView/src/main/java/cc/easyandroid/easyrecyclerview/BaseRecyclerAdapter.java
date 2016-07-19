@@ -80,6 +80,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    System.out.println("EasyRecyclerView setOnClickListener");
                     mListener.onItemClick(pos, data);
                 }
             });
@@ -97,7 +98,8 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
             gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    return getItemViewType(position) == TYPE_HEADER
+                    return ((getItemViewType(position) & TYPE_HEADER) == TYPE_HEADER)//
+                            ||((getItemViewType(position) & TYPE_FOOTER) == TYPE_FOOTER)//
                             ? gridManager.getSpanCount() : 1;
                 }
             });

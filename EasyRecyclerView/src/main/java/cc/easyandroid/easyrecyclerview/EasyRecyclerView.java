@@ -24,7 +24,7 @@ import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
 import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
-import cc.easyandroid.easyrecyclerview.listener.RefreshHeaderLayout;
+import cc.easyandroid.easyrecyclerview.core.RefreshHeaderLayout;
 
 /**
  * 下拉刷新
@@ -51,7 +51,6 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     private OnRefreshListener mOnRefreshListener;
 
     private OnLoadMoreListener mOnLoadMoreListener;
-
 
     private RefreshHeaderLayout mRefreshHeaderContainer;
 

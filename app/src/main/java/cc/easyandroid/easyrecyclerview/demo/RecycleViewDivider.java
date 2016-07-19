@@ -18,7 +18,7 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
 
     private Paint mPaint;
     private Drawable mDivider;
-    private int mDividerHeight = 20;//分割线高度，默认为1px
+    private int mDividerHeight = 1;//分割线高度，默认为1px
     private int mOrientation;//列表的方向：LinearLayoutManager.VERTICAL或LinearLayoutManager.HORIZONTAL
     private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
 
@@ -49,7 +49,9 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
     public RecycleViewDivider(Context context, int orientation, int drawableId) {
         this(context, orientation);
         mDivider = ContextCompat.getDrawable(context, drawableId);
-        mDividerHeight = mDivider.getIntrinsicHeight();
+         mDividerHeight = mDivider.getIntrinsicHeight();
+
+
     }
 
     /**
@@ -72,8 +74,18 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
     //获取分割线尺寸
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        super.getItemOffsets(outRect, view, parent, state);
+       super.getItemOffsets(outRect, view, parent, state);
         outRect.set(0, 0, 0, mDividerHeight);
+
+        int position = parent.getChildAdapterPosition(view);
+        int spanCount = 1;//getSpanCount(parent);
+        int childCount = parent.getAdapter().getItemCount();
+        int pos = position;
+if(pos==0){
+//    outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
+
+}
+
     }
 
     //绘制分割线
@@ -92,7 +104,7 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
         final int left = parent.getPaddingLeft();
         final int right = parent.getMeasuredWidth() - parent.getPaddingRight();
         final int childSize = parent.getChildCount();
-        for (int i = 0; i < childSize; i++) {
+        for (int i = 0; i < childSize-1; i++) {
             final View child = parent.getChildAt(i);
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) child.getLayoutParams();
             final int top = child.getBottom() + layoutParams.bottomMargin;
