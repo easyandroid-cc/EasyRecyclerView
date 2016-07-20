@@ -113,9 +113,21 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent(MotionEvent e) {
+        final int action = MotionEventCompat.getActionMasked(e);
+        final int actionIndex = MotionEventCompat.getActionIndex(e);
+//        switch (action) {
+//            case MotionEvent.ACTION_DOWN: {
+//                if (mEvent != null) {
+//                    mEvent.setAction(MotionEvent.ACTION_DOWN);
+//                    Log.e(TAG, "mStatus ACTION_DOWN = mEvent");
+//                    super.dispatchTouchEvent(mEvent);
+//                    mEvent = null;
+//                }
+//            }
+//        }
 
-        return super.dispatchTouchEvent(ev);
+                return super.dispatchTouchEvent(e);
     }
 
     @Override
@@ -125,12 +137,19 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         final int actionIndex = MotionEventCompat.getActionIndex(e);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                if (mEvent != null) {
-                    super.onTouchEvent(mEvent);
-                }
-                mEvent = null;
+                needResetAnim = false;      //按下的时候关闭回弹
+//                if (mEvent != null) {
+//                    mEvent.setAction(MotionEvent.ACTION_DOWN);
+//                    Log.e(TAG, "mStatus ACTION_DOWN = mEvent"  );
+//                    MotionEvent event = mEvent;
+//                    mEvent=null;
+//                       super. onInterceptTouchEvent(event);
+//
+//                }
+
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
+                    Log.e(TAG, "mStatus ACTION_MOVE = abortAnimation");
                 } else {
 
                 }
@@ -151,8 +170,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             }
             break;
         }
-
-        return super.onInterceptTouchEvent(e);
+        return  super.onInterceptTouchEvent(e);
     }
 
     /**
@@ -180,10 +198,10 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             case MotionEvent.ACTION_DOWN: {
                 Log.e(TAG, "mStatus ACTION_DOWN =");
                 firstMove = true;
-                if (mEvent != null) {
-                    super.onTouchEvent(mEvent);
-                }
-                mEvent = null;
+//                if (mEvent != null) {
+//                    super.onTouchEvent(mEvent);
+//                }
+//                mEvent = null;
                 need = false;
                 needResetAnim = false;      //按下的时候关闭回弹
                 final int index = MotionEventCompat.getActionIndex(e);
@@ -206,8 +224,12 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
                 final int y = getMotionEventY(e, index);
 
                 // final int dx = x - mLastTouchX; //not used
-                final int dy = y - mLastTouchY;
-
+                  int dy = y - mLastTouchY;
+                if(dy<-50){
+                    dy=0;
+                }
+                Log.e(TAG, "mStatus move mLastTouchY=" + mLastTouchY);
+                Log.e(TAG, "mStatus move  y =" + y);
                 mLastTouchX = x;
                 mLastTouchY = y;
 
@@ -234,17 +256,25 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             default:
                 Log.e(TAG, "mStatus ACTION_UP =");
                 needResetAnim = true;      //松开的时候打开回弹
-                if (getFirstVisiblePosition() == 0) {//抬起手指后复位
+                if (getFirstVisiblePosition() == 0&&mRefreshHeaderContainer.getHeight()>0) {//抬起手指后复位
                     onFingerUpStartAnimating();
+                    Log.e(TAG, "mStatus ACTION_MOVE = onFingerUpStartAnimating");
+//                    e.setAction(MotionEvent.ACTION_MOVE);
 //                    super.onTouchEvent(e);//动画结束后应该调用super的方法
 //                    final int index = MotionEventCompat.getActionIndex(e);
 //                    mActivePointerId = MotionEventCompat.getPointerId(e, 0);
 //                    mLastTouchX = getMotionEventX(e, index);
 //                    mLastTouchY = getMotionEventY(e, index);
-                    mEvent = e;
-                    need = true;
-                    return true;
+//                    mEvent = e;
+//                    need = true;
+//                    return true;
+
                 }
+                mLastTouchX=0;
+                        mLastTouchY=0;
+                mActivePointerId=-1;
+                Log.e(TAG, "mStatus ACTION_UP mLastTouchY=" + mLastTouchY);
+//                Log.e(TAG, "mStatus ACTION_UP  y =" + y);
                 break;
         }
         return super.onTouchEvent(e);
@@ -321,8 +351,8 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
         firstMove = false;
 //        super.onInterceptTouchEvent(e);
-        super.onTouchEvent(e);
-        return true;
+        return super.onTouchEvent(e);
+//        return true;
     }
 
     /**
@@ -452,7 +482,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             setRefreshHeaderContainerHeight(mScroller.getCurrY());
-        } else if (((mRefreshHeaderContainer != null && mRefreshHeaderContainer.getHeight() <= 0) || (mRefreshHeaderContainer != null && mRefreshHeaderContainer.getHeight() == mHeaderViewHeight)) && mEvent != null) {
+        } else if (((mRefreshHeaderContainer != null && mRefreshHeaderContainer.getHeight() <= 0) || (mRefreshHeaderContainer != null && mRefreshHeaderContainer.getHeight() == mHeaderViewHeight))) {
             if (mScroller.isFinished()) {
                 if (needResetAnim && need) {
                     Log.e(TAG, "mStatus needResetAnim =" + needResetAnim);

@@ -127,7 +127,7 @@ public class ItemFragment extends Fragment {
                             recyclerView.finishRefresh();
                             System.out.println("EasyRecyclerView 刷结束");
                         }
-                    }, 3000);
+                    }, 10000);
                 }
 
             });
