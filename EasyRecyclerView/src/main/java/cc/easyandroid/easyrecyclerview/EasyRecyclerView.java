@@ -114,19 +114,21 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (mEvent != null) {
-            super.onTouchEvent(mEvent);
-        }
-        mEvent = null;
+
         return super.dispatchTouchEvent(ev);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
+
         final int action = MotionEventCompat.getActionMasked(e);
         final int actionIndex = MotionEventCompat.getActionIndex(e);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
+                if (mEvent != null) {
+                    super.onTouchEvent(mEvent);
+                }
+                mEvent = null;
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
                 } else {
