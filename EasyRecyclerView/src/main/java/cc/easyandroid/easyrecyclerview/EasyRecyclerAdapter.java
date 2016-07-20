@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by cgp
  */
-public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int TYPE_NORMAL = 1;
     public static final int TYPE_HEADER = 1 << 24;//2 24 header item
@@ -21,6 +21,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     private ArrayList<T> mDatas = new ArrayList<>();
     private ArrayList<View> mHeaderViews = new ArrayList<>();
     private ArrayList<View> mFooterViews = new ArrayList<>();
+    private View mLastFooterView = null;//放在最后的footview
 
 
     private OnItemClickListener<T> mListener;
@@ -39,7 +40,22 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         notifyItemInserted(getItemCount() - 1);//
     }
 
+    void addFooterViewToLast(View lastFooterView) {
+        mLastFooterView = lastFooterView;
+    }
+
+    void addHeaderViewToFirst(View firstHeaderView) {
+        mHeaderViews.add(0, firstHeaderView);
+        notifyItemInserted(0);
+    }
+
     public void addDatas(List<T> datas) {
+        mDatas.addAll(datas);
+        notifyItemRangeInserted(getItemCount() - datas.size() - getFooterCount(), datas.size());//
+    }
+
+    public void setDatas(List<T> datas) {
+        mDatas.clear();
         mDatas.addAll(datas);
         notifyDataSetChanged();
     }
@@ -59,7 +75,12 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         if ((viewType & TYPE_HEADER) == TYPE_HEADER) {
             return new Holder(mHeaderViews.get((viewType ^ TYPE_HEADER)));//header
         } else if ((viewType & TYPE_FOOTER) == TYPE_FOOTER) {
-            return new Holder(mFooterViews.get((viewType ^ TYPE_FOOTER)));// footer
+            int index = viewType ^ TYPE_FOOTER;
+            if (index >= mFooterViews.size()) {
+                return new Holder(mLastFooterView);// footer
+            } else {
+                return new Holder(mFooterViews.get((viewType ^ TYPE_FOOTER)));// footer
+            }
         }
         return onCreate(parent, viewType);
     }
@@ -67,10 +88,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        if ((getItemViewType(position) & TYPE_HEADER) == TYPE_HEADER) return;//header
+        if (isHeaderType(position)) return;//header
         if (position >= (mHeaderViews.size() + mDatas.size())) {//
-            if ((getItemViewType(position) & TYPE_FOOTER) == TYPE_FOOTER)
-                return;//footer
+            if (isFooterType(position)) return;//footer
         }
         final int pos = getRealPosition(viewHolder);
         final T data = mDatas.get(pos);
@@ -80,7 +100,6 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("EasyRecyclerView setOnClickListener");
                     mListener.onItemClick(pos, data);
                 }
             });
@@ -98,12 +117,30 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
             gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    return ((getItemViewType(position) & TYPE_HEADER) == TYPE_HEADER)//
-                            ||((getItemViewType(position) & TYPE_FOOTER) == TYPE_FOOTER)//
-                            ? gridManager.getSpanCount() : 1;
+                    return isHeaderType(position) || isFooterType(position) ? gridManager.getSpanCount() : 1;
                 }
             });
         }
+    }
+
+    /**
+     * 是否是header type
+     *
+     * @param position 位置
+     * @return isHeaderType
+     */
+    protected boolean isHeaderType(int position) {
+        return (getItemViewType(position) & TYPE_HEADER) == TYPE_HEADER;
+    }
+
+    /**
+     * 是否是footer type
+     *
+     * @param position 位置
+     * @return isFooterType
+     */
+    protected boolean isFooterType(int position) {
+        return (getItemViewType(position) & TYPE_FOOTER) == TYPE_FOOTER;
     }
 
     @Override
@@ -124,14 +161,26 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     @Override
     public int getItemCount() {
-        return mDatas.size() + mHeaderViews.size() + mFooterViews.size();
+        return mDatas.size() + mHeaderViews.size() + mFooterViews.size() + getLastFooterViewCount();
+    }
+
+    int getLastFooterViewCount() {
+        return mLastFooterView != null ? 1 : 0;
+    }
+
+    public int getHeaderCount() {
+        return mHeaderViews.size();
+    }
+
+    public int getFooterCount() {
+        return mFooterViews.size();
     }
 
     public int getNormalItemCount() {
         return mDatas.size();
     }
 
-    public void clear(){
+    public void clear() {
         mDatas.clear();
     }
 

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import cc.easyandroid.easyrecyclerview.BaseRecyclerAdapter;
+import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
 import cc.easyandroid.easyrecyclerview.demo.ItemFragment.OnListFragmentInteractionListener;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
 
@@ -17,7 +17,7 @@ import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyItemRecyclerViewAdapter extends BaseRecyclerAdapter<DummyItem>{
+public class MyItemRecyclerViewAdapter extends EasyRecyclerAdapter<DummyItem> {
 //    private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 

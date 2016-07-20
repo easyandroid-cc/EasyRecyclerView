@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import cc.easyandroid.easyrecyclerview.BaseRecyclerAdapter;
+import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
@@ -55,9 +55,11 @@ public class ItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 //        if (getArguments() != null) {
-            mColumnCount =3;//= getArguments().getInt(ARG_COLUMN_COUNT);
+        mColumnCount = 1;//= getArguments().getInt(ARG_COLUMN_COUNT);
 //        }
     }
+
+    Toast toast;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,35 +72,58 @@ public class ItemFragment extends Fragment {
             final EasyRecyclerView recyclerView = (EasyRecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                recyclerView.setHeader(new DefaultHeaderHander(getContext()));
-                recyclerView.setFooter(new DefaultFooterHander(getContext()));
-                recyclerView.addItemDecoration(new RecycleViewDivider(view.getContext(), LinearLayoutManager.HORIZONTAL));
+//                recyclerView.setHeader(new DefaultHeaderHander(getContext()));
+////                recyclerView.setHeader(new MeituanHeader(getContext()));
+//                recyclerView.setFooter(new DefaultFooterHander(getContext()));
+
+//                recyclerView.addItemDecoration(new RecycleViewDivider(view.getContext(), LinearLayoutManager.HORIZONTAL));
+//                recyclerView.setItemAnimator();
 //                recyclerView.setdr
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
                 recyclerView.setHeader(new DefaultHeaderHander(getContext()));
-                recyclerView.setFooter(new DefaultFooterHander(getContext()));
-                recyclerView.addItemDecoration(new RecycleViewDivider(view.getContext(), LinearLayoutManager.HORIZONTAL));
+//                recyclerView.addItemDecoration(new RecycleViewDivider(view.getContext(), LinearLayoutManager.HORIZONTAL));
             }
             final MyItemRecyclerViewAdapter adapter = new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener);
-            adapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener<DummyItem>() {
+            recyclerView.setAdapter(adapter);
+            recyclerView.setHeader(new DefaultHeaderHander(getContext()));
+//                recyclerView.setHeader(new MeituanHeader(getContext()));
+            recyclerView.setFooter(new DefaultFooterHander(getContext()));
+
+            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+
+            toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
+            adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<DummyItem>() {
                 @Override
                 public void onItemClick(int position, DummyItem data) {
-                    Toast.makeText(getContext(),position+"",Toast.LENGTH_SHORT).show();
+                    if (toast != null) {
+                        toast.setText(position + "");
+                    } else {
+                        toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
+//                        toast.show();
+                    }
+                    toast.show();
+//                    Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT).show();
                 }
             });
-            recyclerView.setAdapter(adapter);
+
             recyclerView.setOnRefreshListener(new OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     System.out.println("EasyRecyclerView 刷新开始");
-
+                    recyclerView.finishLoadMore();
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
 //                            recyclerView.finishLoadMore();
-                            adapter.clear();
-                            adapter.addDatas(DummyContent.ITEMS);
+//                            adapter.clear();
+                            adapter.setDatas(DummyContent.ITEMS);
                             recyclerView.finishRefresh();
                             System.out.println("EasyRecyclerView 刷结束");
                         }
