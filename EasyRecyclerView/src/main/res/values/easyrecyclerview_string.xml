@@ -11,7 +11,7 @@
     <string name="easyrecyclerview_loadmorefail_click_to_loadmore">加载失败，点击重新</string>
     <string name="easyrecyclerview_loadmore_fullcompleted">已經全部加載完成</string>
 
-    <string name="easyrecyclerview_last_update">上次更新时间：:&#160;</string>
+    <string name="easyrecyclerview_last_update">上次更新时间：&#160;</string>
     <string name="easyrecyclerview_just">&#160;剛剛</string>
     <string name="easyrecyclerview_minutes_ago">&#160;分鐘前</string>
     <string name="easyrecyclerview_hours_ago">&#160;小時前</string>

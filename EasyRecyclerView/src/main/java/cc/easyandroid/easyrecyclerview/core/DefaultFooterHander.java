@@ -27,8 +27,17 @@ import cc.easyandroid.easyrecyclerview.R;
 
 
 public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
-    Context context;
+    private Context context;
+
     private int rotationSrc;
+
+    private TextView footerTv;
+
+    private ProgressBar footerBar;
+
+    private boolean loading = false;//加载中
+
+    private boolean noMore = false;// 已经没有更多了
 
     public DefaultFooterHander(Context context) {
         this(context, R.drawable.progress_small);
@@ -39,10 +48,6 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
         this.rotationSrc = rotationSrc;
     }
 
-    TextView footerTv;
-    ProgressBar footerBar;
-
-
     @Override
     public View getView() {
         View view = LayoutInflater.from(context).inflate(R.layout.default_footer, null, true);
@@ -51,9 +56,6 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
         footerBar.setIndeterminateDrawable(ContextCompat.getDrawable(context, rotationSrc));
         return view;
     }
-
-    private boolean loading = false;//加载中
-    private boolean noMore = false;// 已经没有更多了
 
     @Override
     public void showNormal() {

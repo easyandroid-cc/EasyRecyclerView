@@ -389,6 +389,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     public void autoRefresh() {
         needResetAnim = true;
+        mHeaderHander.onPreDrag(mRefreshHeaderView);
         startScrollReleaseStatusToRefreshingStatus();
     }
 
