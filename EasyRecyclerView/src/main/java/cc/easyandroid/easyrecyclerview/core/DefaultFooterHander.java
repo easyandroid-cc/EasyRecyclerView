@@ -16,6 +16,7 @@ limitations under the License.
 package cc.easyandroid.easyrecyclerview.core;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -25,14 +26,17 @@ import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.R;
 
 
-/**
- * default load more view
- */
 public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
     Context context;
+    private int rotationSrc;
 
     public DefaultFooterHander(Context context) {
+        this(context, R.drawable.progress_small);
+    }
+
+    public DefaultFooterHander(Context context, int rotationSrc) {
         this.context = context;
+        this.rotationSrc = rotationSrc;
     }
 
     TextView footerTv;
@@ -41,13 +45,10 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
 
     @Override
     public View getView() {
-//        View view = LayoutInflater.from(context).inflate(R.layout.default_footer, null, true);
-//        footerTv = (TextView) view.findViewById(R.id.default_footer_title);
-//        footerBar = (ProgressBar) view.findViewById(R.id.default_footer_progressbar);
         View view = LayoutInflater.from(context).inflate(R.layout.default_footer, null, true);
         footerTv = (TextView) view.findViewById(R.id.default_footer_title);
         footerBar = (ProgressBar) view.findViewById(R.id.default_footer_progressbar);
-//        footerProgressbar.setIndeterminateDrawable(ContextCompat.getDrawable(context, rotationSrc));
+        footerBar.setIndeterminateDrawable(ContextCompat.getDrawable(context, rotationSrc));
         return view;
     }
 
@@ -56,7 +57,7 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
 
     @Override
     public void showNormal() {
-        footerTv.setText("点击加载更多");
+        footerTv.setText(context.getResources().getString(R.string.easyrecyclerview_click_to_loadmore));
         footerBar.setVisibility(View.GONE);
         loading = false;
         noMore = false;
@@ -64,7 +65,7 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
 
     @Override
     public void showLoading() {
-        footerTv.setText("正在加载中...");
+        footerTv.setText(context.getResources().getString(R.string.easyrecyclerview_loadmoreing));
         footerBar.setVisibility(View.VISIBLE);
         loading = true;
         noMore = false;
@@ -72,15 +73,15 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
 
     @Override
     public void showFail(Exception exception) {
-        footerTv.setText("加载失败，点击重新");
+        footerTv.setText(context.getResources().getString(R.string.easyrecyclerview_loadmorefail_click_to_loadmore));
         footerBar.setVisibility(View.GONE);
         loading = false;
         noMore = false;
     }
 
     @Override
-    public void loadingCompleted() {
-        footerTv.setText("已经加载完毕");
+    public void fullLoadCompleted() {
+        footerTv.setText(context.getResources().getString(R.string.easyrecyclerview_loadmore_fullcompleted));
         footerBar.setVisibility(View.GONE);
         loading = false;
         noMore = true;

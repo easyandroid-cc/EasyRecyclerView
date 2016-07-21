@@ -95,7 +95,6 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         final int pos = getRealPosition(viewHolder);
         final T data = mDatas.get(pos);
         onBind(viewHolder, pos, data);
-
         if (mListener != null) {
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

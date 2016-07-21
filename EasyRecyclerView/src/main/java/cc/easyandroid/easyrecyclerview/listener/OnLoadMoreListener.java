@@ -4,6 +4,6 @@ import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 
 public interface OnLoadMoreListener {
 
-    void onLoadMore(EasyRecyclerView.FooterHander loadMoreView);
+    void onLoadMore(EasyRecyclerView.FooterHander footerHander);
 
 }

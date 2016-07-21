@@ -3,14 +3,12 @@ package cc.easyandroid.easyrecyclerview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +16,12 @@ import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
-import android.widget.TextView;
 
-import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
+import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
+import cc.easyandroid.easyrecyclerview.core.RefreshHeaderLayout;
 import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
 import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
-import cc.easyandroid.easyrecyclerview.core.RefreshHeaderLayout;
 
 /**
  * 下拉刷新
@@ -72,15 +69,19 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     private boolean needResetAnim;//按下的时候关闭回弹
 
-    private boolean refreshIng;
+    private boolean refreshIng;//是否在刷新中
 
-    private boolean firstMove;
+    private boolean loadMoreIng;//是否在加载中
+
+    private boolean firstMove;//headerview 第一次出现的时候需要
 
     private HeaderHander mHeaderHander;
 
     private FooterHander mFooterHander;
 
     private EasyOnScrollListener easyOnScrollListener;
+
+    private float resistance = 1.7f;
 
 
     public EasyRecyclerView(Context context) {
@@ -113,45 +114,13 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent e) {
-        final int action = MotionEventCompat.getActionMasked(e);
-        final int actionIndex = MotionEventCompat.getActionIndex(e);
-//        switch (action) {
-//            case MotionEvent.ACTION_DOWN: {
-//                if (mEvent != null) {
-//                    mEvent.setAction(MotionEvent.ACTION_DOWN);
-//                    Log.e(TAG, "mStatus ACTION_DOWN = mEvent");
-//                    super.dispatchTouchEvent(mEvent);
-//                    mEvent = null;
-//                }
-//            }
-//        }
-
-                return super.dispatchTouchEvent(e);
-    }
-
-    @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
-
         final int action = MotionEventCompat.getActionMasked(e);
         final int actionIndex = MotionEventCompat.getActionIndex(e);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                needResetAnim = false;      //按下的时候关闭回弹
-//                if (mEvent != null) {
-//                    mEvent.setAction(MotionEvent.ACTION_DOWN);
-//                    Log.e(TAG, "mStatus ACTION_DOWN = mEvent"  );
-//                    MotionEvent event = mEvent;
-//                    mEvent=null;
-//                       super. onInterceptTouchEvent(event);
-//
-//                }
-
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
-                    Log.e(TAG, "mStatus ACTION_MOVE = abortAnimation");
-                } else {
-
                 }
                 mActivePointerId = MotionEventCompat.getPointerId(e, 0);
                 mLastTouchX = (int) (MotionEventCompat.getX(e, actionIndex) + 0.5f);
@@ -170,7 +139,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             }
             break;
         }
-        return  super.onInterceptTouchEvent(e);
+        return super.onInterceptTouchEvent(e);
     }
 
     /**
@@ -189,20 +158,13 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         }
     }
 
-    MotionEvent mEvent;
 
     @Override
-    public boolean onTouchEvent(MotionEvent e) {
+    public boolean dispatchTouchEvent(MotionEvent e) {
         final int action = MotionEventCompat.getActionMasked(e);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                Log.e(TAG, "mStatus ACTION_DOWN =");
                 firstMove = true;
-//                if (mEvent != null) {
-//                    super.onTouchEvent(mEvent);
-//                }
-//                mEvent = null;
-                need = false;
                 needResetAnim = false;      //按下的时候关闭回弹
                 final int index = MotionEventCompat.getActionIndex(e);
                 mActivePointerId = MotionEventCompat.getPointerId(e, 0);
@@ -212,7 +174,6 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             break;
 
             case MotionEvent.ACTION_MOVE: {
-                Log.e(TAG, "mStatus ACTION_MOVE =");
 
                 final int index = MotionEventCompat.findPointerIndex(e, mActivePointerId);
                 if (index < 0) {
@@ -223,19 +184,12 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
                 final int x = getMotionEventX(e, index);
                 final int y = getMotionEventY(e, index);
 
-                // final int dx = x - mLastTouchX; //not used
-                  int dy = y - mLastTouchY;
-                if(dy<-50){
-                    dy=0;
-                }
-                Log.e(TAG, "mStatus move mLastTouchY=" + mLastTouchY);
-                Log.e(TAG, "mStatus move  y =" + y);
+                int dy = y - mLastTouchY;
                 mLastTouchX = x;
                 mLastTouchY = y;
 
                 boolean triggerCondition = getFirstVisiblePosition() == 0 && isFingerDragging() && mRefreshEnabled;//第一个item显示
 
-                Log.e(TAG, "mStatus triggerCondition =" + triggerCondition);
                 if (triggerCondition) {//是否是在临界点，也就是可以下来的位置
                     return handlePull(e, dy);
                 }
@@ -254,30 +208,13 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
             default:
-                Log.e(TAG, "mStatus ACTION_UP =");
                 needResetAnim = true;      //松开的时候打开回弹
-                if (getFirstVisiblePosition() == 0&&mRefreshHeaderContainer.getHeight()>0) {//抬起手指后复位
+                if (getFirstVisiblePosition() == 0 && mRefreshHeaderContainer.getHeight() > 0) {//抬起手指后复位
                     onFingerUpStartAnimating();
-                    Log.e(TAG, "mStatus ACTION_MOVE = onFingerUpStartAnimating");
-//                    e.setAction(MotionEvent.ACTION_MOVE);
-//                    super.onTouchEvent(e);//动画结束后应该调用super的方法
-//                    final int index = MotionEventCompat.getActionIndex(e);
-//                    mActivePointerId = MotionEventCompat.getPointerId(e, 0);
-//                    mLastTouchX = getMotionEventX(e, index);
-//                    mLastTouchY = getMotionEventY(e, index);
-//                    mEvent = e;
-//                    need = true;
-//                    return true;
-
                 }
-                mLastTouchX=0;
-                        mLastTouchY=0;
-                mActivePointerId=-1;
-                Log.e(TAG, "mStatus ACTION_UP mLastTouchY=" + mLastTouchY);
-//                Log.e(TAG, "mStatus ACTION_UP  y =" + y);
                 break;
         }
-        return super.onTouchEvent(e);
+        return super.dispatchTouchEvent(e);
     }
 
     private int getFirstVisiblePosition() {
@@ -286,6 +223,14 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             return ((RecyclerView.LayoutParams) getLayoutManager().getChildAt(0).getLayoutParams()).getViewLayoutPosition();
         }
         return 0;
+    }
+
+    public HeaderHander getHeaderHander() {
+        return mHeaderHander;
+    }
+
+    public FooterHander getFooterHander() {
+        return mFooterHander;
     }
 
     /**
@@ -319,18 +264,14 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         mHeaderHander.onPreDrag(mRefreshHeaderView);
         if (dy > 0 && mStatus == STATUS_SWIPING_TO_REFRESH) {//下拉
             //Not used
-            Log.e(TAG, "mStatus aaa =" + mStatus);
         } else if (dy < 0) {//上拉
             if ((mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE || mStatus == STATUS_REFRESHING) && refreshHeaderContainerHeight <= 0) {//这几种状态要跳出，让至空间自己移动，不然会卡住
                 if (mStatus == STATUS_COMPLETE) {//完成上拉 再下来一个是下拉刷新  //完成后再往上拉要恢复到默认状态
                     setStatus(STATUS_DEFAULT);
                 }
-                Log.e(TAG, "mStatus bbb =" + mStatus);
-                return super.onTouchEvent(e);
+                return super.dispatchTouchEvent(e);
             }
         }
-        Log.e(TAG, "mStatus =" + mStatus);
-        Log.e(TAG, "mStatus dy =" + dy);
         if (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH || mStatus == STATUS_DEFAULT) {//完成后不能出现在这里，完成后上下拉动应该还是显示完成状态
 
             if (refreshHeaderContainerHeight >= refreshHeaderViewHeight) {//两种状态切换
@@ -345,14 +286,10 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
                 }
             }
         }
-
         fingerMove(dy);//TODO  放在if 外面 让刷新的时候也可以拉动
 
-
         firstMove = false;
-//        super.onInterceptTouchEvent(e);
-        return super.onTouchEvent(e);
-//        return true;
+        return super.dispatchTouchEvent(e);
     }
 
     /**
@@ -364,7 +301,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         mHeaderHander.onDropAnim(mRefreshHeaderContainer, dy);
         int ratioDy;
         if (dy > 0) {//减速
-            ratioDy = (int) (((mHeaderHander.getDragMaxHeight(this) - mRefreshHeaderContainer.getHeight()) / (float) mHeaderHander.getDragMaxHeight(this)) * dy / 2);
+            ratioDy = (int) (((mHeaderHander.getDragMaxHeight(this) - mRefreshHeaderContainer.getHeight()) / (float) mHeaderHander.getDragMaxHeight(this)) * dy / resistance);
         } else {//上滑速度1:1
             ratioDy = dy;
         }
@@ -383,7 +320,6 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             setRefreshHeaderContainerHeight(height);
         }
     }
-
 
     /**
      * 改变header的高度
@@ -426,6 +362,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     private void startScrollRefreshingStatusToRefreshingStatus() {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
         mScroller.startScroll(0, currentHeight, 0, mHeaderViewHeight - currentHeight, 200);
+        invalidate();
     }
 
     synchronized void loadMore() {
@@ -458,7 +395,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     /**
      * 重置控件位置，暴露给外部的方法，用于在刷新或者加载完成后调用
      */
-    public void finishRefresh() {
+    public void finishRefresh(boolean refreshSuccess) {
         if (getFirstVisiblePosition() == 0) {
             setStatus(STATUS_COMPLETE);//完成标识
         } else {
@@ -468,7 +405,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             startScrollSwipingToRefreshStatusToDefaultStatus();
         }
         refreshIng = false;
-        if (mHeaderHander != null) mHeaderHander.onFinishAnim();
+        if (mHeaderHander != null) mHeaderHander.onFinishAnim(refreshSuccess);
 
     }
 
@@ -476,21 +413,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         mFooterHander.showNormal();
     }
 
-    boolean need;
-
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             setRefreshHeaderContainerHeight(mScroller.getCurrY());
-        } else if (((mRefreshHeaderContainer != null && mRefreshHeaderContainer.getHeight() <= 0) || (mRefreshHeaderContainer != null && mRefreshHeaderContainer.getHeight() == mHeaderViewHeight))) {
-            if (mScroller.isFinished()) {
-                if (needResetAnim && need) {
-                    Log.e(TAG, "mStatus needResetAnim =" + needResetAnim);
-                    need = false;
-//                   super.onTouchEvent(mEvent);
-//                    mEvent = null;
-                }
-            }
+            invalidate();
         }
         super.computeScroll();
     }
@@ -561,12 +488,12 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
 
-    public void setHeader(HeaderHander headerHander) {
+    public void setHeaderHander(HeaderHander headerHander) {
         mHeaderHander = headerHander;
         setRefreshHeaderView(headerHander.getView());
     }
 
-    public void setFooter(DefaultFooterHander footerHander) {
+    public void setFooterHander(DefaultFooterHander footerHander) {
         mFooterHander = footerHander;
         setLoadMoreFooterView(footerHander.getView());
     }
@@ -593,17 +520,9 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public void setAdapter(Adapter adapter) {
         ensureRefreshHeaderContainer();
         ensureLoadMoreFooterContainer();
-
         if (adapter instanceof EasyRecyclerAdapter) {
             EasyRecyclerAdapter baseRecyclerAdapter = (EasyRecyclerAdapter) adapter;
             baseRecyclerAdapter.addHeaderViewToFirst(mRefreshHeaderContainer);
-            TextView textView = new TextView(getContext());
-            textView.setBackgroundColor(Color.RED);
-            textView.setText("测试");
-            textView.setHeight(100);
-            textView.setGravity(Gravity.TOP);
-            textView.setTextSize(10);
-            baseRecyclerAdapter.addHeaderView(textView);
             baseRecyclerAdapter.addFooterViewToLast(mLoadMoreFooterContainer);
         }
         super.setAdapter(adapter);
@@ -643,7 +562,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     @Override
     public boolean isLoadIng() {
-        return false;
+        return loadMoreIng;
     }
 
     @Override
@@ -746,7 +665,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         /**
          * 头(尾)已经全部弹回时回调
          */
-        void onFinishAnim();
+        void onFinishAnim(boolean refreshSuccess);
     }
 
     public interface FooterHander {
@@ -760,7 +679,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         /**
          * 显示已经加载完成，没有更多数据的布局
          */
-        void loadingCompleted();
+        void fullLoadCompleted();
 
         /**
          * 显示正在加载中的布局

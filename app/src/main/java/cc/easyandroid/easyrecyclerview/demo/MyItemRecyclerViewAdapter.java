@@ -1,6 +1,7 @@
 package cc.easyandroid.easyrecyclerview.demo;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,12 @@ public class MyItemRecyclerViewAdapter extends EasyRecyclerAdapter<DummyItem> {
 
         public ViewHolder(View view) {
             super(view);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("jwzhangjie", "当前点击的位置：" + getPosition());
+                }
+            });
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);

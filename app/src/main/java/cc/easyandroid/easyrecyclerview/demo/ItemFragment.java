@@ -72,23 +72,23 @@ public class ItemFragment extends Fragment {
             final EasyRecyclerView recyclerView = (EasyRecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//                recyclerView.setHeader(new DefaultHeaderHander(getContext()));
-////                recyclerView.setHeader(new MeituanHeader(getContext()));
-//                recyclerView.setFooter(new DefaultFooterHander(getContext()));
+//                recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
+////                recyclerView.setHeaderHander(new MeituanHeader(getContext()));
+//                recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
 
 //                recyclerView.addItemDecoration(new RecycleViewDivider(view.getContext(), LinearLayoutManager.HORIZONTAL));
 //                recyclerView.setItemAnimator();
 //                recyclerView.setdr
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-                recyclerView.setHeader(new DefaultHeaderHander(getContext()));
+                recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
 //                recyclerView.addItemDecoration(new RecycleViewDivider(view.getContext(), LinearLayoutManager.HORIZONTAL));
             }
             final MyItemRecyclerViewAdapter adapter = new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener);
             recyclerView.setAdapter(adapter);
-            recyclerView.setHeader(new DefaultHeaderHander(getContext()));
-//                recyclerView.setHeader(new MeituanHeader(getContext()));
-            recyclerView.setFooter(new DefaultFooterHander(getContext()));
+            recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
+//                recyclerView.setHeaderHander(new MeituanHeader(getContext()));
+            recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
 
             adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
             adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
@@ -124,10 +124,10 @@ public class ItemFragment extends Fragment {
 //                            recyclerView.finishLoadMore();
 //                            adapter.clear();
                             adapter.setDatas(DummyContent.ITEMS);
-                            recyclerView.finishRefresh();
+                            recyclerView.finishRefresh(true);
                             System.out.println("EasyRecyclerView 刷结束");
                         }
-                    }, 10000);
+                    }, 3000);
                 }
 
             });
@@ -141,12 +141,12 @@ public class ItemFragment extends Fragment {
                 @Override
                 public void onLoadMore(final EasyRecyclerView.FooterHander loadMoreView) {
                     System.out.println("EasyRecyclerView loadmore开始");
-                    recyclerView.finishRefresh();
+                    recyclerView.finishRefresh(true);
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             adapter.addDatas(DummyContent.ITEMS);
-                            loadMoreView.loadingCompleted();
+                            loadMoreView.fullLoadCompleted();
 
                             System.out.println("EasyRecyclerView loadmore结束");
                         }
