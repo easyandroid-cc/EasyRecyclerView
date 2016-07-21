@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent;
-
-public class MainActivity extends AppCompatActivity implements ItemFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,12 +13,8 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnLi
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content,new ItemFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment()).commit();
 
     }
 
-    @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-
-    }
 }

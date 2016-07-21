@@ -76,16 +76,6 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
        super.getItemOffsets(outRect, view, parent, state);
         outRect.set(0, 0, 0, mDividerHeight);
-
-        int position = parent.getChildAdapterPosition(view);
-        int spanCount = 1;//getSpanCount(parent);
-        int childCount = parent.getAdapter().getItemCount();
-        int pos = position;
-if(pos==0){
-//    outRect.set(0, 0, 0, mDivider.getIntrinsicHeight());
-
-}
-
     }
 
     //绘制分割线
