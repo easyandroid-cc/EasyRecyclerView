@@ -19,3 +19,4 @@ dependencies {
     dependencies {
        compile 'com.github.cgpllx:EasyRecyclerView:v1.0.0'
     }
+    ```
