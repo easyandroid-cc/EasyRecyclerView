@@ -11,7 +11,7 @@ allprojects {
 }
     ```
 Add this to your app build.gradle:
-**获取SpringView**
+**EasyRecyclerView**
  	--------
     ```
     dependencies {
