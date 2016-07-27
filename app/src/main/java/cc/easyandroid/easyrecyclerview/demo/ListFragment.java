@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
@@ -20,19 +21,26 @@ import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
 public class ListFragment extends Fragment {
     Toast toast;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-
-        if (view instanceof EasyRecyclerView) {
+        EasyRecyclerView easyRecyclerView= (EasyRecyclerView) view.findViewById(R.id.list);
+        if (true) {
             Context context = view.getContext();
-            final EasyRecyclerView recyclerView = (EasyRecyclerView) view;
+            final EasyRecyclerView recyclerView = (EasyRecyclerView) easyRecyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             //  recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             final MyAdapter adapter = new MyAdapter(DummyContent.ITEMS);
-            recyclerView.setAdapter(adapter);
+            adapter.clear();
 
+           ViewGroup viewGroup= (ViewGroup) recyclerView.getParent();
+            View empty = View.inflate(getContext(), R.layout.empty, null);
+            viewGroup.addView(empty);
+//            View empty =view.findViewById(R.id.emptyView);
+            recyclerView.setEmptyView(empty);
+            recyclerView.setAdapter(adapter);
             recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
             recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
             recyclerView.setLoadMoreEnabled(false);

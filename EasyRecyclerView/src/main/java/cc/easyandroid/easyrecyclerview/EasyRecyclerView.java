@@ -528,7 +528,16 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             baseRecyclerAdapter.addHeaderViewToFirst(mRefreshHeaderContainer);
             baseRecyclerAdapter.addFooterViewToLast(mLoadMoreFooterContainer);
         }
+
+        Adapter oldAdapter = getAdapter();
+        if (oldAdapter != null) {
+            oldAdapter.unregisterAdapterDataObserver(emptyObserver);
+        }
+        if (adapter != null) {
+            adapter.registerAdapterDataObserver(emptyObserver);
+        }
         super.setAdapter(adapter);
+        emptyObserver.onChanged();
     }
 
     private void ensureRefreshHeaderContainer() {
@@ -635,6 +644,42 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         removeOnScrollListener(easyOnScrollListener);
+    }
+
+    private View emptyView;
+
+    private AdapterDataObserver emptyObserver = new AdapterDataObserver() {
+
+
+        @Override
+        public void onChanged() {
+            updata();
+        }
+    };/**/
+
+    void updata() {
+        Adapter<?> adapter = getAdapter();
+        if (adapter != null) {
+            if (adapter instanceof EasyRecyclerAdapter) {
+                EasyRecyclerAdapter easyRecyclerAdapter = (EasyRecyclerAdapter) adapter;
+                if (!easyRecyclerAdapter.isEmpty() && emptyView != null) {
+                    emptyView.setVisibility(View.GONE);
+                    EasyRecyclerView.this.setVisibility(View.VISIBLE);
+                    return;
+                }
+            }
+
+        }
+        if (emptyView != null) {
+            emptyView.setVisibility(View.VISIBLE);
+            EasyRecyclerView.this.setVisibility(View.GONE);
+        }
+
+    }
+
+
+    public void setEmptyView(View emptyView) {
+        this.emptyView = emptyView;
     }
 
     public interface HeaderHander {

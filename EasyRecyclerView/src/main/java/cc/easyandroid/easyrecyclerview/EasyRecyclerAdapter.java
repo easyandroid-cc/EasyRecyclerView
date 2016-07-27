@@ -197,4 +197,8 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         void onItemClick(int position, T data);
     }
 
+    public boolean isEmpty(){
+        return  getNormalItemCount()==0;
+    }
+
 }
