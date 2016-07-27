@@ -35,7 +35,7 @@ public class ListFragment extends Fragment {
 
             recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
             recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
-
+            recyclerView.setLoadMoreEnabled(false);
             toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
             adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<DummyItem>() {
                 @Override
@@ -58,6 +58,7 @@ public class ListFragment extends Fragment {
                         public void run() {
                             adapter.setDatas(DummyContent.ITEMS);
                             recyclerView.finishRefresh(true);
+                            recyclerView.setLoadMoreEnabled(true);
                         }
                     }, 3000);
                 }

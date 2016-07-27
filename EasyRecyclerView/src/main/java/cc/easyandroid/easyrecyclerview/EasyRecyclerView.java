@@ -448,6 +448,8 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         this.mLoadMoreEnabled = enabled;
         if (mLoadMoreFooterContainer != null) {
             mLoadMoreFooterContainer.setVisibility(mLoadMoreEnabled ? View.VISIBLE : View.GONE);
+            mLoadMoreFooterContainer.getLayoutParams().height = mLoadMoreEnabled ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+            mLoadMoreFooterContainer.requestLayout();
         }
     }
 
