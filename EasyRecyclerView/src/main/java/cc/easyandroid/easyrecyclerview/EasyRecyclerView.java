@@ -199,7 +199,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
                 boolean triggerCondition = getFirstVisiblePosition() == 0 && isFingerDragging() && mRefreshEnabled;//第一个item显示
 
-                if (triggerCondition) {//是否是在临界点，也就是可以下来的位置
+                if (triggerCondition && mHeaderHander != null) {//是否是在临界点，也就是可以下来的位置
                     return handlePull(e, dy);
                 }
             }

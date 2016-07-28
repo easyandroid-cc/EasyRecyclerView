@@ -12,7 +12,6 @@ import android.widget.Toast;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
-import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
@@ -33,7 +32,7 @@ public class ListFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             //  recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             final MyAdapter adapter = new MyAdapter(DummyContent.ITEMS);
-            adapter.clear();
+//            adapter.clear();
 
            ViewGroup viewGroup= (ViewGroup) recyclerView.getParent();
 //            View empty = View.inflate(getContext(), R.layout.empty, null);
@@ -41,7 +40,7 @@ public class ListFragment extends Fragment {
 //            View empty =view.findViewById(R.id.emptyView);
 //            recyclerView.setEmptyView(empty);
             recyclerView.setAdapter(adapter);
-            recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
+//            recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
             recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
             recyclerView.setLoadMoreEnabled(false);
             recyclerView.setOnEasyProgressClickListener(new OnEasyProgressClickListener() {
@@ -93,7 +92,7 @@ public class ListFragment extends Fragment {
             recyclerView.post(new Runnable() {
                 @Override
                 public void run() {
-                    recyclerView.autoRefresh();
+//                    recyclerView.autoRefresh();
                 }
             });
             recyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
