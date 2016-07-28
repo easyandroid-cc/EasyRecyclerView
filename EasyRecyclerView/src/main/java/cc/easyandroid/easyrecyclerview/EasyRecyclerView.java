@@ -18,8 +18,10 @@ import android.widget.FrameLayout;
 import android.widget.Scroller;
 
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
+import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
 import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
 import cc.easyandroid.easyrecyclerview.core.RefreshHeaderLayout;
+import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
 import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
@@ -79,9 +81,13 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     private FooterHander mFooterHander;
 
+    private ProgressHander mProgressHander;
+
     private EasyOnScrollListener easyOnScrollListener;
 
     private float resistance = 1.7f;
+
+//    private ProgressEmptyViewHandle mProgressEmptyViewHandle;
 
 
     public EasyRecyclerView(Context context) {
@@ -91,6 +97,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public EasyRecyclerView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
+
 
     public EasyRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -104,9 +111,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         } finally {
             a.recycle();
         }
-        mScroller = new Scroller(context, new DecelerateInterpolator() {
 
-        });
+        ProgressEmptyView progressEmptyView = new ProgressEmptyView(context, attrs, defStyle);
+        setProgressHander(progressEmptyView);
+
+        mScroller = new Scroller(context, new DecelerateInterpolator());
         easyOnScrollListener = new EasyOnScrollListener(this);
         setRefreshEnabled(refreshEnabled);
         setLoadMoreEnabled(loadMoreEnabled);
@@ -367,6 +376,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     synchronized void loadMore() {
         if (mLoadMoreEnabled && mFooterHander != null && mFooterHander.onCanLoadMore() && !isLoadIng()) {
+            loadMoreIng = true;
             mFooterHander.showLoading();
             if (mOnLoadMoreListener != null) {
                 mOnLoadMoreListener.onLoadMore(mFooterHander);
@@ -501,6 +511,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         setLoadMoreFooterView(footerHander.getView());
     }
 
+    public void setProgressHander(ProgressHander progressHander) {
+        mProgressHander = progressHander;
+        setEmptyView(mProgressHander.getView());
+    }
+
     private void setLoadMoreFooterView(View loadMoreFooterView) {
         if (mLoadMoreFooterView != null) {
             removeLoadMoreFooterView();
@@ -577,6 +592,10 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         return loadMoreIng;
     }
 
+    /**
+     * 是否是手指按下起的第一次移动
+     */
+
     @Override
     public boolean isFirstMove() {
         return firstMove;
@@ -585,6 +604,22 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     @Override
     public boolean isRefreshIng() {
         return refreshIng;
+    }
+
+    public void showLoadingView() {
+        mProgressHander.showLoadingView();
+    }
+
+    public void showEmptyView() {
+        mProgressHander.showEmptyView();
+    }
+
+    public void showErrorView() {
+        mProgressHander.showErrorView();
+    }
+
+    public void setOnEasyProgressClickListener(OnEasyProgressClickListener listener) {
+        mProgressHander.setOnEasyProgressClickListener(listener);
     }
 
     /**
@@ -638,6 +673,15 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         addOnScrollListener(easyOnScrollListener);
+        // 要添加在window后才能找到parent
+        ViewGroup parent = (ViewGroup) getParent();
+        if (parent == null) {
+            throw new IllegalStateException(getClass().getSimpleName() + " is not attached to parent view.");
+        }
+        if (emptyView != null) {
+            parent.removeView(emptyView);
+            parent.addView(emptyView);
+        }
     }
 
     @Override
@@ -649,13 +693,27 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     private View emptyView;
 
     private AdapterDataObserver emptyObserver = new AdapterDataObserver() {
+        public void onItemRangeChanged(int positionStart, int itemCount) {
+            updata();
+        }
 
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            updata();
+        }
+
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            updata();
+        }
+
+        public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+            updata();
+        }
 
         @Override
         public void onChanged() {
             updata();
         }
-    };/**/
+    };
 
     void updata() {
         Adapter<?> adapter = getAdapter();
@@ -678,7 +736,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
 
-    public void setEmptyView(View emptyView) {
+    void setEmptyView(View emptyView) {
         this.emptyView = emptyView;
     }
 
@@ -742,5 +800,17 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         void showFail(Exception e);
 
         boolean onCanLoadMore();
+    }
+
+    public interface ProgressHander {
+        View getView();
+
+        void showLoadingView();
+
+        void showEmptyView();
+
+        void showErrorView();
+
+        void setOnEasyProgressClickListener(OnEasyProgressClickListener listener);
     }
 }

@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
@@ -16,6 +15,7 @@ import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
+import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
 import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
@@ -36,14 +36,30 @@ public class ListFragment extends Fragment {
             adapter.clear();
 
            ViewGroup viewGroup= (ViewGroup) recyclerView.getParent();
-            View empty = View.inflate(getContext(), R.layout.empty, null);
-            viewGroup.addView(empty);
+//            View empty = View.inflate(getContext(), R.layout.empty, null);
+//            viewGroup.addView(empty);
 //            View empty =view.findViewById(R.id.emptyView);
-            recyclerView.setEmptyView(empty);
+//            recyclerView.setEmptyView(empty);
             recyclerView.setAdapter(adapter);
             recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
             recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
             recyclerView.setLoadMoreEnabled(false);
+            recyclerView.setOnEasyProgressClickListener(new OnEasyProgressClickListener() {
+                @Override
+                public void onLoadingViewClick() {
+
+                }
+
+                @Override
+                public void onEmptyViewClick() {
+                    recyclerView.autoRefresh();
+                }
+
+                @Override
+                public void onErrorViewClick() {
+                    recyclerView.autoRefresh();
+                }
+            });
             toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
             adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<DummyItem>() {
                 @Override
@@ -61,10 +77,12 @@ public class ListFragment extends Fragment {
                 @Override
                 public void onRefresh() {
                     recyclerView.finishLoadMore();
+                    recyclerView.showLoadingView();
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.setDatas(DummyContent.ITEMS);
+//                            adapter.setDatas(DummyContent.ITEMS);
+                            recyclerView.showErrorView();
                             recyclerView.finishRefresh(true);
                             recyclerView.setLoadMoreEnabled(true);
                         }

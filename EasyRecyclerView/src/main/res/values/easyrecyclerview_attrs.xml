@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EasyRecyclerView">
+        <attr name="refreshEnabled" format="boolean" />
+        <attr name="loadMoreEnabled" format="boolean" />
+    </declare-styleable>
+
+    <!-- 多种状态的listview -->
+    <declare-styleable name="ProgressEmptyView">
+        <attr name="easyLoadingView" />
+        <attr name="easyEmptyView" />
+        <attr name="easyErrorView" />
+    </declare-styleable>
+    <!-- 这样可以引用系统样式 -->
+    <declare-styleable name="ProgressEmptyViews">
+        <attr name="ProgressEmptyViewStyle" format="reference" />
+    </declare-styleable>
+    <attr name="easyLoadingView" format="reference" />
+    <attr name="easyEmptyView" format="reference" />
+    <attr name="easyErrorView" format="reference" />
+</resources>
