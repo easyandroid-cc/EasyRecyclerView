@@ -452,6 +452,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     public void setRefreshEnabled(boolean enabled) {
         this.mRefreshEnabled = enabled;
+        if (mRefreshHeaderContainer != null) {
+            mRefreshHeaderContainer.setVisibility(mLoadMoreEnabled ? View.VISIBLE : View.GONE);
+            mRefreshHeaderContainer.getLayoutParams().height = mLoadMoreEnabled ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+            mRefreshHeaderContainer.requestLayout();
+        }
     }
 
     public void setLoadMoreEnabled(boolean enabled) {
@@ -473,6 +478,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
 
     private void setRefreshHeaderView(View refreshHeaderView) {
+        refreshHeaderView.setVisibility(mRefreshEnabled ? View.VISIBLE : View.GONE);
         if (mRefreshHeaderView != null) {
             removeRefreshHeaderView();
         }
