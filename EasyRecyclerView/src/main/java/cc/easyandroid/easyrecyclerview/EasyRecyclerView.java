@@ -374,7 +374,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         invalidate();
     }
 
-    synchronized void loadMore() {
+    void loadMore() {
         if (mLoadMoreEnabled && mFooterHander != null && mFooterHander.onCanLoadMore() && !isLoadIng()) {
             loadMoreIng = true;
             mFooterHander.showLoading();
@@ -386,7 +386,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
 
     //正在刷新时候就不再进行第二次回调
-    synchronized void refresh() {
+    void refresh() {
         if (!isRefreshIng()) {
             refreshIng = true;//标记正在刷新
             if (mOnRefreshListener != null) {
@@ -421,7 +421,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
     public void finishLoadMore() {
-        refreshIng = false;
+        loadMoreIng = false;
     }
 
     @Override
