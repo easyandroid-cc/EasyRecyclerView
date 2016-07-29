@@ -3,6 +3,9 @@
     <declare-styleable name="EasyRecyclerView">
         <attr name="refreshEnabled" format="boolean" />
         <attr name="loadMoreEnabled" format="boolean" />
+        <attr name="easyLoadingView" />
+        <attr name="easyEmptyView" />
+        <attr name="easyErrorView" />
     </declare-styleable>
 
     <!-- 多种状态的listview -->
@@ -12,6 +15,9 @@
         <attr name="easyErrorView" />
     </declare-styleable>
     <!-- 这样可以引用系统样式 -->
+    <declare-styleable name="EasyRecyclerViews">
+        <attr name="EasyRecyclerViewStyle" format="reference" />
+    </declare-styleable>
     <declare-styleable name="ProgressEmptyViews">
         <attr name="ProgressEmptyViewStyle" format="reference" />
     </declare-styleable>

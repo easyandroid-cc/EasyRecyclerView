@@ -95,7 +95,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
     public EasyRecyclerView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
+        this(context, attrs, R.attr.EasyRecyclerViewStyle);
     }
 
 
@@ -421,7 +421,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
     public void finishLoadMore() {
-        mFooterHander.showNormal();
+        refreshIng = false;
     }
 
     @Override
