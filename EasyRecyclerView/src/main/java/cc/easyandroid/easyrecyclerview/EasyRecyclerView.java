@@ -85,10 +85,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     private EasyOnScrollListener easyOnScrollListener;
 
-    private float resistance = 1.7f;
-
-//    private ProgressEmptyViewHandle mProgressEmptyViewHandle;
-
+    private final float resistance = 1.7f;
 
     public EasyRecyclerView(Context context) {
         this(context, null);
@@ -420,8 +417,19 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     }
 
-    public void finishLoadMore() {
+    public void finishLoadMore(int loadstatus) {
         loadMoreIng = false;
+        switch (loadstatus) {
+            case FooterHander.LOADSTATUS_COMPLETED:
+                mFooterHander.showLoadCompleted();
+                break;
+            case FooterHander.LOADSTATUS_FAIL:
+                mFooterHander.showLoadFail();
+                break;
+            case FooterHander.LOADSTATUS_FULLCOMPLETED:
+                mFooterHander.showLoadFullCompleted();
+                break;
+        }
     }
 
     @Override
@@ -643,7 +651,8 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
         @Override
         public void onScrollStateChanged(android.support.v7.widget.RecyclerView recyclerView, int newState) {
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && isScollBottom(recyclerView) && canTriggerLoadMore(recyclerView)) {
+            //刷新时候滚蛋地步不让自动加载
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && isScollBottom(recyclerView) && canTriggerLoadMore(recyclerView) && !easyRecyclerView.isRefreshIng()) {
                 if (easyRecyclerView != null) {
                     easyRecyclerView.loadMore();
                 }
@@ -783,17 +792,19 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
     public interface FooterHander {
+        int LOADSTATUS_COMPLETED = 0, LOADSTATUS_FAIL = 1, LOADSTATUS_FULLCOMPLETED = 2;
+
         View getView();
 
         /**
          * 显示普通布局
          */
-        void showNormal();
+        void showLoadCompleted();
 
         /**
          * 显示已经加载完成，没有更多数据的布局
          */
-        void fullLoadCompleted();
+        void showLoadFullCompleted();
 
         /**
          * 显示正在加载中的布局
@@ -802,10 +813,8 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
         /**
          * 显示加载失败的布局
-         *
-         * @param e error
          */
-        void showFail(Exception e);
+        void showLoadFail();
 
         boolean onCanLoadMore();
     }

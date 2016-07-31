@@ -18,9 +18,11 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
 
     private Paint mPaint;
     private Drawable mDivider;
-    private int mDividerHeight = 1;//分割线高度，默认为1px
+    private int mDividerHeight = 2;//分割线高度，默认为1px
     private int mOrientation;//列表的方向：LinearLayoutManager.VERTICAL或LinearLayoutManager.HORIZONTAL
     private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
+    private int mEndNotShowDividerCount = 1;//最后几个item不划线
+    private int mStartNotShowDividerCount = 1;//让用户自己决定前面几个item不划线
 
     /**
      * 默认分割线：高度为2px，颜色为灰色
@@ -39,6 +41,7 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
         a.recycle();
     }
 
+
     /**
      * 自定义分割线
      *
@@ -48,9 +51,10 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
      */
     public RecycleViewDivider(Context context, int orientation, int drawableId) {
         this(context, orientation);
-        mDivider = ContextCompat.getDrawable(context, drawableId);
-         mDividerHeight = mDivider.getIntrinsicHeight();
-
+        if (drawableId > 0) {
+            mDivider = ContextCompat.getDrawable(context, drawableId);
+            mDividerHeight = mDivider.getIntrinsicHeight();
+        }
 
     }
 
@@ -70,12 +74,24 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
         mPaint.setStyle(Paint.Style.FILL);
     }
 
+    public RecycleViewDivider setNotShowDividerCount(int startNotShowDividerCount, int endNotShowDividerCount) {
+        mEndNotShowDividerCount = endNotShowDividerCount;
+        mStartNotShowDividerCount = startNotShowDividerCount;
+        return this;
 
-    //获取分割线尺寸
+    }
+
+    //获取分割线尺寸 每个item 向下留出mDividerHeight的距离 用做divider
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-       super.getItemOffsets(outRect, view, parent, state);
-        outRect.set(0, 0, 0, mDividerHeight);
+        super.getItemOffsets(outRect, view, parent, state);
+        int position = parent.getChildAdapterPosition(view);
+        if (position < mStartNotShowDividerCount || position >= parent.getAdapter().getItemCount() - mEndNotShowDividerCount) {
+            outRect.set(0, 0, 0, 0);
+        } else {
+            outRect.set(0, 0, 0, mDividerHeight);
+        }
+
     }
 
     //绘制分割线
@@ -94,7 +110,7 @@ public class RecycleViewDivider extends RecyclerView.ItemDecoration {
         final int left = parent.getPaddingLeft();
         final int right = parent.getMeasuredWidth() - parent.getPaddingRight();
         final int childSize = parent.getChildCount();
-        for (int i = 0; i < childSize-1; i++) {
+        for (int i = 0; i < childSize - 1; i++) {
             final View child = parent.getChildAt(i);
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) child.getLayoutParams();
             final int top = child.getBottom() + layoutParams.bottomMargin;

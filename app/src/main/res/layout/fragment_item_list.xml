@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    >
-
-<cc.easyandroid.easyrecyclerview.EasyRecyclerView
-    android:id="@+id/list"
-    android:name="cc.easyandroid.easyrecyclerview.demo.ItemFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".ListFragment"
-    tools:listitem="@layout/fragment_item" />
+    android:background="@android:color/white">
+
+    <cc.easyandroid.easyrecyclerview.EasyRecyclerView
+        android:id="@+id/list"
+        android:name="cc.easyandroid.easyrecyclerview.demo.ItemFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ListFragment"
+        tools:listitem="@layout/fragment_item" />
 
     <!--<include layout="@layout/empty"></include>-->
 </FrameLayout>

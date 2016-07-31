@@ -15,8 +15,10 @@ limitations under the License.
  */
 package cc.easyandroid.easyrecyclerview.core;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -51,6 +53,7 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
     @Override
     public View getView() {
         View view = LayoutInflater.from(context).inflate(R.layout.default_footer, null, true);
+        view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT,RecyclerView.LayoutParams.WRAP_CONTENT));
         footerTv = (TextView) view.findViewById(R.id.default_footer_title);
         footerBar = (ProgressBar) view.findViewById(R.id.default_footer_progressbar);
         footerBar.setIndeterminateDrawable(ContextCompat.getDrawable(context, rotationSrc));
@@ -58,7 +61,7 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
     }
 
     @Override
-    public void showNormal() {
+    public void showLoadCompleted() {
         footerTv.setText(context.getResources().getString(R.string.easyrecyclerview_click_to_loadmore));
         footerBar.setVisibility(View.GONE);
         loading = false;
@@ -74,7 +77,7 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
     }
 
     @Override
-    public void showFail(Exception exception) {
+    public void showLoadFail() {
         footerTv.setText(context.getResources().getString(R.string.easyrecyclerview_loadmorefail_click_to_loadmore));
         footerBar.setVisibility(View.GONE);
         loading = false;
@@ -82,7 +85,7 @@ public class DefaultFooterHander implements EasyRecyclerView.FooterHander {
     }
 
     @Override
-    public void fullLoadCompleted() {
+    public void showLoadFullCompleted() {
         footerTv.setText(context.getResources().getString(R.string.easyrecyclerview_loadmore_fullcompleted));
         footerBar.setVisibility(View.GONE);
         loading = false;

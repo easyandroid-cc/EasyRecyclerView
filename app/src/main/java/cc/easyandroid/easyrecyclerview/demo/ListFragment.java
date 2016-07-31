@@ -3,6 +3,7 @@ package cc.easyandroid.easyrecyclerview.demo;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
+import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
@@ -30,7 +32,7 @@ public class ListFragment extends Fragment {
             Context context = view.getContext();
             final EasyRecyclerView recyclerView = (EasyRecyclerView) easyRecyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            //  recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+//              recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
             final MyAdapter adapter = new MyAdapter(DummyContent.ITEMS);
 //            adapter.clear();
 
@@ -40,9 +42,12 @@ public class ListFragment extends Fragment {
 //            View empty =view.findViewById(R.id.emptyView);
 //            recyclerView.setEmptyView(empty);
             recyclerView.setAdapter(adapter);
-//            recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
+           recyclerView.addItemDecoration(new RecycleViewDivider(getContext(),LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(0,2));
+            recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
             recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
-            recyclerView.setLoadMoreEnabled(false);
+            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+//            recyclerView.setLoadMoreEnabled(false);
+            adapter.addHeaderView(new DefaultFooterHander(getContext()).getView());
             recyclerView.setOnEasyProgressClickListener(new OnEasyProgressClickListener() {
                 @Override
                 public void onLoadingViewClick() {
@@ -75,14 +80,17 @@ public class ListFragment extends Fragment {
             recyclerView.setOnRefreshListener(new OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    recyclerView.finishLoadMore();
+                    recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
+//                    recyclerView.getFooterHander().showNormal();
                     recyclerView.showLoadingView();
                     recyclerView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-//                            adapter.setDatas(DummyContent.ITEMS);
+                            adapter.setDatas(DummyContent.ITEMS);
                             recyclerView.showErrorView();
                             recyclerView.finishRefresh(true);
+                            recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
+//                            recyclerView.getFooterHander().showNormal();
                             recyclerView.setLoadMoreEnabled(true);
                         }
                     }, 3000);
@@ -103,7 +111,8 @@ public class ListFragment extends Fragment {
                         @Override
                         public void run() {
                             adapter.addDatas(DummyContent.ITEMS);
-                            loadMoreView.fullLoadCompleted();
+                            recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
+//                            loadMoreView.showNormal();
 
                         }
                     }, 3000);
