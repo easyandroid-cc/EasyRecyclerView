@@ -18,9 +18,9 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public static final int TYPE_HEADER = 1 << 24;//2 24 header item
     public static final int TYPE_FOOTER = 1 << 25;//2 25 foot item
 
-    private ArrayList<T> mDatas = new ArrayList<>();
-    private ArrayList<View> mHeaderViews = new ArrayList<>();
-    private ArrayList<View> mFooterViews = new ArrayList<>();
+    protected ArrayList<T> mDatas = new ArrayList<>();
+    protected ArrayList<View> mHeaderViews = new ArrayList<>();
+    protected ArrayList<View> mFooterViews = new ArrayList<>();
     private View mLastFooterView = null;//放在最后的footview
 
 
@@ -57,6 +57,10 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public void setDatas(List<T> datas) {
         mDatas.clear();
         mDatas.addAll(datas);
+        notifyDataSetChanged();
+    }
+    public void clearDatas(){
+        mDatas.clear();
         notifyDataSetChanged();
     }
 
