@@ -14,7 +14,7 @@ import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
 public class MyAdapter extends EasyRecyclerAdapter<DummyItem> {
 
     public MyAdapter(List<DummyItem> items) {
-        addDatas(items);
+//        addDatas(items);
     }
     @Override
     public RecyclerView.ViewHolder onCreate(ViewGroup parent, int viewType) {

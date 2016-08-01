@@ -82,6 +82,7 @@ public class ListFragment extends Fragment {
                 public void onRefresh() {
                     recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
 //                    recyclerView.getFooterHander().showNormal();
+                    System.out.println("onRefresh ddd");
                     recyclerView.showLoadingView();
                     recyclerView.postDelayed(new Runnable() {
                         @Override
@@ -89,11 +90,10 @@ public class ListFragment extends Fragment {
                             adapter.setDatas(DummyContent.ITEMS);
                             recyclerView.showErrorView();
                             recyclerView.finishRefresh(true);
-                            recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
 //                            recyclerView.getFooterHander().showNormal();
-                            recyclerView.setLoadMoreEnabled(true);
+//                            recyclerView.setLoadMoreEnabled(true);
                         }
-                    }, 3000);
+                    }, 1000);
                 }
 
             });
@@ -115,9 +115,10 @@ public class ListFragment extends Fragment {
 //                            loadMoreView.showNormal();
 
                         }
-                    }, 3000);
+                    }, 2000);
                 }
             });
+            recyclerView.autoRefresh();
 
         }
         return view;

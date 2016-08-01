@@ -3,6 +3,7 @@ package cc.easyandroid.easyrecyclerview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
@@ -405,17 +406,30 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
      */
     public void finishRefresh(boolean refreshSuccess) {
         if (getFirstVisiblePosition() == 0) {
-            setStatus(STATUS_COMPLETE);//完成标识
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    refreshIng = false;
+                    if (getFirstVisiblePosition() == 0) {
+                        setStatus(STATUS_COMPLETE);//完成标识
+                        if (needResetAnim) {
+                            startScrollSwipingToRefreshStatusToDefaultStatus();
+                        }
+                    } else {
+                        setStatus(STATUS_DEFAULT);//完成标识
+                    }
+                }
+            }, 500);
         } else {
             setStatus(STATUS_DEFAULT);//完成标识
+            refreshIng = false;
         }
-        if (getFirstVisiblePosition() == 0 && needResetAnim) {
-            startScrollSwipingToRefreshStatusToDefaultStatus();
-        }
-        refreshIng = false;
+
         if (mHeaderHander != null) mHeaderHander.onFinishAnim(refreshSuccess);
 
     }
+
+//    public void
 
     public void finishLoadMore(int loadstatus) {
         loadMoreIng = false;
@@ -642,7 +656,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
      * 滑动监听
      */
     private static class EasyOnScrollListener extends RecyclerView.OnScrollListener {
-        private EasyRecyclerView easyRecyclerView;
+        private final EasyRecyclerView easyRecyclerView;
 
         public EasyOnScrollListener(EasyRecyclerView easyRecyclerView) {
             super();
@@ -652,15 +666,22 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         @Override
         public void onScrollStateChanged(android.support.v7.widget.RecyclerView recyclerView, int newState) {
             //刷新时候滚蛋地步不让自动加载
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && isScollBottom(recyclerView) && canTriggerLoadMore(recyclerView) && !easyRecyclerView.isRefreshIng()) {
-                if (easyRecyclerView != null) {
-                    easyRecyclerView.loadMore();
-                }
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && isScollBottom(recyclerView) && canTriggerLoadMore(recyclerView) && !easyRecyclerView.isRefreshIng() && isFillParent()) {
+                easyRecyclerView.loadMore();
             }
         }
 
         private boolean isScollBottom(RecyclerView recyclerView) {
             return !isCanScollVertically(recyclerView);
+        }
+
+        /**
+         * item 是否充满父容器了
+         *
+         * @return
+         */
+        private boolean isFillParent() {
+            return easyRecyclerView.mLoadMoreFooterContainer.getBottom() >= easyRecyclerView.getBottom();
         }
 
         private boolean canTriggerLoadMore(RecyclerView recyclerView) {
