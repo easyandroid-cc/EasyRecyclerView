@@ -185,6 +185,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     public void clear() {
         mDatas.clear();
+        notifyDataSetChanged();
     }
 
     public abstract RecyclerView.ViewHolder onCreate(ViewGroup parent, final int viewType);

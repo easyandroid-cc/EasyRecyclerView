@@ -429,7 +429,12 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     }
 
-//    public void
+    public void stopRefreshAndLoadMore(){
+        setStatus(STATUS_DEFAULT);//完成标识
+        refreshIng = false;
+        loadMoreIng = false;
+
+    }
 
     public void finishLoadMore(int loadstatus) {
         loadMoreIng = false;
