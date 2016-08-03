@@ -3,7 +3,6 @@ package cc.easyandroid.easyrecyclerview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
@@ -429,7 +428,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     }
 
-    public void stopRefreshAndLoadMore(){
+    public void stopRefreshAndLoadMore() {
         setStatus(STATUS_DEFAULT);//完成标识
         refreshIng = false;
         loadMoreIng = false;
@@ -686,7 +685,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
          * @return
          */
         private boolean isFillParent() {
-            return easyRecyclerView.mLoadMoreFooterContainer.getBottom() >= easyRecyclerView.getBottom();
+            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) easyRecyclerView.mLoadMoreFooterContainer.getLayoutParams();
+            System.out.println("easyRecyclerView.mLoadMoreFooterContainer=" + easyRecyclerView.mLoadMoreFooterContainer.getBottom());
+            System.out.println("easyRecyclerView. =" + easyRecyclerView.getBottom());
+            System.out.println("easyRecyclerView.layoutParams =" + layoutParams.bottomMargin);
+            return easyRecyclerView.mLoadMoreFooterContainer.getBottom() + layoutParams.bottomMargin >= easyRecyclerView.getBottom();
         }
 
         private boolean canTriggerLoadMore(RecyclerView recyclerView) {
