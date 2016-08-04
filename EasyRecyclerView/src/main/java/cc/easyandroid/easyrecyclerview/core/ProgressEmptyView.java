@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
@@ -64,6 +65,7 @@ public class ProgressEmptyView extends FrameLayout implements EasyRecyclerView.P
 
     private void setupLoadingView() {
         if (mLoadingView != null) {
+            mLoadingView.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
             this.addView(mLoadingView);
             View view = mLoadingView.findViewById(R.id.progressCanClickView);
             if (view != null) {
@@ -85,7 +87,6 @@ public class ProgressEmptyView extends FrameLayout implements EasyRecyclerView.P
                     }
                 });
             }
-
             mLoadingView.setVisibility(View.VISIBLE);
         }
     }

@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/black">
 
     <cc.easyandroid.easyrecyclerview.EasyRecyclerView
         android:id="@+id/list"
         android:name="cc.easyandroid.easyrecyclerview.demo.ItemFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
         app:layoutManager="LinearLayoutManager"
         tools:context=".ListFragment"
         tools:listitem="@layout/fragment_item" />

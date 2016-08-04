@@ -686,10 +686,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
          */
         private boolean isFillParent() {
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) easyRecyclerView.mLoadMoreFooterContainer.getLayoutParams();
-            System.out.println("easyRecyclerView.mLoadMoreFooterContainer=" + easyRecyclerView.mLoadMoreFooterContainer.getBottom());
-            System.out.println("easyRecyclerView. =" + easyRecyclerView.getBottom());
-            System.out.println("easyRecyclerView.layoutParams =" + layoutParams.bottomMargin);
-            return easyRecyclerView.mLoadMoreFooterContainer.getBottom() + layoutParams.bottomMargin + easyRecyclerView.mLoadMoreFooterContainer.getPaddingBottom() >= easyRecyclerView.getBottom();
+            return easyRecyclerView.mLoadMoreFooterContainer.getBottom() + layoutParams.bottomMargin >= easyRecyclerView.getBottom();
         }
 
         private boolean canTriggerLoadMore(RecyclerView recyclerView) {
