@@ -52,7 +52,7 @@ public class ProgressEmptyView extends FrameLayout implements EasyRecyclerView.P
             mErrorView = mLayoutInflater.inflate(errorViewResId, null);
         }
         a.recycle();
-
+        setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         initProgress();
     }
 
