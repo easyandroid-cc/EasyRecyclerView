@@ -59,20 +59,32 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         mDatas.addAll(datas);
         notifyDataSetChanged();
     }
-    public void clearDatas(){
+
+    public void clearDatas() {
         mDatas.clear();
         notifyDataSetChanged();
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (position < mHeaderViews.size()) {
+    public int getItemViewType(int position) {//type 包括 index 和 和type
+        if (position < getHeaderCount()) {
             return TYPE_HEADER | position;
-        } else if (position >= (mHeaderViews.size() + mDatas.size())) {
-            return TYPE_FOOTER | (position - (mHeaderViews.size() + mDatas.size()));
+        } else if (position >= (getHeaderCount() + getNormalItemCount())) {
+            return TYPE_FOOTER | (position - (getHeaderCount() + getNormalItemCount()));
         }
+        return onCreatItemViewType(position - getHeaderCount());
+    }
+
+    /**
+     * 给用户重新item 的机会
+     *
+     * @param position 在data数据集合的位置
+     * @return type
+     */
+    public int onCreatItemViewType(int position) {
         return TYPE_NORMAL;
     }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
@@ -81,9 +93,9 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         } else if ((viewType & TYPE_FOOTER) == TYPE_FOOTER) {
             int index = viewType ^ TYPE_FOOTER;
             if (index >= mFooterViews.size()) {
-                return new Holder(mLastFooterView);// footer
+                return new FooterHolder(mLastFooterView);// footer
             } else {
-                return new Holder(mFooterViews.get((viewType ^ TYPE_FOOTER)));// footer
+                return new HeaderHolder(mFooterViews.get((viewType ^ TYPE_FOOTER)));// footer
             }
         }
         return onCreate(parent, viewType);
@@ -198,12 +210,24 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         }
     }
 
+    public class HeaderHolder extends RecyclerView.ViewHolder {
+        public HeaderHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public class FooterHolder extends RecyclerView.ViewHolder {
+        public FooterHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
     public interface OnItemClickListener<T> {
         void onItemClick(int position, T data);
     }
 
-    public boolean isEmpty(){
-        return  getNormalItemCount()==0;
+    public boolean isEmpty() {
+        return getNormalItemCount() == 0;
     }
 
 }
