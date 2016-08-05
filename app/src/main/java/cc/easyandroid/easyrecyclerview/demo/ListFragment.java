@@ -3,6 +3,7 @@ package cc.easyandroid.easyrecyclerview.demo;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +31,8 @@ public class ListFragment extends Fragment {
         if (true) {
             Context context = view.getContext();
             final EasyRecyclerView recyclerView = (EasyRecyclerView) easyRecyclerView;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//              recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+//            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+              recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
             final MyAdapter adapter = new MyAdapter(DummyContent.ITEMS);
 //            adapter.clear();
 
@@ -41,15 +42,15 @@ public class ListFragment extends Fragment {
 //            View empty =view.findViewById(R.id.emptyView);
 //            recyclerView.setEmptyView(empty);
             recyclerView.setAdapter(adapter);
-           recyclerView.addItemDecoration(new RecycleViewDivider(getContext(),LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(3,5));
+           recyclerView.addItemDecoration(new RecycleViewDivider(getContext(),LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1,1));
             recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
             recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
-            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
-            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
-            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
-            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+//            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+//            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+//            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
+//            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
 //            recyclerView.setLoadMoreEnabled(false);
-            adapter.addHeaderView(new DefaultFooterHander(getContext()).getView());
+//            adapter.addHeaderView(new DefaultFooterHander(getContext()).getView());
             recyclerView.setOnEasyProgressClickListener(new OnEasyProgressClickListener() {
                 @Override
                 public void onLoadingViewClick() {

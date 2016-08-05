@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="@android:color/white">
 
     <cc.easyandroid.easyrecyclerview.EasyRecyclerView
         android:id="@+id/list"
@@ -15,5 +15,4 @@
         tools:context=".ListFragment"
         tools:listitem="@layout/fragment_item" />
 
-    <!--<include layout="@layout/empty"></include>-->
 </FrameLayout>
