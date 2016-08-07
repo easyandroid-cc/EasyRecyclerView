@@ -31,8 +31,8 @@ public class ListFragment extends Fragment {
         if (true) {
             Context context = view.getContext();
             final EasyRecyclerView recyclerView = (EasyRecyclerView) easyRecyclerView;
-//            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-              recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+//              recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
             final MyAdapter adapter = new MyAdapter(DummyContent.ITEMS);
 //            adapter.clear();
 
