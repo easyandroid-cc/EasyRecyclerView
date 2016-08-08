@@ -6,16 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
-
 import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
-import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
 
-public class MyAdapter extends EasyRecyclerAdapter<DummyItem> {
+public class MyAdapter extends EasyRecyclerAdapter<String> {
 
-    public MyAdapter(List<DummyItem> items) {
-//        addDatas(items);
+    public MyAdapter() {
     }
+
     @Override
     public RecyclerView.ViewHolder onCreate(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -24,11 +21,11 @@ public class MyAdapter extends EasyRecyclerAdapter<DummyItem> {
     }
 
     @Override
-    public void onBind(RecyclerView.ViewHolder viewHolder, int RealPosition, DummyItem mValues) {
+    public void onBind(RecyclerView.ViewHolder viewHolder, int RealPosition, String mValues) {
         if (viewHolder instanceof MyAdapter.ViewHolder) {
             MyAdapter.ViewHolder viewHolder1 = (ViewHolder) viewHolder;
-            viewHolder1.mIdView.setText(mValues.id);
-            viewHolder1.mContentView.setText(mValues.content);
+            viewHolder1.mIdView.setText("item "+RealPosition);
+//            viewHolder1.mContentView.setText(mValues);
         }
     }
 

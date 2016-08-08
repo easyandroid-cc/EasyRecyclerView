@@ -1,6 +1,7 @@
 package cc.easyandroid.easyrecyclerview;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -12,10 +13,8 @@ import android.view.animation.LinearInterpolator;
 import java.util.ArrayList;
 import java.util.List;
 
-import cc.easyandroid.easyrecyclerview.animation.AlphaInAnimation;
 import cc.easyandroid.easyrecyclerview.animation.BaseAnimation;
-import cc.easyandroid.easyrecyclerview.animation.SlideInBottomAnimation;
-import cc.easyandroid.easyrecyclerview.animation.SlideInLeftAnimation;
+import cc.easyandroid.easyrecyclerview.animation.ViewHelper;
 
 /**
  * Created by cgp
@@ -30,14 +29,16 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     protected ArrayList<View> mHeaderViews = new ArrayList<>();
     protected ArrayList<View> mFooterViews = new ArrayList<>();
     private View mLastFooterView = null;//放在最后的footview
-    private boolean mOpenAnimationEnable = true;
-    private int mDuration = 400;
+    private boolean mItemAnimationEnable = true;
+    private BaseAnimation mAnimation = null;//
+    private long mDuration = 300L;
     /**
      * The position of the last item that was animated.
      */
     private int mLastAnimatedPosition = -1;
     private Interpolator mInterpolator = new LinearInterpolator();
     private OnItemClickListener<T> mListener;
+    protected RecyclerView mRecyclerView;
 
     public void setOnItemClickListener(OnItemClickListener<T> li) {
         mListener = li;
@@ -62,15 +63,40 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         notifyItemInserted(0);
     }
 
+    public void setItemAnimationEnable(boolean enable) {
+        mItemAnimationEnable = enable;
+    }
+
+    /**
+     * 设置动画duration
+     *
+     * @param duration 时长
+     */
+    public void setItemAnimationDuration(int duration) {
+        mDuration = duration;
+    }
+
+    /**
+     * 设置item 动画
+     *
+     * @param animation animation
+     */
+    public void setItemAnimation(BaseAnimation animation) {
+        mAnimation = animation;
+    }
+
     public void addDatas(List<T> datas) {
         mDatas.addAll(datas);
         notifyItemRangeInserted(getItemCount() - datas.size() - getFooterCount(), datas.size());//
     }
 
     public void setDatas(List<T> datas) {
+        //int oldcount = mDatas.size();
         mDatas.clear();
+        //notifyItemRangeRemoved(getHeaderCount(), oldcount);
         mDatas.addAll(datas);
         notifyDataSetChanged();
+        mLastAnimatedPosition = mRecyclerView.getChildCount();
     }
 
     public void clearDatas() {
@@ -92,7 +118,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
      * 给用户重新item 的机会
      *
      * @param position 在data数据集合的位置
-     * @return type
+     * @return position  position
      */
     public int onCreatItemViewType(int position) {
         return TYPE_NORMAL;
@@ -132,13 +158,12 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
                 }
             });
         }
-
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-
+        mRecyclerView = recyclerView;
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
         if (manager instanceof GridLayoutManager) {
             final GridLayoutManager gridManager = ((GridLayoutManager) manager);
@@ -149,6 +174,12 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
                 }
             });
         }
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        mRecyclerView = null;
     }
 
     /**
@@ -173,44 +204,49 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
 
     @Override
-    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        int viewType = holder.getItemViewType();
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder viewHolder) {
+        super.onViewAttachedToWindow(viewHolder);
+        int viewType = viewHolder.getItemViewType();
         if (isHeaderType(viewType) || isFooterType(viewType)) {
-            setFullSpan(holder);
+            setFullSpan(viewHolder);
         } else {
-            addAnimation(holder);
+            addAnimation(viewHolder);
         }
     }
-
-    BaseAnimation animation = new AlphaInAnimation();
 
     /**
      * add animation when you want to show time
      *
-     * @param holder
+     * @param holder holder
      */
     private void addAnimation(RecyclerView.ViewHolder holder) {
         int position = holder.getLayoutPosition();
-        if (mOpenAnimationEnable && position > mLastAnimatedPosition) {
-            for (Animator anim : animation.getAnimators(holder.itemView)) {
-                startAnim(anim, position);
+        if (mItemAnimationEnable && position > mLastAnimatedPosition) {
+            if (mAnimation != null) {
+                Animator[] animators = mAnimation.getAnimators(holder.itemView);
+                startAnim(animators, position);
             }
 
         }
     }
 
+
     /**
      * set anim to start when loading
      *
-     * @param anim
-     * @param position
+     * @param animators animators
+     * @param position  position
      */
-    protected void startAnim(Animator anim, int position) {
-        anim.setDuration(mDuration).start();
-        anim.setInterpolator(mInterpolator);
+    protected void startAnim(Animator[] animators, int position) {
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animators);
+        set.setInterpolator(mInterpolator);
+        set.setStartDelay(0);
+        set.setDuration(mDuration);
+        set.start();
         mLastAnimatedPosition = position;
     }
+
 
     private void setFullSpan(RecyclerView.ViewHolder holder) {
         ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
@@ -229,6 +265,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
+        ViewHelper.clear(holder.itemView);
     }
 
     @Override

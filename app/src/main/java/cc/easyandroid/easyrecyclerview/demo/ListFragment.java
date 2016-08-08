@@ -1,131 +1,118 @@
 package cc.easyandroid.easyrecyclerview.demo;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import cc.easyandroid.easyrecyclerview.EasyRecycleViewDivider;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
+import cc.easyandroid.easyrecyclerview.demo.anim.AlphaInAnimation;
 import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent;
-import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent.DummyItem;
-import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
 import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
 public class ListFragment extends Fragment {
     Toast toast;
+    MyAdapter adapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-        EasyRecyclerView easyRecyclerView= (EasyRecyclerView) view.findViewById(R.id.list);
-        if (true) {
-            Context context = view.getContext();
-            final EasyRecyclerView recyclerView = (EasyRecyclerView) easyRecyclerView;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//              recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-            final MyAdapter adapter = new MyAdapter(DummyContent.ITEMS);
-//            adapter.clear();
-
-           ViewGroup viewGroup= (ViewGroup) recyclerView.getParent();
-//            View empty = View.inflate(getContext(), R.layout.empty, null);
-//            viewGroup.addView(empty);
-//            View empty =view.findViewById(R.id.emptyView);
-//            recyclerView.setEmptyView(empty);
-            recyclerView.setAdapter(adapter);
-           recyclerView.addItemDecoration(new RecycleViewDivider(getContext(),LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1,1));
-            recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
-            recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
-//            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
-//            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
-//            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
-//            adapter.addFooterView(new DefaultFooterHander(getContext()).getView());
-//            recyclerView.setLoadMoreEnabled(false);
-//            adapter.addHeaderView(new DefaultFooterHander(getContext()).getView());
-            recyclerView.setOnEasyProgressClickListener(new OnEasyProgressClickListener() {
-                @Override
-                public void onLoadingViewClick() {
-
-                }
-
-                @Override
-                public void onEmptyViewClick() {
-                    recyclerView.autoRefresh();
-                }
-
-                @Override
-                public void onErrorViewClick() {
-                    recyclerView.autoRefresh();
-                }
-            });
-            toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
-            adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<DummyItem>() {
-                @Override
-                public void onItemClick(int position, DummyItem data) {
-                    if (toast != null) {
-                        toast.setText(position + "");
-                    } else {
-                        toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
-                    }
-                    toast.show();
-                }
-            });
-
-            recyclerView.setOnRefreshListener(new OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
-//                    recyclerView.getFooterHander().showNormal();
-                    System.out.println("onRefresh ddd");
-                    recyclerView.showLoadingView();
-                    recyclerView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.setDatas(DummyContent.ITEMS);
-                            recyclerView.showErrorView();
-                            recyclerView.finishRefresh(true);
-//                            recyclerView.getFooterHander().showNormal();
-//                            recyclerView.setLoadMoreEnabled(true);
-                        }
-                    }, 1000);
-                }
-
-            });
-            recyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-//                    recyclerView.autoRefresh();
-                }
-            });
-            recyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
-                @Override
-                public void onLoadMore(final EasyRecyclerView.FooterHander loadMoreView) {
-                    recyclerView.finishRefresh(true);
-                    recyclerView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.addDatas(DummyContent.ITEMS);
-                            recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
-//                            loadMoreView.showNormal();
-
-                        }
-                    }, 2000);
-                }
-            });
-            recyclerView.autoRefresh();
-
-        }
         return view;
     }
 
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        adapter = new MyAdapter();
+        adapter.setItemAnimation(new AlphaInAnimation());
+//        adapter.setItemAnimation(new SlideInLeftAnimation());
+//        adapter.setItemAnimation(null);
+        initView(view);
+    }
+
+    private void initView(View view) {
+        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.list);
+        setupEasyRecyclerView(recyclerView);
+        setupRefreshListener(recyclerView);
+        setupLoadMoreListener(recyclerView);
+        recyclerView.autoRefresh();
+    }
+
+    private void setupLoadMoreListener(final EasyRecyclerView recyclerView) {
+        recyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(final EasyRecyclerView.FooterHander loadMoreView) {
+                recyclerView.finishRefresh(true);
+                recyclerView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.addDatas(DummyContent.ITEMS);
+                        recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
+                    }
+                }, 500);
+            }
+        });
+    }
+
+    /**
+     * 设置刷新监听
+     *
+     * @param recyclerView
+     */
+    private void setupRefreshListener(final EasyRecyclerView recyclerView) {
+        recyclerView.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
+                recyclerView.showLoadingView();
+                recyclerView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.setDatas(DummyContent.ITEMS);
+                        recyclerView.finishRefresh(true);
+                    }
+                }, 1000);
+            }
+
+        });
+    }
+
+    private void setupEasyRecyclerView(EasyRecyclerView recyclerView) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));        // recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线
+        recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
+        recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setItemAnimator(new SlideInLeftAnimator());
+        recyclerView.getItemAnimator().setAddDuration(1000);
+//        recyclerView.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f)));
+        setupOnItemClickListener(adapter);
+    }
+
+    private void setupOnItemClickListener(MyAdapter adapter) {
+        toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
+        adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<String>() {
+            @Override
+            public void onItemClick(int position, String data) {
+                if (toast != null) {
+                    toast.setText(position + "");
+                } else {
+                    toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
+                }
+                toast.show();
+            }
+        });
+    }
 }

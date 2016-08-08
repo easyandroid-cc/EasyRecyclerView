@@ -1,13 +1,12 @@
-package cc.easyandroid.easyrecyclerview.animation;
+package cc.easyandroid.easyrecyclerview.demo.anim;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.view.View;
 
+import cc.easyandroid.easyrecyclerview.animation.BaseAnimation;
 
-/**
- * https://github.com/CymChad/BaseRecyclerViewAdapterHelper
- */
+
 public class AlphaInAnimation implements BaseAnimation {
 
     private static final float DEFAULT_ALPHA_FROM = 0f;
@@ -23,6 +22,6 @@ public class AlphaInAnimation implements BaseAnimation {
 
     @Override
     public Animator[] getAnimators(View view) {
-        return new Animator[]{ObjectAnimator.ofFloat(view, "alpha", mFrom, 1f),ObjectAnimator.ofFloat(view, "translationY", view.getMeasuredHeight()*2, 0)};
+        return new Animator[]{ObjectAnimator.ofFloat(view, "alpha", mFrom, 1f)};
     }
 }
