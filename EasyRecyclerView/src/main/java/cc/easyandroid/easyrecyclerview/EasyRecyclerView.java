@@ -125,9 +125,6 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         final int actionIndex = MotionEventCompat.getActionIndex(e);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                if (!mScroller.isFinished()) {
-                    mScroller.abortAnimation();
-                }
                 mActivePointerId = MotionEventCompat.getPointerId(e, 0);
                 mLastTouchX = (int) (MotionEventCompat.getX(e, actionIndex) + 0.5f);
                 mLastTouchY = (int) (MotionEventCompat.getY(e, actionIndex) + 0.5f);
@@ -170,6 +167,9 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         final int action = MotionEventCompat.getActionMasked(e);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                }
                 firstMove = true;
                 needResetAnim = false;      //按下的时候关闭回弹
                 final int index = MotionEventCompat.getActionIndex(e);
@@ -215,7 +215,8 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             case MotionEvent.ACTION_CANCEL:
             default:
                 needResetAnim = true;      //松开的时候打开回弹
-                if (getFirstVisiblePosition() == 0 && mRefreshHeaderContainer.getHeight() > 0) {//抬起手指后复位
+//                getFirstVisiblePosition() == 0 &&
+                if (mRefreshHeaderContainer.getHeight() > 0) {//抬起手指后复位
                     onFingerUpStartAnimating();
                 }
                 break;
