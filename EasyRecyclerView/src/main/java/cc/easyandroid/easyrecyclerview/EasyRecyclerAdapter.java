@@ -108,7 +108,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public int getItemViewType(int position) {//type 包括 index 和 和type
         if (position < getHeaderCount()) {
             return TYPE_HEADER | position;
-        } else if (position >= (getHeaderCount() + getNormalItemCount())) {
+        } else if (position >= (getItemCount() - getFooterCount() - getLastFooterViewCount())) {
             return TYPE_FOOTER | (position - (getHeaderCount() + getNormalItemCount()));
         }
         return onCreatItemViewType(position - getHeaderCount());
