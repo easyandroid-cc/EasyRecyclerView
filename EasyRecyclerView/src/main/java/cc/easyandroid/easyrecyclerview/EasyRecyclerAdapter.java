@@ -37,10 +37,10 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
      */
     private int mLastAnimatedPosition = -1;
     private Interpolator mInterpolator = new LinearInterpolator();
-    private OnItemClickListener<T> mListener;
+    private OnItemClickListener mListener;
     protected RecyclerView mRecyclerView;
 
-    public void setOnItemClickListener(OnItemClickListener<T> li) {
+    public void setOnItemClickListener(OnItemClickListener li) {
         mListener = li;
     }
 
@@ -334,7 +334,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         }
     }
 
-    public interface OnItemClickListener<T> {
+    public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
 
