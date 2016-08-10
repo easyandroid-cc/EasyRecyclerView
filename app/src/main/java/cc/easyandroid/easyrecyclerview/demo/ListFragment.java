@@ -35,8 +35,6 @@ public class ListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         adapter = new MyAdapter();
         adapter.setItemAnimation(new AlphaInAnimation());
-//        adapter.setItemAnimation(new SlideInLeftAnimation());
-//        adapter.setItemAnimation(null);
         initView(view);
     }
 
@@ -95,9 +93,6 @@ public class ListFragment extends Fragment {
         recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
         recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.setItemAnimator(new SlideInLeftAnimator());
-        recyclerView.getItemAnimator().setAddDuration(1000);
-//        recyclerView.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f)));
         setupOnItemClickListener(adapter);
     }
 
@@ -105,7 +100,7 @@ public class ListFragment extends Fragment {
         toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
         adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<String>() {
             @Override
-            public void onItemClick(int position, String data) {
+            public void onItemClick(View view, int position) {
                 if (toast != null) {
                     toast.setText(position + "");
                 } else {

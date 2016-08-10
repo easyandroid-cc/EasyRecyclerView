@@ -142,22 +142,29 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (isHeaderType(getItemViewType(position))) return;//header
         if (position >= (mHeaderViews.size() + mDatas.size())) {//
             if (isFooterType(getItemViewType(position))) return;//footer
         }
-        final int pos = getRealPosition(viewHolder);
-        final T data = mDatas.get(pos);
-        onBind(viewHolder, pos, data);
+        onBind(viewHolder, position);
         if (mListener != null) {
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            final View clickView = viewHolder.itemView;
+            clickView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onItemClick(pos, data);
+                    performItemClick(clickView, position);
                 }
             });
         }
+    }
+
+    public boolean performItemClick(View view, int position) {
+        if (position >= 0 && position < getItemCount()) {
+            mListener.onItemClick(view, position);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -262,6 +269,17 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         return position - mHeaderViews.size();
     }
 
+    /**
+     * 根据positon位置获取对应的对象值
+     *
+     * @param position
+     * @return
+     */
+    public T getData(int position) {
+        int realPosition = position - mHeaderViews.size();
+        return mDatas.get(realPosition);
+    }
+
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
@@ -296,7 +314,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     public abstract RecyclerView.ViewHolder onCreate(ViewGroup parent, final int viewType);
 
-    public abstract void onBind(RecyclerView.ViewHolder viewHolder, int RealPosition, T data);
+    public abstract void onBind(RecyclerView.ViewHolder viewHolder, int adapterPosition);
 
     public class Holder extends RecyclerView.ViewHolder {
         public Holder(View itemView) {
@@ -317,7 +335,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     }
 
     public interface OnItemClickListener<T> {
-        void onItemClick(int position, T data);
+        void onItemClick(View view, int position);
     }
 
     public boolean isEmpty() {

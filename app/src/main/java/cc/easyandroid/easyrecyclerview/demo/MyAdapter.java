@@ -21,7 +21,7 @@ public class MyAdapter extends EasyRecyclerAdapter<String> {
     }
 
     @Override
-    public void onBind(RecyclerView.ViewHolder viewHolder, int RealPosition, String mValues) {
+    public void onBind(RecyclerView.ViewHolder viewHolder, int RealPosition) {
         if (viewHolder instanceof MyAdapter.ViewHolder) {
             MyAdapter.ViewHolder viewHolder1 = (ViewHolder) viewHolder;
             viewHolder1.mIdView.setText("item "+RealPosition);
