@@ -277,7 +277,10 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
      */
     public T getData(int position) {
         int realPosition = position - mHeaderViews.size();
-        return mDatas.get(realPosition);
+        if (realPosition >= 0 && realPosition < getNormalItemCount()) {
+            return mDatas.get(realPosition);
+        }
+        return null;
     }
 
     @Override
