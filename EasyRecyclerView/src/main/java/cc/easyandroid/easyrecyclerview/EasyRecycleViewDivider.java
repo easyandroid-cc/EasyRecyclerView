@@ -27,7 +27,7 @@ public class EasyRecycleViewDivider extends RecyclerView.ItemDecoration {
     /**
      * 默认分割线：高度为2px，颜色为灰色
      *
-     * @param context
+     * @param context context
      * @param orientation 列表方向
      */
     public EasyRecycleViewDivider(Context context, int orientation) {
