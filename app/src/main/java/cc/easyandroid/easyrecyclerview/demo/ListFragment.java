@@ -100,7 +100,7 @@ public class ListFragment extends Fragment {
         toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
         adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<String>() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onItemClick(EasyRecyclerAdapter<String> adapter, View view, int position) {
                 if (toast != null) {
                     toast.setText(position + "");
                 } else {
@@ -109,5 +109,16 @@ public class ListFragment extends Fragment {
                 toast.show();
             }
         });
+//        adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<String>() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                if (toast != null) {
+//                    toast.setText(position + "");
+//                } else {
+//                    toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
+//                }
+//                toast.show();
+//            }
+//        });
     }
 }

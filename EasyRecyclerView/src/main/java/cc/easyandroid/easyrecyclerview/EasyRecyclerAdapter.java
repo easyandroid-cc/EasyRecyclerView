@@ -37,10 +37,10 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
      */
     private int mLastAnimatedPosition = -1;
     private Interpolator mInterpolator = new LinearInterpolator();
-    private OnItemClickListener mListener;
+    private OnItemClickListener<T> mListener;
     protected RecyclerView mRecyclerView;
 
-    public void setOnItemClickListener(OnItemClickListener li) {
+    public void setOnItemClickListener(OnItemClickListener<T> li) {
         mListener = li;
     }
 
@@ -161,7 +161,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     public boolean performItemClick(View view, int position) {
         if (position >= 0 && position < getItemCount()) {
-            mListener.onItemClick(view, position);
+            mListener.onItemClick(this,view, position);
             return true;
         }
         return false;
@@ -337,8 +337,8 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         }
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
+    public interface OnItemClickListener<T> {
+        void onItemClick(EasyRecyclerAdapter<T> adapter, View view, int position);
     }
 
     public boolean isEmpty() {
