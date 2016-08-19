@@ -17,6 +17,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 
+import java.util.ArrayList;
+
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
 import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
@@ -87,6 +89,8 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     private final float resistance = 1.7f;
 
+    private ArrayList<HeaderHeightChangedListener> mHeaderHeightChangedListeners;
+
     public EasyRecyclerView(Context context) {
         this(context, null);
     }
@@ -143,6 +147,19 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             break;
         }
         return super.onInterceptTouchEvent(e);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        final int action = MotionEventCompat.getActionMasked(e);
+        switch (action) {
+            case MotionEvent.ACTION_DOWN: {
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                }
+            }
+        }
+        return super.onTouchEvent(e);
     }
 
     /**
@@ -339,6 +356,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         }
         mRefreshHeaderContainer.getLayoutParams().height = height;
         mRefreshHeaderContainer.requestLayout();
+        if (mHeaderHeightChangedListeners != null) {
+            for (int i = mHeaderHeightChangedListeners.size() - 1; i >= 0; i--) {
+                mHeaderHeightChangedListeners.get(i).onChanged(height);
+            }
+        }
         getLayoutManager().scrollToPosition(0);//让回滚的时候先让header缩回去
     }
 
@@ -544,6 +566,25 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public void setFooterHander(DefaultFooterHander footerHander) {
         mFooterHander = footerHander;
         setLoadMoreFooterView(footerHander.getView());
+    }
+
+    public void addHeaderHeightChangedListener(HeaderHeightChangedListener headerHeightChangedListener) {
+        if (mHeaderHeightChangedListeners == null) {
+            mHeaderHeightChangedListeners = new ArrayList<>();
+        }
+        mHeaderHeightChangedListeners.add(headerHeightChangedListener);
+    }
+
+    public void removeHeaderHeightChangedListener(HeaderHeightChangedListener headerHeightChangedListener) {
+        if (mHeaderHeightChangedListeners != null) {
+            mHeaderHeightChangedListeners.remove(headerHeightChangedListener);
+        }
+    }
+
+    public void clearHeaderHeightChangedListeners() {
+        if (mHeaderHeightChangedListeners != null) {
+            mHeaderHeightChangedListeners.clear();
+        }
     }
 
     public void setProgressHander(ProgressHander progressHander) {
@@ -856,5 +897,9 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         void showErrorView();
 
         void setOnEasyProgressClickListener(OnEasyProgressClickListener listener);
+    }
+
+    public interface HeaderHeightChangedListener {
+        void onChanged(int headerHeight);
     }
 }
