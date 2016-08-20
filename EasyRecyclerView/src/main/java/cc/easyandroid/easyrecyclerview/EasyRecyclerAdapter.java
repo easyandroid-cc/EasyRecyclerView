@@ -161,7 +161,7 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     public boolean performItemClick(View view, int position) {
         if (position >= 0 && position < getItemCount()) {
-            mListener.onItemClick(this,view, position);
+            mListener.onItemClick(this, view, position);
             return true;
         }
         return false;
@@ -187,6 +187,10 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         mRecyclerView = null;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
     }
 
     /**
