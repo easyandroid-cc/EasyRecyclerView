@@ -376,13 +376,14 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     /**
      * 释放进入到刷新状态                  复位到正在刷新 的位置
+     * autoRefresh 是否是autoRefresh，（手动刷新，当上一次还没有刷新完成时是不能进行新的刷新的，，如果是autoRefresh，会取消之前的刷新，进行新的刷新动作）
      */
-    private void startScrollReleaseStatusToRefreshingStatus() {
+    private void startScrollReleaseStatusToRefreshingStatus(boolean autoRefresh) {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
         mScroller.startScroll(0, currentHeight, 0, mHeaderViewHeight - currentHeight, 200);
         invalidate();
         setStatus(STATUS_REFRESHING);//设置当前状态是刷新状态
-        refresh();
+        refresh(autoRefresh);
     }
 
     /**
@@ -405,9 +406,14 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
 
-    //正在刷新时候就不再进行第二次回调
-    void refresh() {
-        if (!isRefreshIng()) {
+
+
+    /**
+     *刷新
+     * @param autoRefresh  true 如果正在进行刷新，也进入回调刷新，
+     */
+    void refresh(boolean autoRefresh) {
+        if (!isRefreshIng()||autoRefresh) {
             refreshIng = true;//标记正在刷新
             if (mOnRefreshListener != null) {
                 mOnRefreshListener.onRefresh();
@@ -420,7 +426,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public void autoRefresh() {
         needResetAnim = true;
         mHeaderHander.onPreDrag(mRefreshHeaderView);
-        startScrollReleaseStatusToRefreshingStatus();
+        startScrollReleaseStatusToRefreshingStatus(true);
     }
 
     /**
@@ -486,7 +492,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     private void onFingerUpStartAnimating() {
 
         if (mStatus == STATUS_RELEASE_TO_REFRESH) {
-            startScrollReleaseStatusToRefreshingStatus();
+            startScrollReleaseStatusToRefreshingStatus(false);
         } else if (needResetAnim && (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE || mStatus == STATUS_DEFAULT)) {
             startScrollSwipingToRefreshStatusToDefaultStatus();
         } else if (mStatus == STATUS_REFRESHING) {
