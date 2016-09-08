@@ -94,6 +94,7 @@ public class ListFragment extends Fragment {
         recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         setupOnItemClickListener(adapter);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews();
     }
 
     private void setupOnItemClickListener(MyAdapter adapter) {

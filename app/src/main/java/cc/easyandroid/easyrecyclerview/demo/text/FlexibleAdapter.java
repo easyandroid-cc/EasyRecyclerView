@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -23,10 +24,10 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
     /**
      * The main container for ALL items.
      */
-    private List<T> mItems;
-    private List<T> mHeaderItems;
-    private List<T> mFooterItems;
-
+    private List<T> mItems = new ArrayList<>();
+    private List<T> mHeaderItems = new ArrayList<>();
+    private List<T> mFooterItems = new ArrayList<>();
+    private T mLastFooterItem = null;//放在最后的footview
 
     /* ViewTypes */
     protected LayoutInflater mInflater;
@@ -36,6 +37,7 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
     private boolean autoMap = false;
 
     public OnItemClickListener mItemClickListener;
+
     public OnItemLongClickListener mItemLongClickListener;
 
     public FlexibleAdapter(@NonNull List<T> items) {
@@ -60,9 +62,13 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
         return this;
     }
 
-    public final T getItem(@IntRange(from = 0) int position) {
-        if (position < 0 || position >= mItems.size()) return null;
-        return mItems.get(position);
+    public final T getItem(int position) {
+        if (position < getHeaderItemCount()) {
+            return mHeaderItems.get(position);
+        } else if (position >= (getItemCount() - getFooterItemCount() - getLastFooterViewCount())) {
+            return mFooterItems.get(position - (getHeaderItemCount() + getItemCount()));
+        }
+        return mItems.get(position - getHeaderItemCount());
     }
 
 
@@ -90,10 +96,31 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
 
     @Override
     public final int getItemCount() {
-        return mItems != null ? mItems.size() : 0;
+        return getHeaderItemCount() + getNormalItemCount() + getFooterItemCount() + getLastFooterViewCount();
     }
 
+    public int getNormalItemCount() {
+        return mItems.size();
+    }
 
+    int getLastFooterViewCount() {
+        return mLastFooterItem != null ? 1 : 0;
+    }
+
+    public int getHeaderItemCount() {
+        return mHeaderItems.size();
+    }
+
+    public int getFooterItemCount() {
+        return mFooterItems.size();
+    }
+
+    /**
+     * 获取某一个类型的item数量
+     *
+     * @param viewTypes viewTypes
+     * @return count
+     */
     public int getItemCountOfTypes(Integer... viewTypes) {
         return getItemCountOfTypesUntil(getItemCount(), viewTypes);
     }
@@ -114,6 +141,7 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
     public boolean isEmpty() {
         return getItemCount() == 0;
     }
+
 
     public int getGlobalPositionOf(@NonNull IFlexible item) {
         return item != null && mItems != null && !mItems.isEmpty() ? mItems.indexOf(item) : -1;
@@ -137,8 +165,8 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
     /**
      * layout id就是item的type
      *
-     * @param position
-     * @return
+     * @param position position
+     * @return viewtype
      */
     @Override
     public int getItemViewType(int position) {
@@ -186,7 +214,7 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
         updateItem(getGlobalPositionOf(item), item, payload);
     }
 
-    public void updateItem(@IntRange(from = 0) int position, @NonNull T item,
+    public void updateItem(int position, @NonNull T item,
                            @Nullable Object payload) {
         if (position < 0 || position >= mItems.size()) {
             Log.e(TAG, "Cannot updateItem on position out of OutOfBounds!");
@@ -198,7 +226,7 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
     }
 
 
-    public boolean addItem(@IntRange(from = 0) int position, @NonNull T item) {
+    public boolean addItem(T item) {
         if (item == null) {
             Log.e(TAG, "No items to add!");
             return false;
@@ -206,30 +234,52 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
         if (DEBUG) Log.v(TAG, "addItem delegates addition to addItems!");
         List<T> items = new ArrayList<T>(1);
         items.add(item);
-        return addItems(position, items);
+        return addItems(items);
     }
 
-
-    public boolean addItems(@IntRange(from = 0) int position, @NonNull List<T> items) {
-        if (position < 0) {
-            Log.e(TAG, "Cannot addItems on negative position!");
+    public boolean addHeaderItem(T headerItem) {
+        if (headerItem == null) {
+            Log.e(TAG, "No headerItem to add!");
             return false;
         }
+        if (DEBUG) Log.v(TAG, "addItem delegates addition to addHeaderItem!");
+        List<T> headerItems = new ArrayList<T>(1);
+        headerItems.add(headerItem);
+        return addHeaderItems(headerItems);
+    }
+
+    /**
+     * @param items items
+     */
+    public boolean addHeaderItems(List<T> items) {
         if (items == null || items.isEmpty()) {
             Log.e(TAG, "No items to add!");
             return false;
         }
-        if (DEBUG) Log.v(TAG, "addItems on position=" + position + " itemCount=" + items.size());
-
         //Insert Items
-        if (position < mItems.size()) {
-            mItems.addAll(position, items);
-        } else {
-            mItems.addAll(items);
-        }
-        //Notify range addition
-        notifyItemRangeInserted(position, items.size());
+        mItems.addAll(items);
 
+        //Notify range addition
+        notifyItemRangeInserted(getHeaderItemCount() - 1, items.size());
+        return true;
+    }
+
+    /**
+     * 添加普通的item
+     *
+     * @param items items
+     * @return
+     */
+    public boolean addItems(List<T> items) {
+
+        if (items == null || items.isEmpty()) {
+            Log.e(TAG, "No items to add!");
+            return false;
+        }
+        //Insert Items
+        mItems.addAll(items);
+        //Notify range addition
+        notifyItemRangeInserted(getItemCount() - items.size() - getFooterItemCount(), items.size());//
         return true;
     }
 
@@ -237,7 +287,7 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
     /**
      * 讲type和 t 映射mTypeInstancesz中
      *
-     * @param item
+     * @param item item
      */
     private void mapViewTypeFrom(T item) {
 
@@ -256,8 +306,8 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter {
     /**
      * 根据view type 获取对应的对象
      *
-     * @param viewType
-     * @return
+     * @param viewType viewType
+     * @return T
      */
     private T getViewTypeInstance(int viewType) {
         return mTypeInstances.get(viewType);
