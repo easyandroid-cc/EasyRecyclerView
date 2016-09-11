@@ -16,7 +16,7 @@ import cc.easyandroid.easyrecyclerview.demo.R;
 public class MyHolder implements IFlexible {
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class MyHolder implements IFlexible {
 
     @Override
     public RecyclerView.ViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new ViewHolder(inflater.inflate(getLayoutRes(), parent, false));
+        return new ViewHolder(inflater.inflate(getLayoutRes(), parent, false),adapter);
     }
 
     @Override
@@ -46,17 +46,17 @@ public class MyHolder implements IFlexible {
 //        adapter.get
         if (viewHolder instanceof MyHolder.ViewHolder) {
             ViewHolder viewHolder1 = (ViewHolder) viewHolder;
-            viewHolder1.mIdView.setText("item " + iiii);
+            viewHolder1.mIdView.setText("item " + iiii+"--"+position);
 //            viewHolder1.mContentView.setText(mValues);
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends FlexibleViewHolder  {
         public final TextView mIdView;
         public final TextView mContentView;
 
-        public ViewHolder(View view) {
-            super(view);
+        public ViewHolder(View view,FlexibleAdapter adapter) {
+            super(view,adapter);
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
         }

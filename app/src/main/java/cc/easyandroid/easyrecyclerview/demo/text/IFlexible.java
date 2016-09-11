@@ -26,7 +26,7 @@ import java.util.List;
  * 自定义的ViewHolder
  * @param <VH>
  */
-public interface IFlexible<VH extends RecyclerView.ViewHolder> {
+  interface IFlexible<VH extends RecyclerView.ViewHolder> {
 
     /**
      * Returns if the Item is enabled.

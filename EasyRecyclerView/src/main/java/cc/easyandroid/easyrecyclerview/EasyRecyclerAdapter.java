@@ -19,7 +19,7 @@ import cc.easyandroid.easyrecyclerview.animation.ViewHelper;
 /**
  * Created by cgp
  */
-public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IEasyAdapter {
 
     public static final int TYPE_NORMAL = 1;
     public static final int TYPE_HEADER = 1 << 24;//2 24 header item
@@ -54,11 +54,11 @@ public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         notifyItemInserted(getItemCount() - 1);//
     }
 
-    void addFooterViewToLast(View lastFooterView) {
+    public void addFooterViewToLast(View lastFooterView) {
         mLastFooterView = lastFooterView;
     }
 
-    void addHeaderViewToFirst(View firstHeaderView) {
+    public void addHeaderViewToFirst(View firstHeaderView) {
         mHeaderViews.add(0, firstHeaderView);
         notifyItemInserted(0);
     }

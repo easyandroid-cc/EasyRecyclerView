@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!--<cc.easyandroid.easyrecyclerview.EasyRecyclerView-->
-        <android.support.v7.widget.RecyclerView
+    <!--<android.support.v7.widget.RecyclerView-->
+    <cc.easyandroid.easyrecyclerview.EasyRecyclerView
         android:id="@+id/list"
         android:name="cc.easyandroid.easyrecyclerview.demo.ItemFragment"
         android:layout_width="match_parent"

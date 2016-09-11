@@ -620,8 +620,8 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public void setAdapter(Adapter adapter) {
         ensureRefreshHeaderContainer();
         ensureLoadMoreFooterContainer();
-        if (adapter instanceof EasyRecyclerAdapter) {
-            EasyRecyclerAdapter baseRecyclerAdapter = (EasyRecyclerAdapter) adapter;
+        if (adapter instanceof IEasyAdapter) {
+            IEasyAdapter baseRecyclerAdapter = (IEasyAdapter) adapter;
             baseRecyclerAdapter.addHeaderViewToFirst(mRefreshHeaderContainer);
             baseRecyclerAdapter.addFooterViewToLast(mLoadMoreFooterContainer);
         }
@@ -809,8 +809,8 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     void updata() {
         Adapter<?> adapter = getAdapter();
         if (adapter != null) {
-            if (adapter instanceof EasyRecyclerAdapter) {
-                EasyRecyclerAdapter easyRecyclerAdapter = (EasyRecyclerAdapter) adapter;
+            if (adapter instanceof IEasyAdapter) {
+                IEasyAdapter easyRecyclerAdapter = (IEasyAdapter) adapter;
                 if (!easyRecyclerAdapter.isEmpty() && emptyView != null) {
                     emptyView.setVisibility(View.GONE);
                     EasyRecyclerView.this.setVisibility(View.VISIBLE);

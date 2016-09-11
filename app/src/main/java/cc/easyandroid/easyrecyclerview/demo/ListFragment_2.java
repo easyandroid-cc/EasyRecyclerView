@@ -16,6 +16,8 @@ import java.util.List;
 import cc.easyandroid.easyrecyclerview.EasyRecycleViewDivider;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
+import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
+import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
 import cc.easyandroid.easyrecyclerview.demo.text.FlexibleAdapter;
 import cc.easyandroid.easyrecyclerview.demo.text.MyHolder;
 import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
@@ -36,23 +38,36 @@ public class ListFragment_2 extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         adapter = new FlexibleAdapter();
+        adapter.initializeListeners(new FlexibleAdapter.OnItemClickListener() {
+            @Override
+            public boolean onItemClick(int position) {
+                if (toast != null) {
+                    toast.setText(position + "");
+                } else {
+                    toast = Toast.makeText(getContext(), position+"", Toast.LENGTH_SHORT);
+                }
+                toast.show();
+
+                return false;
+            }
+        });
 //        adapter.setItemAnimation(new AlphaInAnimation());
         initView(view);
     }
 
     private void initView(View view) {
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.list);
         recyclerView.getRecycledViewPool().setMaxRecycledViews(R.layout.fragment_item,0);
         setupEasyRecyclerView(recyclerView);
-//        setupRefreshListener(recyclerView);
-//        setupLoadMoreListener(recyclerView);
-//        recyclerView.autoRefresh();
+        setupRefreshListener(recyclerView);
+        setupLoadMoreListener(recyclerView);
+        recyclerView.autoRefresh();
 
-        List<MyHolder> items = new ArrayList<MyHolder>();
-        for (int i = 0; i < 100; i++) {
-            items.add(new MyHolder(i + 200));
-        }
-        adapter.addItems(items);
+//        List<MyHolder> items = new ArrayList<MyHolder>();
+//        for (int i = 0; i < 100; i++) {
+//            items.add(new MyHolder(i + 200));
+//        }
+//        adapter.addItems(items);
     }
 
     private void setupLoadMoreListener(final EasyRecyclerView recyclerView) {
@@ -66,7 +81,7 @@ public class ListFragment_2 extends Fragment {
 //                        adapter.addDatas(DummyContent.ITEMS);
 //                        )
                         List<MyHolder> items = new ArrayList<MyHolder>();
-                        for (int i = 0; i < 1; i++) {
+                        for (int i = 0; i < 100; i++) {
                             items.add(new MyHolder(i + 200));
                         }
                         adapter.addItems(items);
@@ -96,7 +111,7 @@ public class ListFragment_2 extends Fragment {
                         for (int i = 0; i < 10; i++) {
                             items.add(new MyHolder(i + 200));
                         }
-                        adapter.addItems(items);
+                        adapter.setItems(items);
                         recyclerView.finishRefresh(true);
                     }
                 }, 1000);
@@ -105,13 +120,13 @@ public class ListFragment_2 extends Fragment {
         });
     }
 
-    private void setupEasyRecyclerView(RecyclerView recyclerView) {
+    private void setupEasyRecyclerView(EasyRecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));        // recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
 
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线
-//        recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
-//        recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
+        recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
+        recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 //        setupOnItemClickListener(adapter);
 //        recyclerView.getRecycledViewPool().setMaxRecycledViews();
@@ -125,7 +140,7 @@ public class ListFragment_2 extends Fragment {
                 if (toast != null) {
                     toast.setText(position + "");
                 } else {
-                    toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
+                    toast = Toast.makeText(getContext(), position+"", Toast.LENGTH_SHORT);
                 }
                 toast.show();
             }
