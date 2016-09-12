@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cc.easyandroid.easyrecyclerview.demo.text;
+package cc.easyandroid.easyrecyclerview.items;
 
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
@@ -22,11 +22,13 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
+
 /**
  * 自定义的ViewHolder
  * @param <VH>
  */
-  interface IFlexible<VH extends RecyclerView.ViewHolder> {
+public interface IFlexible<VH extends RecyclerView.ViewHolder> {
 
     /**
      * Returns if the Item is enabled.
@@ -46,9 +48,9 @@ import java.util.List;
 	int getLayoutRes();
 
 
-	VH createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent);
+	VH createViewHolder(EasyFlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent);
 
 
-	void bindViewHolder(FlexibleAdapter adapter, VH holder, int position, List payloads);
+	void bindViewHolder(EasyFlexibleAdapter adapter, VH holder, int position, List payloads);
 
 }

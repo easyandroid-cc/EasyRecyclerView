@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +12,22 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecycleViewDivider;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
-import cc.easyandroid.easyrecyclerview.demo.text.FlexibleAdapter;
+import cc.easyandroid.easyrecyclerview.demo.anim.AlphaInAnimation;
 import cc.easyandroid.easyrecyclerview.demo.text.MyHolder;
+import cc.easyandroid.easyrecyclerview.demo.text.MyHolder_sticky;
+import cc.easyandroid.easyrecyclerview.items.IFlexible;
 import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
 import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
 public class ListFragment_2 extends Fragment {
     Toast toast;
-    FlexibleAdapter adapter;
+    EasyFlexibleAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,37 +39,35 @@ public class ListFragment_2 extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        adapter = new FlexibleAdapter();
-        adapter.initializeListeners(new FlexibleAdapter.OnItemClickListener() {
-            @Override
-            public boolean onItemClick(int position) {
-                if (toast != null) {
-                    toast.setText(position + "");
-                } else {
-                    toast = Toast.makeText(getContext(), position+"", Toast.LENGTH_SHORT);
-                }
-                toast.show();
+        adapter = new EasyFlexibleAdapter();
 
-                return false;
-            }
-        });
-//        adapter.setItemAnimation(new AlphaInAnimation());
+//        adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
+//            @Override
+//            public boolean onItemClick(int position) {
+//                if (toast != null) {
+//                    toast.setText(position + "");
+//                } else {
+//                    toast = Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT);
+//                }
+//                toast.show();
+//
+//                return false;
+//            }
+//        });
+
+        adapter.setItemAnimation(new AlphaInAnimation());
         initView(view);
+        adapter.setStickyHeaders(true);
     }
 
     private void initView(View view) {
         EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.list);
-        recyclerView.getRecycledViewPool().setMaxRecycledViews(R.layout.fragment_item,0);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(R.layout.fragment_item, 0);
         setupEasyRecyclerView(recyclerView);
         setupRefreshListener(recyclerView);
         setupLoadMoreListener(recyclerView);
         recyclerView.autoRefresh();
 
-//        List<MyHolder> items = new ArrayList<MyHolder>();
-//        for (int i = 0; i < 100; i++) {
-//            items.add(new MyHolder(i + 200));
-//        }
-//        adapter.addItems(items);
     }
 
     private void setupLoadMoreListener(final EasyRecyclerView recyclerView) {
@@ -78,8 +78,6 @@ public class ListFragment_2 extends Fragment {
                 recyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        adapter.addDatas(DummyContent.ITEMS);
-//                        )
                         List<MyHolder> items = new ArrayList<MyHolder>();
                         for (int i = 0; i < 100; i++) {
                             items.add(new MyHolder(i + 200));
@@ -107,10 +105,12 @@ public class ListFragment_2 extends Fragment {
                     @Override
                     public void run() {
 //                        adapter.setDatas(DummyContent.ITEMS);
-                        List<MyHolder> items = new ArrayList<MyHolder>();
+                        List<IFlexible> items = new ArrayList<IFlexible>();
+                        items.add(new MyHolder_sticky(22));
                         for (int i = 0; i < 10; i++) {
                             items.add(new MyHolder(i + 200));
                         }
+                        items.add(new MyHolder_sticky(22));
                         adapter.setItems(items);
                         recyclerView.finishRefresh(true);
                     }
@@ -140,21 +140,11 @@ public class ListFragment_2 extends Fragment {
                 if (toast != null) {
                     toast.setText(position + "");
                 } else {
-                    toast = Toast.makeText(getContext(), position+"", Toast.LENGTH_SHORT);
+                    toast = Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT);
                 }
                 toast.show();
             }
         });
-//        adapter.setOnItemClickListener(new EasyRecyclerAdapter.OnItemClickListener<String>() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                if (toast != null) {
-//                    toast.setText(position + "");
-//                } else {
-//                    toast = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
-//                }
-//                toast.show();
-//            }
-//        });
+
     }
 }

@@ -20,6 +20,7 @@ import android.widget.Scroller;
 import java.util.ArrayList;
 
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
+import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
 import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
 import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
 import cc.easyandroid.easyrecyclerview.core.RefreshHeaderLayout;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cc.easyandroid.easyrecyclerview.demo.text;
+package cc.easyandroid.easyrecyclerview.items;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,25 +22,16 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
+
 /**
  * 一个空接口，用来区分是header
- *
  */
-public class RefreshOrLoadmoreFlexible implements IFlexible {
+public class RefreshOrLoadmoreFlexible extends AbstractEasyFlexibleItem {
     private View mRefreshOrLoadmore;
 
     public RefreshOrLoadmoreFlexible(View refreshOrLoadmore) {
         this.mRefreshOrLoadmore = refreshOrLoadmore;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-
     }
 
     @Override
@@ -49,13 +40,13 @@ public class RefreshOrLoadmoreFlexible implements IFlexible {
     }
 
     @Override
-    public RecyclerView.ViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
+    public RecyclerView.ViewHolder createViewHolder(EasyFlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
         return new RecyclerView.ViewHolder(mRefreshOrLoadmore) {
         };
     }
 
     @Override
-    public void bindViewHolder(FlexibleAdapter adapter, RecyclerView.ViewHolder holder, int position, List payloads) {
-
+    public void bindViewHolder(EasyFlexibleAdapter adapter, RecyclerView.ViewHolder holder, int position, List payloads) {
+        //not use
     }
 }

@@ -1,6 +1,7 @@
-package cc.easyandroid.easyrecyclerview.demo.text;
+package cc.easyandroid.easyrecyclerview;
 
-import android.app.Activity;
+import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +19,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import cc.easyandroid.easyrecyclerview.IEasyAdapter;
-import cc.easyandroid.easyrecyclerview.demo.R;
+import cc.easyandroid.easyrecyclerview.animation.BaseAnimation;
+import cc.easyandroid.easyrecyclerview.animation.ViewHelper;
+import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
+import cc.easyandroid.easyrecyclerview.helper.StickyHeaderHelper;
+import cc.easyandroid.easyrecyclerview.items.IFlexible;
+import cc.easyandroid.easyrecyclerview.items.IHeader;
+import cc.easyandroid.easyrecyclerview.items.RefreshOrLoadmoreFlexible;
 
-public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter implements IEasyAdapter {
+public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter implements IEasyAdapter {
     public static boolean DEBUG = true;
 
-    private static final String TAG = FlexibleAdapter.class.getSimpleName();
+    private static final String TAG = EasyFlexibleAdapter.class.getSimpleName();
 
     protected RecyclerView mRecyclerView;
     /**
@@ -34,10 +42,18 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
     private IFlexible mLastFooterItem = null;//加载的footer
     private IFlexible mFirstHeaderItem = null;//刷新的header
 
+    private long mDuration = 300L;
+    /**
+     * The position of the last item that was animated.
+     */
+    private int mLastAnimatedPosition = -1;
+
+    private Interpolator mInterpolator = new LinearInterpolator();
     /* ViewTypes */
     protected LayoutInflater mInflater;
 
     private HashMap<Integer, IFlexible> mTypeInstances = new HashMap<>();
+
     private boolean autoMap = false;
 
     public OnItemClickListener mItemClickListener;
@@ -46,15 +62,19 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
 
     private StickyHeaderHelper mStickyHeaderHelper;
 
-    public FlexibleAdapter() {
+    private boolean mItemAnimationEnable = true;
+
+    private BaseAnimation mAnimation = null;//
+
+    private boolean headersSticky = false;
+
+    protected OnStickyHeaderChangeListener mStickyHeaderChangeListener;
+
+    public EasyFlexibleAdapter() {
         this(null);
     }
 
-    private boolean headersSticky = false;
-    protected OnStickyHeaderChangeListener mStickyHeaderChangeListener;
-
-
-    public FlexibleAdapter(@Nullable Object listeners) {
+    public EasyFlexibleAdapter(@Nullable Object listeners) {
         //Create listeners instances
         initializeListeners(listeners);
         //Get notified when items are inserted or removed (it adjusts selected positions)
@@ -66,9 +86,10 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
         //notifyItemRangeRemoved(getHeaderCount(), oldcount);
         mItems.addAll(items);
         notifyDataSetChanged();
+        mLastAnimatedPosition = mRecyclerView.getChildCount();
     }
 
-    public FlexibleAdapter initializeListeners(@Nullable Object listeners) {
+    public EasyFlexibleAdapter initializeListeners(@Nullable Object listeners) {
         if (listeners instanceof OnItemClickListener)
             mItemClickListener = (OnItemClickListener) listeners;
         if (listeners instanceof OnItemLongClickListener)
@@ -105,24 +126,6 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
         return position;
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        if (mStickyHeaderHelper != null) {
-            mStickyHeaderHelper.attachToRecyclerView(mRecyclerView);
-        }
-        mRecyclerView = recyclerView;
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        if (mStickyHeaderHelper != null) {
-            mStickyHeaderHelper.detachFromRecyclerView(mRecyclerView);
-            mStickyHeaderHelper = null;
-        }
-        super.onDetachedFromRecyclerView(recyclerView);
-        mRecyclerView = null;
-    }
 
     public RecyclerView getRecyclerView() {
         return mRecyclerView;
@@ -184,9 +187,12 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
 
 
     public int getGlobalPositionOf(@NonNull IFlexible item) {
-        return item != null && mItems != null && !mItems.isEmpty() ? mItems.indexOf(item) : -1;
+        return item != null && mItems != null && !mItems.isEmpty() ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : -1;
     }
 
+    public boolean areHeadersSticky() {
+        return headersSticky;
+    }
 
     @NonNull
     public List<IHeader> getHeaderItems() {
@@ -236,19 +242,38 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
         this.onBindViewHolder(holder, position, Collections.unmodifiableList(new ArrayList<>()));
     }
 
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads) {
-        if (!autoMap) {
-            throw new IllegalStateException("AutoMap is not active: super() cannot be called.");
-        }
-        //Bind the item
-        IFlexible item = getItem(position);
-        if (item != null) {
-            item.bindViewHolder(this, holder, position, payloads);
-        }
+    /**
+     * set anim to start when loading
+     *
+     * @param animators animators
+     * @param position  position
+     */
+    protected void startAnim(Animator[] animators, int position) {
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animators);
+        set.setInterpolator(mInterpolator);
+        set.setStartDelay(0);
+        set.setDuration(mDuration);
+        set.start();
+        mLastAnimatedPosition = position;
     }
 
+
+    /**
+     * add animation when you want to show time
+     *
+     * @param holder holder
+     */
+    private void addAnimation(RecyclerView.ViewHolder holder) {
+        int position = holder.getLayoutPosition();
+        if (mItemAnimationEnable && position > mLastAnimatedPosition) {
+            if (mAnimation != null) {
+                Animator[] animators = mAnimation.getAnimators(holder.itemView);
+                startAnim(animators, position);
+            }
+
+        }
+    }
 
     public boolean addItem(T item) {
         if (item == null) {
@@ -333,8 +358,28 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
         return true;
     }
 
+    public void setItemAnimationEnable(boolean enable) {
+        mItemAnimationEnable = enable;
+    }
 
-    private FlexibleAdapter setStickyHeaders(boolean headersSticky) {
+    /**
+     * 设置动画duration
+     *
+     * @param duration 时长
+     */
+    public void setItemAnimationDuration(int duration) {
+        mDuration = duration;
+    }
+
+    /**
+     * 设置item 动画
+     *
+     * @param animation animation
+     */
+    public void setItemAnimation(BaseAnimation animation) {
+        mAnimation = animation;
+    }
+    public EasyFlexibleAdapter setStickyHeaders(boolean headersSticky) {
         // Add or Remove the sticky headers
         if (headersSticky) {
             this.headersSticky = true;
@@ -342,13 +387,31 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
                 mStickyHeaderHelper = new StickyHeaderHelper(this, mStickyHeaderChangeListener);
             if (!mStickyHeaderHelper.isAttachedToRecyclerView())
                 mStickyHeaderHelper.attachToRecyclerView(mRecyclerView);
+            if (mRecyclerView instanceof EasyRecyclerView) {
+                EasyRecyclerView easyRecyclerView = (EasyRecyclerView) mRecyclerView;
+                easyRecyclerView.addHeaderHeightChangedListener(headerHeightChangedListener);
+            }
         } else if (mStickyHeaderHelper != null) {
             this.headersSticky = false;
             mStickyHeaderHelper.detachFromRecyclerView(mRecyclerView);
+            if (mRecyclerView instanceof EasyRecyclerView) {
+                EasyRecyclerView easyRecyclerView = (EasyRecyclerView) mRecyclerView;
+                easyRecyclerView.removeHeaderHeightChangedListener(headerHeightChangedListener);
+            }
             mStickyHeaderHelper = null;
         }
         return this;
     }
+
+    EasyRecyclerView.HeaderHeightChangedListener headerHeightChangedListener = new EasyRecyclerView.HeaderHeightChangedListener() {
+        @Override
+        public void onChanged(int headerHeight) {
+            if (mStickyHeaderHelper != null) {
+                mStickyHeaderHelper.updateOrClearHeader(false);
+                Log.v(TAG, "onChanged  headerHeight =" + headerHeight);
+            }
+        }
+    };
 
     public IHeader getSectionHeader(@IntRange(from = 0) int position) {
         //Headers are not visible nor sticky
@@ -362,16 +425,57 @@ public class FlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter i
 
 
     public ViewGroup getStickySectionHeadersHolder() {
-        return (ViewGroup) ((Activity) mRecyclerView.getContext()).findViewById(R.id.sticky_header_container);
+        ViewGroup viewGroup = (ViewGroup) mRecyclerView.getParent();
+        return (ViewGroup) viewGroup.findViewById(R.id.sticky_header_container);
     }
 
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        ViewHelper.clear(holder.itemView);
+    }
+
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder viewHolder) {
+        super.onViewAttachedToWindow(viewHolder);
+        addAnimation(viewHolder);
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads) {
+        if (!autoMap) {
+            throw new IllegalStateException("AutoMap is not active: super() cannot be called.");
+        }
+        //Bind the item
+        IFlexible item = getItem(position);
+        if (item != null) {
+            item.bindViewHolder(this, holder, position, payloads);
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+        if (mStickyHeaderHelper != null) {
+            mStickyHeaderHelper.attachToRecyclerView(mRecyclerView);
+        }
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        if (mStickyHeaderHelper != null) {
+            mStickyHeaderHelper.detachFromRecyclerView(mRecyclerView);
+            mStickyHeaderHelper = null;
+        }
+        super.onDetachedFromRecyclerView(recyclerView);
+        mRecyclerView = null;
+    }
 
     /**
      * Observer Class responsible to recalculate Selection and Expanded positions.
      */
     private class AdapterDataObserver extends RecyclerView.AdapterDataObserver {
-
-
         private void updateOrClearHeader() {
             if (mStickyHeaderHelper != null) {
                 mStickyHeaderHelper.updateOrClearHeader(true);

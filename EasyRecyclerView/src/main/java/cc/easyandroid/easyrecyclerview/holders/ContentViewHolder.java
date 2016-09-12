@@ -1,8 +1,10 @@
-package cc.easyandroid.easyrecyclerview.demo.text;
+package cc.easyandroid.easyrecyclerview.holders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 
 /**
  * This Class separates the initialization of an eventual StickyHeader ViewHolder from a Normal
@@ -18,11 +20,11 @@ abstract class ContentViewHolder extends RecyclerView.ViewHolder {
 
 	/**
 	 * @param view         The {@link View} being hosted in this ViewHolder
-	 * @param adapter      Adapter instance of type {@link FlexibleAdapter}
+	 * @param adapter      Adapter instance of type {@link EasyFlexibleAdapter}
 	 * @param stickyHeader true if the ViewHolder is a header to be sticky
 	 * @since 5.0.0-b7
 	 */
-	public ContentViewHolder(View view, FlexibleAdapter adapter, boolean stickyHeader) {
+	public ContentViewHolder(View view, EasyFlexibleAdapter adapter, boolean stickyHeader) {
 		//Since itemView is declared "final", the split is done before the View is initialized
 		super(stickyHeader ? new FrameLayout(view.getContext()) : view);
 

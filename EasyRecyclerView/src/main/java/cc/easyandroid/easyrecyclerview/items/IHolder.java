@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cc.easyandroid.easyrecyclerview.demo.text;
+package cc.easyandroid.easyrecyclerview.items;
 
 
-public interface IHolder<Model> {
+public interface IHolder<M> {
 
 	/**
 	 * @return the model object
 	 */
-	Model getModel();
+	M getModel();
 
 }

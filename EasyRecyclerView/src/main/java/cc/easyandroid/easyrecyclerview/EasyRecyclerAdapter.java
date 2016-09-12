@@ -15,6 +15,7 @@ import java.util.List;
 
 import cc.easyandroid.easyrecyclerview.animation.BaseAnimation;
 import cc.easyandroid.easyrecyclerview.animation.ViewHelper;
+import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
 
 /**
  * Created by cgp

@@ -7,11 +7,11 @@
     <!--<android.support.v7.widget.RecyclerView-->
     <cc.easyandroid.easyrecyclerview.EasyRecyclerView
         android:id="@+id/list"
-        android:name="cc.easyandroid.easyrecyclerview.demo.ItemFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
         tools:context=".ListFragment"
         tools:listitem="@layout/fragment_item" />
 
+    <include layout="@layout/sticky_header_layout" />
 </FrameLayout>
