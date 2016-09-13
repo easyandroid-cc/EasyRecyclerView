@@ -70,6 +70,11 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
 
     protected OnStickyHeaderChangeListener mStickyHeaderChangeListener;
 
+    /**
+     * 如果emptyConditionContainsHeader=ture header.size+item.size>0那么empty就不是空
+     */
+    private boolean emptyConditionContainsHeader;//empty 的条件是否包含header
+
     public EasyFlexibleAdapter() {
         this(null);
     }
@@ -104,7 +109,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         if (position < getFirstHeaderViewCount()) {
             return mFirstHeaderItem;
         } else if (position < getHeaderItemCount() + getFirstHeaderViewCount()) {
-            return mHeaderItems.get(position + getFirstHeaderViewCount());
+            return mHeaderItems.get(position - getFirstHeaderViewCount());
         } else if (position >= getItemCount() - getLastFooterViewCount()) {
             return mLastFooterItem;
         } else if (position > (getItemCount() - getFooterItemCount() - getLastFooterViewCount())) {
@@ -181,8 +186,21 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
     }
 
 
+    /**
+     * 数据是否是空
+     * @return
+     */
     public boolean isEmpty() {
+        if (emptyConditionContainsHeader) {
+            return getNormalItemCount() + getHeaderItemCount() == 0;
+        }
         return getNormalItemCount() == 0;
+    }
+
+
+
+    public void setEmptyConditionContainsHeader(boolean emptyConditionContainsHeader) {
+        this.emptyConditionContainsHeader = emptyConditionContainsHeader;
     }
 
 
@@ -379,6 +397,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
     public void setItemAnimation(BaseAnimation animation) {
         mAnimation = animation;
     }
+
     public EasyFlexibleAdapter setStickyHeaders(boolean headersSticky) {
         // Add or Remove the sticky headers
         if (headersSticky) {

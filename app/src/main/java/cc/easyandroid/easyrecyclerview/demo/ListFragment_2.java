@@ -145,6 +145,5 @@ public class ListFragment_2 extends Fragment {
                 toast.show();
             }
         });
-
     }
 }
