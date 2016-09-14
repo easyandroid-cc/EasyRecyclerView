@@ -304,24 +304,24 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         return addItems(items);
     }
 
-    public boolean addHeaderItem(T headerItem) {
+    public boolean addHeaderItem(IFlexible headerItem) {
         if (headerItem == null) {
             Log.e(TAG, "No headerItem to add!");
             return false;
         }
         if (DEBUG) Log.v(TAG, "addItem delegates addition to addHeaderItem!");
-        List<T> headerItems = new ArrayList<>(1);
+        List<IFlexible> headerItems = new ArrayList<>(1);
         headerItems.add(headerItem);
         return addHeaderItems(headerItems);
     }
 
-    public boolean addFooterItem(T footerItem) {
+    public boolean addFooterItem(IFlexible footerItem) {
         if (footerItem == null) {
             Log.e(TAG, "No footerItem to add!");
             return false;
         }
         if (DEBUG) Log.v(TAG, "addItem delegates addition to addFooterItem!");
-        List<T> footerItems = new ArrayList<>(1);
+        List<IFlexible> footerItems = new ArrayList<>(1);
         footerItems.add(footerItem);
         return addFooterItems(footerItems);
     }
@@ -329,7 +329,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
     /**
      * @param items items
      */
-    public boolean addHeaderItems(List<T> items) {
+    public boolean addHeaderItems(List<IFlexible> items) {
         if (items == null || items.isEmpty()) {
             Log.e(TAG, "No items to add!");
             return false;
@@ -345,7 +345,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
     /**
      * @param items items
      */
-    public boolean addFooterItems(List<T> items) {
+    public boolean addFooterItems(List<IFlexible> items) {
         if (items == null || items.isEmpty()) {
             Log.e(TAG, "No items to add!");
             return false;
