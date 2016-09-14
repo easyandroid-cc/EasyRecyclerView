@@ -113,7 +113,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         } else if (position >= getItemCount() - getLastFooterViewCount()) {
             return mLastFooterItem;
         } else if (position >= (getItemCount() - getFooterItemCount() - getLastFooterViewCount())) {
-            return mFooterItems.get(position - (getHeaderItemCount() + getItemCount()));
+            return mFooterItems.get(position - (getItemCount() - getFooterItemCount() - getLastFooterViewCount()));
         }
         return mItems.get(position - getHeaderItemCount() - getFirstHeaderViewCount());
     }
