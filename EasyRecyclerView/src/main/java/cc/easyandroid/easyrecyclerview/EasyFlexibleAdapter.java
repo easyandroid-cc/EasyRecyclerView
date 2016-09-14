@@ -112,7 +112,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
             return mHeaderItems.get(position - getFirstHeaderViewCount());
         } else if (position >= getItemCount() - getLastFooterViewCount()) {
             return mLastFooterItem;
-        } else if (position > (getItemCount() - getFooterItemCount() - getLastFooterViewCount())) {
+        } else if (position >= (getItemCount() - getFooterItemCount() - getLastFooterViewCount())) {
             return mFooterItems.get(position - (getHeaderItemCount() + getItemCount()));
         }
         return mItems.get(position - getHeaderItemCount() - getFirstHeaderViewCount());
@@ -188,6 +188,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
 
     /**
      * 数据是否是空
+     *
      * @return
      */
     public boolean isEmpty() {
@@ -196,7 +197,6 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         }
         return getNormalItemCount() == 0;
     }
-
 
 
     public void setEmptyConditionContainsHeader(boolean emptyConditionContainsHeader) {
