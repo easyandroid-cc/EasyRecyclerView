@@ -398,6 +398,13 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         mAnimation = animation;
     }
 
+    public void clearItems(){
+        if(getNormalItemCount()>0){
+            mItems.clear();
+            notifyDataSetChanged();
+        }
+    }
+
     public EasyFlexibleAdapter setStickyHeaders(boolean headersSticky) {
         // Add or Remove the sticky headers
         if (headersSticky) {
