@@ -70,6 +70,8 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
 
     protected OnStickyHeaderChangeListener mStickyHeaderChangeListener;
 
+    private Object mEasyTag;
+
     /**
      * 如果emptyConditionContainsHeader=ture header.size+item.size>0那么empty就不是空
      */
@@ -389,6 +391,14 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         mDuration = duration;
     }
 
+    public void setEasyTag(Object easyTag) {
+        this.mEasyTag = easyTag;
+    }
+
+    public Object getEasyTag() {
+        return mEasyTag;
+    }
+
     /**
      * 设置item 动画
      *
@@ -398,8 +408,8 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         mAnimation = animation;
     }
 
-    public void clearItems(){
-        if(getNormalItemCount()>0){
+    public void clearItems() {
+        if (getNormalItemCount() > 0) {
             mItems.clear();
             notifyDataSetChanged();
         }

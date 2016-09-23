@@ -106,11 +106,12 @@ public class ListFragment_2 extends Fragment {
                     public void run() {
 //                        adapter.setDatas(DummyContent.ITEMS);
                         List<IFlexible> items = new ArrayList<IFlexible>();
-                        items.add(new MyHolder_sticky(22));
+//                        items.add(new MyHolder_sticky(22));
                         for (int i = 0; i < 10; i++) {
                             items.add(new MyHolder(i + 200));
                         }
-                        items.add(new MyHolder_sticky(22));
+                        adapter.addHeaderItem(new MyHolder_sticky(22));
+//                        items.add(new MyHolder_sticky(22));
                         adapter.setItems(items);
                         recyclerView.finishRefresh(true);
                     }
