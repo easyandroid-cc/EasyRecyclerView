@@ -496,8 +496,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             setRefreshHeaderContainerHeight(mScroller.getCurrY());
-            invalidate();
+            System.out.println("easyView  computeScroll" + needResetAnim + "   mStatus=" + mStatus);
+            postInvalidate();
+//            invalidate();
         }
+        System.out.println("easyView  computeScroll" + needResetAnim + "   mStatus=" + mStatus);
         super.computeScroll();
     }
 
