@@ -155,28 +155,15 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         final int action = MotionEventCompat.getActionMasked(e);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                if (!mScroller.isFinished()) {
-                    mScroller.abortAnimation();
-                }
+//                if (!mScroller.isFinished()) {
+//                    mScroller.abortAnimation();
+//                }
+//                firstMove = true;
+//                needResetAnim = false;      //按下的时候关闭回弹
+                return true;
             }
         }
         return super.onTouchEvent(e);
-    }
-
-    /**
-     * 处理多点中一个点up后的时间,详见父类
-     *
-     * @param e motionEvent e
-     */
-    private void onPointerUp(MotionEvent e) {
-        final int actionIndex = MotionEventCompat.getActionIndex(e);
-        if (MotionEventCompat.getPointerId(e, actionIndex) == mActivePointerId) {
-            // Pick a new pointer to pick up the slack.
-            final int newIndex = actionIndex == 0 ? 1 : 0;
-            mActivePointerId = MotionEventCompat.getPointerId(e, newIndex);
-            mLastTouchX = getMotionEventX(e, newIndex);
-            mLastTouchY = getMotionEventY(e, newIndex);
-        }
     }
 
 
@@ -186,7 +173,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 if (!mScroller.isFinished()) {
-                    mScroller.abortAnimation();
+//                    mScroller.abortAnimation();
                 }
                 firstMove = true;
                 needResetAnim = false;      //按下的时候关闭回弹
@@ -198,11 +185,16 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             break;
 
             case MotionEvent.ACTION_MOVE: {
-
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                    System.out.println("easyView  abortAnimation");
+                }
+//                needResetAnim = false;      //按下的时候关闭回弹
                 final int index = MotionEventCompat.findPointerIndex(e, mActivePointerId);
                 if (index < 0) {
                     Log.e(TAG, "Error processing scroll; pointer index for id " + index + " not found. Did any MotionEvents get skipped?");
-                    return false;
+//                    return false;
+                    break;
                 }
 
                 final int x = getMotionEventX(e, index);
@@ -236,10 +228,28 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 //                getFirstVisiblePosition() == 0 &&
                 if (mRefreshHeaderContainer.getHeight() > 0) {//抬起手指后复位
                     onFingerUpStartAnimating();
+                    System.out.println("easyView  ACTION_UP mRefreshHeaderContainer.getHeight() > 0=" +( mRefreshHeaderContainer.getHeight() > 0));
                 }
+                System.out.println("easyView  ACTION_UP needResetAnim="+needResetAnim);
                 break;
         }
         return super.dispatchTouchEvent(e);
+    }
+
+    /**
+     * 处理多点中一个点up后的时间,详见父类
+     *
+     * @param e motionEvent e
+     */
+    private void onPointerUp(MotionEvent e) {
+        final int actionIndex = MotionEventCompat.getActionIndex(e);
+        if (MotionEventCompat.getPointerId(e, actionIndex) == mActivePointerId) {
+            // Pick a new pointer to pick up the slack.
+            final int newIndex = actionIndex == 0 ? 1 : 0;
+            mActivePointerId = MotionEventCompat.getPointerId(e, newIndex);
+            mLastTouchX = getMotionEventX(e, newIndex);
+            mLastTouchY = getMotionEventY(e, newIndex);
+        }
     }
 
     private int getFirstVisiblePosition() {
@@ -370,9 +380,11 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
      */
     private void startScrollSwipingToRefreshStatusToDefaultStatus() {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
+        mScroller.startScroll(0, currentHeight, 0, -currentHeight, 3000);
+        postInvalidate();//这里必须调用invalidate()才能保证computeScroll()会被调用，否则不一定会刷新界面，看不到滚动效果
         setStatus(STATUS_DEFAULT);
-        mScroller.startScroll(0, currentHeight, 0, -currentHeight, 120);
-        invalidate();//这里必须调用invalidate()才能保证computeScroll()会被调用，否则不一定会刷新界面，看不到滚动效果
+
+        System.out.println("easyView  startScrollSwipingToRefreshStatusToDefaultStatus-- currentHeight="+currentHeight);
     }
 
     /**
@@ -381,7 +393,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
      */
     private void startScrollReleaseStatusToRefreshingStatus(boolean autoRefresh) {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
-        mScroller.startScroll(0, currentHeight, 0, mHeaderViewHeight - currentHeight, 200);
+        mScroller.startScroll(0, currentHeight, 0, mHeaderViewHeight - currentHeight, 3000);
         invalidate();
         setStatus(STATUS_REFRESHING);//设置当前状态是刷新状态
         refresh(autoRefresh);
@@ -491,11 +503,13 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
 
     //抬起手指后复位
     private void onFingerUpStartAnimating() {
-
+        System.out.println("easyView  onFingerUpStartAnimating--onFingerUpStartAnimating="+needResetAnim+"   mStatus="+mStatus);
         if (mStatus == STATUS_RELEASE_TO_REFRESH) {
             startScrollReleaseStatusToRefreshingStatus(false);
+
         } else if (needResetAnim && (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE || mStatus == STATUS_DEFAULT)) {
             startScrollSwipingToRefreshStatusToDefaultStatus();
+
         } else if (mStatus == STATUS_REFRESHING) {
             final int refreshHeaderContainerHeight = mRefreshHeaderContainer.getMeasuredHeight();
             if (refreshHeaderContainerHeight >= mHeaderViewHeight) {//滚动到刷新位置
@@ -503,7 +517,10 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             } else {//关闭
                 startScrollSwipingToRefreshStatusToDefaultStatus();
             }
+        }else {
+            System.out.println("easyView  onFingerUpStartAnimating");
         }
+
     }
 
     public void setRefreshEnabled(boolean enabled) {

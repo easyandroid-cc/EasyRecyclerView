@@ -79,7 +79,7 @@ public class ListFragment extends Fragment {
                         adapter.setDatas(DummyContent.ITEMS);
                         recyclerView.finishRefresh(true);
                     }
-                }, 1000);
+                }, 2000);
             }
 
         });
@@ -90,22 +90,6 @@ public class ListFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
-        adapter.addHeaderView(new DefaultHeaderHander(getContext()).getView());
         recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线
         recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
         recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
