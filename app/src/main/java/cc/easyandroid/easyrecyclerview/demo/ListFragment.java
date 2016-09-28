@@ -55,9 +55,10 @@ public class ListFragment extends Fragment {
                     @Override
                     public void run() {
                         adapter.addDatas(DummyContent.ITEMS);
+                        System.out.println("easyload");
                         recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
                     }
-                }, 500);
+                }, 50);
             }
         });
     }
@@ -87,7 +88,7 @@ public class ListFragment extends Fragment {
 
     private void setupEasyRecyclerView(EasyRecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));        // recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-
+        recyclerView.setRestItemCountToLoadMore(100);
         recyclerView.setAdapter(adapter);
 
         recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线
