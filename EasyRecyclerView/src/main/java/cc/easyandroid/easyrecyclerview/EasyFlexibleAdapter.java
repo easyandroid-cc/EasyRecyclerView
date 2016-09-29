@@ -495,6 +495,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         mRecyclerView = recyclerView;
         if (mStickyHeaderHelper != null) {
             mStickyHeaderHelper.attachToRecyclerView(mRecyclerView);
+            if (mRecyclerView instanceof EasyRecyclerView) {
+                EasyRecyclerView easyRecyclerView = (EasyRecyclerView) mRecyclerView;
+                easyRecyclerView.addHeaderHeightChangedListener(headerHeightChangedListener);
+            }
         }
     }
 
@@ -502,6 +506,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         if (mStickyHeaderHelper != null) {
             mStickyHeaderHelper.detachFromRecyclerView(mRecyclerView);
+            if (mRecyclerView instanceof EasyRecyclerView) {
+                EasyRecyclerView easyRecyclerView = (EasyRecyclerView) mRecyclerView;
+                easyRecyclerView.removeHeaderHeightChangedListener(headerHeightChangedListener);
+            }
             mStickyHeaderHelper = null;
         }
         super.onDetachedFromRecyclerView(recyclerView);
