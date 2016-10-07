@@ -384,9 +384,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         if (currentHeight == 0) {
             return;
         }
-        setStatus(STATUS_DEFAULT);
         mScroller.startScroll(0, currentHeight, 0, -currentHeight, 120);
-        postInvalidate();//这里必须调用invalidate()才能保证computeScroll()会被调用，否则不一定会刷新界面，看不到滚动效果
         postInvalidate();//这里必须调用invalidate()才能保证computeScroll()会被调用，否则不一定会刷新界面，看不到滚动效果
         setStatus(STATUS_DEFAULT);
     }
@@ -752,7 +750,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
          * 是否滚动到了最底部
          *
          * @param recyclerView
-         * @return
+         * @return boolean
          */
         private boolean isScollBottom(RecyclerView recyclerView) {
             return !isCanScollVertically(recyclerView);
@@ -761,7 +759,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         /**
          * item 是否充满父容器了
          *
-         * @return
+         * @return boolean
          */
         private boolean isFillParent() {
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) easyRecyclerView.mLoadMoreFooterContainer.getLayoutParams();
