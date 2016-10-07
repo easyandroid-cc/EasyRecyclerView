@@ -234,9 +234,14 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             default:
                 needResetAnim = true;      //松开的时候打开回弹
 //                getFirstVisiblePosition() == 0 &&
-                if (mRefreshHeaderContainer.getHeight() > 0) {//抬起手指后复位
-                    onFingerUpStartAnimating();
-                }
+                postDelayed(new Runnable() {
+                    public void run() {
+                        if (mRefreshHeaderContainer.getHeight() > 0) {//抬起手指后复位
+                            onFingerUpStartAnimating();
+                        }
+                    }
+                }, 50);
+
                 break;
         }
         return super.dispatchTouchEvent(e);
@@ -370,9 +375,12 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
      */
     private void startScrollSwipingToRefreshStatusToDefaultStatus() {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
+        if (currentHeight == 0) {
+            return;
+        }
         setStatus(STATUS_DEFAULT);
         mScroller.startScroll(0, currentHeight, 0, -currentHeight, 120);
-        invalidate();//这里必须调用invalidate()才能保证computeScroll()会被调用，否则不一定会刷新界面，看不到滚动效果
+        postInvalidate();//这里必须调用invalidate()才能保证computeScroll()会被调用，否则不一定会刷新界面，看不到滚动效果
     }
 
     /**
@@ -382,7 +390,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     private void startScrollReleaseStatusToRefreshingStatus(boolean autoRefresh) {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
         mScroller.startScroll(0, currentHeight, 0, mHeaderViewHeight - currentHeight, 200);
-        invalidate();
+        postInvalidate();
         setStatus(STATUS_REFRESHING);//设置当前状态是刷新状态
         refresh(autoRefresh);
     }
@@ -393,7 +401,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     private void startScrollRefreshingStatusToRefreshingStatus() {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
         mScroller.startScroll(0, currentHeight, 0, mHeaderViewHeight - currentHeight, 200);
-        invalidate();
+        postInvalidate();
     }
 
     void loadMore() {
@@ -407,14 +415,13 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
 
-
-
     /**
-     *刷新
-     * @param autoRefresh  true 如果正在进行刷新，也进入回调刷新，
+     * 刷新
+     *
+     * @param autoRefresh true 如果正在进行刷新，也进入回调刷新，
      */
     void refresh(boolean autoRefresh) {
-        if (!isRefreshIng()||autoRefresh) {
+        if (!isRefreshIng() || autoRefresh) {
             refreshIng = true;//标记正在刷新
             if (mOnRefreshListener != null) {
                 mOnRefreshListener.onRefresh();
@@ -484,14 +491,13 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             setRefreshHeaderContainerHeight(mScroller.getCurrY());
-            invalidate();
+            postInvalidate();
         }
         super.computeScroll();
     }
 
     //抬起手指后复位
     private void onFingerUpStartAnimating() {
-
         if (mStatus == STATUS_RELEASE_TO_REFRESH) {
             startScrollReleaseStatusToRefreshingStatus(false);
         } else if (needResetAnim && (mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE || mStatus == STATUS_DEFAULT)) {
@@ -731,7 +737,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         /**
          * item 是否充满父容器了
          *
-         * @return
+         * @return boolean
          */
         private boolean isFillParent() {
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) easyRecyclerView.mLoadMoreFooterContainer.getLayoutParams();
