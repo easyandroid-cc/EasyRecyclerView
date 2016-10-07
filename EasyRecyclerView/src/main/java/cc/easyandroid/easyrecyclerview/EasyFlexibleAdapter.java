@@ -70,6 +70,8 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
 
     protected OnStickyHeaderChangeListener mStickyHeaderChangeListener;
 
+    private Object mEasyTag;
+
     /**
      * 如果emptyConditionContainsHeader=ture header.size+item.size>0那么empty就不是空
      */
@@ -389,6 +391,14 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         mDuration = duration;
     }
 
+    public void setEasyTag(Object easyTag) {
+        this.mEasyTag = easyTag;
+    }
+
+    public Object getEasyTag() {
+        return mEasyTag;
+    }
+
     /**
      * 设置item 动画
      *
@@ -396,6 +406,13 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
      */
     public void setItemAnimation(BaseAnimation animation) {
         mAnimation = animation;
+    }
+
+    public void clearItems() {
+        if (getNormalItemCount() > 0) {
+            mItems.clear();
+            notifyDataSetChanged();
+        }
     }
 
     public EasyFlexibleAdapter setStickyHeaders(boolean headersSticky) {
@@ -478,6 +495,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         mRecyclerView = recyclerView;
         if (mStickyHeaderHelper != null) {
             mStickyHeaderHelper.attachToRecyclerView(mRecyclerView);
+            if (mRecyclerView instanceof EasyRecyclerView) {
+                EasyRecyclerView easyRecyclerView = (EasyRecyclerView) mRecyclerView;
+                easyRecyclerView.addHeaderHeightChangedListener(headerHeightChangedListener);
+            }
         }
     }
 
@@ -485,6 +506,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         if (mStickyHeaderHelper != null) {
             mStickyHeaderHelper.detachFromRecyclerView(mRecyclerView);
+            if (mRecyclerView instanceof EasyRecyclerView) {
+                EasyRecyclerView easyRecyclerView = (EasyRecyclerView) mRecyclerView;
+                easyRecyclerView.removeHeaderHeightChangedListener(headerHeightChangedListener);
+            }
             mStickyHeaderHelper = null;
         }
         super.onDetachedFromRecyclerView(recyclerView);
