@@ -225,13 +225,13 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
             default:
                 needResetAnim = true;      //松开的时候打开回弹
 //                getFirstVisiblePosition() == 0 &&
-                postDelayed(new Runnable() {
+                post(new Runnable() {
                     public void run() {
                         if (mRefreshHeaderContainer.getHeight() > 0) {//抬起手指后复位
                             onFingerUpStartAnimating();
                         }
                     }
-                }, 50);
+                });
 
                 break;
         }
@@ -382,6 +382,7 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     private void startScrollSwipingToRefreshStatusToDefaultStatus() {
         final int currentHeight = mRefreshHeaderContainer.getMeasuredHeight();
         if (currentHeight == 0) {
+            setStatus(STATUS_DEFAULT);
             return;
         }
         mScroller.startScroll(0, currentHeight, 0, -currentHeight, 120);
