@@ -63,7 +63,7 @@ public class MyHolder_sticky implements IHeader {
 //        public final TextView mContentView;
 
         public ViewHolder(View view,EasyFlexibleAdapter adapter) {
-            super(view,adapter);
+            super(view,adapter,true);
 //            mIdView = (TextView) view.findViewById(R.id.id);
 //            mContentView = (TextView) view.findViewById(R.id.content);
         }
