@@ -29,6 +29,20 @@ public interface IFlexible<VH extends RecyclerView.ViewHolder> {
      */
     void setEnabled(boolean enabled);
 
+    /**
+     * Returns if the item can be selected.<br/>
+     *
+     * @return (default) true for a Selectable item, false otherwise
+     */
+    boolean isSelectable();
+
+    /**
+     * Setter to change selectable behaviour.
+     *
+     * @param selectable false to disable selection on this item
+     */
+    void setSelectable(boolean selectable);
+
 	@LayoutRes
 	int getLayoutRes();
 

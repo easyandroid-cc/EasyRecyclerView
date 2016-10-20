@@ -26,6 +26,16 @@ public class MyHolder_sticky implements IHeader {
 
     }
 
+    @Override
+    public boolean isSelectable() {
+        return false;
+    }
+
+    @Override
+    public void setSelectable(boolean selectable) {
+
+    }
+
     private int iiii = 0;
 
     public MyHolder_sticky(int i) {

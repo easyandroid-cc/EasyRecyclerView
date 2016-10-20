@@ -28,6 +28,16 @@ public class MyHolder implements IFlexible {
 
     }
 
+    @Override
+    public boolean isSelectable() {
+        return true;
+    }
+
+    @Override
+    public void setSelectable(boolean selectable) {
+
+    }
+
     private int iiii = 0;
 
     public MyHolder(int i) {
