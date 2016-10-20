@@ -366,14 +366,16 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
         if (height < 0) {
             height = 0;
         }
-        mRefreshHeaderContainer.getLayoutParams().height = height;
-        mRefreshHeaderContainer.requestLayout();
-        if (mHeaderHeightChangedListeners != null) {
-            for (int i = mHeaderHeightChangedListeners.size() - 1; i >= 0; i--) {
-                mHeaderHeightChangedListeners.get(i).onChanged(height);
+//        if (mRefreshHeaderContainer.getLayoutParams().height != height) {
+            mRefreshHeaderContainer.getLayoutParams().height = height;
+            mRefreshHeaderContainer.requestLayout();
+            if (mHeaderHeightChangedListeners != null) {
+                for (int i = mHeaderHeightChangedListeners.size() - 1; i >= 0; i--) {
+                    mHeaderHeightChangedListeners.get(i).onChanged(height);
+                }
             }
-        }
-        getLayoutManager().scrollToPosition(0);//让回滚的时候先让header缩回去
+            getLayoutManager().scrollToPosition(0);//让回滚的时候先让header缩回去
+//        }
     }
 
     /**

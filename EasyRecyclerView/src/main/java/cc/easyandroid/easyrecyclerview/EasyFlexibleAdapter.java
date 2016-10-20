@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Checkable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ import cc.easyandroid.easyrecyclerview.items.IFlexible;
 import cc.easyandroid.easyrecyclerview.items.IHeader;
 import cc.easyandroid.easyrecyclerview.items.RefreshOrLoadmoreFlexible;
 
-public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapter implements IEasyAdapter {
+public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter implements IEasyAdapter {
     public static boolean DEBUG = true;
 
     private static final String TAG = EasyFlexibleAdapter.class.getSimpleName();
@@ -136,6 +137,11 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
 
     public RecyclerView getRecyclerView() {
         return mRecyclerView;
+    }
+
+    @Override
+    public boolean isSelectable(int position) {
+        return getItem(position).isSelectable();
     }
 
 
@@ -383,6 +389,22 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @param position Position of the item to toggle the selection status for.
+     * @since 5.0.0-b1
+     */
+    @Override
+    public void toggleSelection(@IntRange(from = 0) int position) {
+        IFlexible item = getItem(position);
+        //Allow selection only for selectable items
+        if (item != null && item.isSelectable()) {
+            super.toggleSelection(position);
+            updateOnScreenCheckedViews();
+        }
+    }
+
+    /**
      * 设置动画duration
      *
      * @param duration 时长
@@ -449,6 +471,36 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         }
     };
 
+    private int getFirstVisiblePosition() {
+        View firstView = getRecyclerView().getLayoutManager().getChildAt(0);
+        if (firstView != null) {
+            return ((RecyclerView.LayoutParams) getRecyclerView().getLayoutManager().getChildAt(0).getLayoutParams()).getViewLayoutPosition();
+        }
+        return 0;
+    }
+
+    /**
+     * Perform a quick, in-place update of the checked or activated state
+     * on all visible item views. This should only be called when a valid
+     * choice mode is active.
+     */
+    private void updateOnScreenCheckedViews() {
+
+        final int count = getRecyclerView().getChildCount();
+        final boolean useActivated = getRecyclerView().getContext().getApplicationInfo().targetSdkVersion
+                >= android.os.Build.VERSION_CODES.HONEYCOMB;
+        for (int i = 0; i < count; i++) {
+            final View child = getRecyclerView().getChildAt(i);
+            final int position = ((RecyclerView.LayoutParams) child.getLayoutParams()).getViewLayoutPosition();
+
+            if (child instanceof Checkable) {
+                ((Checkable) child).setChecked(isSelected(position));
+            } else if (useActivated) {
+                child.setActivated(isSelected(position));
+            }
+        }
+    }
+
     public IHeader getSectionHeader(@IntRange(from = 0) int position) {
         //Headers are not visible nor sticky
         //When headers are visible and sticky, get the previous header
@@ -482,6 +534,8 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         if (!autoMap) {
             throw new IllegalStateException("AutoMap is not active: super() cannot be called.");
         }
+        //When user scrolls, this line binds the correct selection status
+        holder.itemView.setActivated(isSelected(position));
         //Bind the item
         IFlexible item = getItem(position);
         if (item != null) {
@@ -516,10 +570,13 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends RecyclerView.Adapt
         mRecyclerView = null;
     }
 
+
     /**
      * Observer Class responsible to recalculate Selection and Expanded positions.
      */
     private class AdapterDataObserver extends RecyclerView.AdapterDataObserver {
+
+
         private void updateOrClearHeader() {
             if (mStickyHeaderHelper != null) {
                 mStickyHeaderHelper.updateOrClearHeader(true);

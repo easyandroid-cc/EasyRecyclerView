@@ -122,6 +122,7 @@ public class StickyHeaderHelper extends OnScrollListener {
         }
         int firstHeaderPosition = getHeaderPosition(RecyclerView.NO_POSITION);
         if (firstHeaderPosition >= 0 && firstHeaderPosition < mAdapter.getItemCount()) {
+            if (EasyFlexibleAdapter.DEBUG) Log.v(TAG, "firstHeaderPosition=" + firstHeaderPosition);
             updateHeader(firstHeaderPosition, updateHeaderContent);
         } else {
             clearHeader();
