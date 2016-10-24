@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.Checkable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -471,35 +470,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         }
     };
 
-    private int getFirstVisiblePosition() {
-        View firstView = getRecyclerView().getLayoutManager().getChildAt(0);
-        if (firstView != null) {
-            return ((RecyclerView.LayoutParams) getRecyclerView().getLayoutManager().getChildAt(0).getLayoutParams()).getViewLayoutPosition();
-        }
-        return 0;
-    }
 
-    /**
-     * Perform a quick, in-place update of the checked or activated state
-     * on all visible item views. This should only be called when a valid
-     * choice mode is active.
-     */
-    private void updateOnScreenCheckedViews() {
-
-        final int count = getRecyclerView().getChildCount();
-        final boolean useActivated = getRecyclerView().getContext().getApplicationInfo().targetSdkVersion
-                >= android.os.Build.VERSION_CODES.HONEYCOMB;
-        for (int i = 0; i < count; i++) {
-            final View child = getRecyclerView().getChildAt(i);
-            final int position = ((RecyclerView.LayoutParams) child.getLayoutParams()).getViewLayoutPosition();
-
-            if (child instanceof Checkable) {
-                ((Checkable) child).setChecked(isSelected(position));
-            } else if (useActivated) {
-                child.setActivated(isSelected(position));
-            }
-        }
-    }
 
     public IHeader getSectionHeader(@IntRange(from = 0) int position) {
         //Headers are not visible nor sticky

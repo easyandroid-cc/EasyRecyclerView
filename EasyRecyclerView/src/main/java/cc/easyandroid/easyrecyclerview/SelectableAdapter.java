@@ -6,6 +6,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.Checkable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -62,7 +64,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
 
 	/*----------------*/
     /* STATIC METHODS */
-	/*----------------*/
+    /*----------------*/
 
     /**
      * Call this once, to enable or disable DEBUG logs.<br/>
@@ -172,7 +174,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
      */
     public void toggleSelection(int position) {
         if (position < 0) return;
-        if (mMode == MODE_SINGLE){
+        if (mMode == MODE_SINGLE) {
             mSelectedPositions.clear();
         }
 
@@ -216,7 +218,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
     public void clearSelection() {
         if (DEBUG) Log.v(TAG, "clearSelection " + mSelectedPositions);
         Iterator<Integer> iterator = mSelectedPositions.iterator();
-        int positionStart = 1, itemCount = 0;
+        int positionStart = 0, itemCount = 0;
         //The notification is done only on items that are currently selected.
         while (iterator.hasNext()) {
             int position = iterator.next();
@@ -237,7 +239,28 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
 
     private void notifySelectionChanged(int positionStart, int itemCount) {
         if (itemCount > 0) notifyItemRangeChanged(positionStart, itemCount);
-//        notifyDataSetChanged();
+    }
+
+    /**
+     * Perform a quick, in-place update of the checked or activated state
+     * on all visible item views. This should only be called when a valid
+     * choice mode is active.
+     */
+    void updateOnScreenCheckedViews() {
+
+        final int count = getRecyclerView().getChildCount();
+        final boolean useActivated = getRecyclerView().getContext().getApplicationInfo().targetSdkVersion
+                >= android.os.Build.VERSION_CODES.HONEYCOMB;
+        for (int i = 0; i < count; i++) {
+            final View child = getRecyclerView().getChildAt(i);
+            final int position = ((RecyclerView.LayoutParams) child.getLayoutParams()).getViewLayoutPosition();
+
+            if (child instanceof Checkable) {
+                ((Checkable) child).setChecked(isSelected(position));
+            } else if (useActivated) {
+                child.setActivated(isSelected(position));
+            }
+        }
     }
 
     /**
