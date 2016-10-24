@@ -77,8 +77,8 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
     }
 
 	/*--------------*/
-	/* MAIN METHODS */
-	/*--------------*/
+    /* MAIN METHODS */
+    /*--------------*/
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -262,14 +262,19 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void clearChoices(){
+    public void clearChoices() {
         mSelectedPositions.clear();
         updateOnScreenCheckedViews();
     }
-    public void setItemChecked(int position,boolean checked){
-        if(checked){
+
+    public void setItemChecked(int position, boolean checked) {
+        if (mMode == MODE_SINGLE) {
+            mSelectedPositions.clear();
+        }
+        boolean selected = isSelected(position);
+        if (checked && !selected) {
             addSelection(position);
-        }else{
+        } else if (selected) {
             removeSelection(position);
         }
         updateOnScreenCheckedViews();

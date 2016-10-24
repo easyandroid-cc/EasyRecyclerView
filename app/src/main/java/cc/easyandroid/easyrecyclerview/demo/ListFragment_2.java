@@ -40,7 +40,7 @@ public class ListFragment_2 extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         adapter = new EasyFlexibleAdapter();
-        adapter.setMode(EasyFlexibleAdapter.MODE_MULTI);
+        adapter.setMode(EasyFlexibleAdapter.MODE_IDLE);
 
         adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
             @Override
