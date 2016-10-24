@@ -247,7 +247,6 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
      * choice mode is active.
      */
     void updateOnScreenCheckedViews() {
-
         final int count = getRecyclerView().getChildCount();
         final boolean useActivated = getRecyclerView().getContext().getApplicationInfo().targetSdkVersion
                 >= android.os.Build.VERSION_CODES.HONEYCOMB;
@@ -261,6 +260,19 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
                 child.setActivated(isSelected(position));
             }
         }
+    }
+
+    public void clearChoices(){
+        mSelectedPositions.clear();
+        updateOnScreenCheckedViews();
+    }
+    public void setItemChecked(int position,boolean checked){
+        if(checked){
+            addSelection(position);
+        }else{
+            removeSelection(position);
+        }
+        updateOnScreenCheckedViews();
     }
 
     /**
