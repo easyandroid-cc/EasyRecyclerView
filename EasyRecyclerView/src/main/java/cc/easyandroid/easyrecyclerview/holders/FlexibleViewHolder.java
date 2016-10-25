@@ -45,11 +45,11 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
             if (EasyFlexibleAdapter.DEBUG)
                 Log.v(TAG, "onClick on position " + position);
             //Get the permission to activate the View from user
-            mAdapter.mItemClickListener.onItemClick(position);
             if (position != RecyclerView.NO_POSITION) {
                 toggleSelection(position);
                 toggleActivation(position);
             }
+            mAdapter.mItemClickListener.onItemClick(position);
         }
     }
 
@@ -68,9 +68,11 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
         //If DragLongPress is enabled, then LongClick must be skipped and the listener will
         // be called in onActionStateChanged in Drag mode.
         if (mAdapter.mItemLongClickListener != null) {
+            if (position != RecyclerView.NO_POSITION) {
+                toggleSelection(position);
+                toggleActivation(position);
+            }
             mAdapter.mItemLongClickListener.onItemLongClick(position);
-            toggleSelection(position);
-            toggleActivation(position);
             return true;
         }
         return false;
