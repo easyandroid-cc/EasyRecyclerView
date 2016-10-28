@@ -27,7 +27,7 @@ public class EasyRecycleViewDivider extends RecyclerView.ItemDecoration {
     /**
      * 默认分割线：高度为2px，颜色为灰色
      *
-     * @param context context
+     * @param context     context
      * @param orientation 列表方向
      */
     public EasyRecycleViewDivider(Context context, int orientation) {
@@ -110,7 +110,7 @@ public class EasyRecycleViewDivider extends RecyclerView.ItemDecoration {
         final int left = parent.getPaddingLeft();
         final int right = parent.getMeasuredWidth() - parent.getPaddingRight();
         final int childSize = parent.getChildCount();
-        for (int i = 0; i < childSize - 1; i++) {
+        for (int i = 0; i < childSize; i++) {
             final View child = parent.getChildAt(i);
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) child.getLayoutParams();
             final int top = child.getBottom() + layoutParams.bottomMargin;

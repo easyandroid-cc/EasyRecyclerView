@@ -440,6 +440,9 @@ public class EasyRecyclerView extends RecyclerView implements PullViewHandle {
     }
 
 
+    /**
+     * 自动刷新一定要回调刷新（手拉的不刷新如果正在刷新就不重复进入到刷新）
+     */
     public void autoRefresh() {
         needResetAnim = true;
         mHeaderHander.onPreDrag(mRefreshHeaderView);
