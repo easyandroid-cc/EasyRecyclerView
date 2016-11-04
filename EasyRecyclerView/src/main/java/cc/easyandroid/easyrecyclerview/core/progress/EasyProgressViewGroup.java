@@ -11,7 +11,7 @@ import cc.easyandroid.easyrecyclerview.R;
 import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 
-public class EasyProgressViewGroup extends ViewGroup {
+public class EasyProgressViewGroup extends ViewGroup implements EasyProgressLayout {
 
     private EasyRecyclerView.ProgressHander mProgressHander;
 
@@ -76,7 +76,7 @@ public class EasyProgressViewGroup extends ViewGroup {
 
     }
 
-    public void setProgressHander(EasyRecyclerView.ProgressHander progressHander) {
+    void setProgressHander(EasyRecyclerView.ProgressHander progressHander) {
         mProgressHander = progressHander;
         setEmptyView(mProgressHander.getView());
     }

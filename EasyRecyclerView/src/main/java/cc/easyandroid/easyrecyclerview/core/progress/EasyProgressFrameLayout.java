@@ -12,7 +12,7 @@ import cc.easyandroid.easyrecyclerview.R;
 import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 
-public class EasyProgressFrameLayout extends FrameLayout {
+public class EasyProgressFrameLayout extends FrameLayout implements EasyProgressLayout {
 
     private EasyRecyclerView.ProgressHander mProgressHander;
 
@@ -72,7 +72,7 @@ public class EasyProgressFrameLayout extends FrameLayout {
         super.onDetachedFromWindow();
     }
 
-    public void setProgressHander(EasyRecyclerView.ProgressHander progressHander) {
+    void setProgressHander(EasyRecyclerView.ProgressHander progressHander) {
         mProgressHander = progressHander;
         setEmptyView(mProgressHander.getView());
     }
