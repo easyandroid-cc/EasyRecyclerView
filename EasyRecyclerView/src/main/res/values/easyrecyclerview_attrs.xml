@@ -8,6 +8,12 @@
         <attr name="easyErrorView" />
     </declare-styleable>
 
+    <declare-styleable name="EasyProgressViewGroup">
+        <attr name="easyLoadingView" />
+        <attr name="easyEmptyView" />
+        <attr name="easyErrorView" />
+    </declare-styleable>
+
     <!-- 多种状态的listview -->
     <declare-styleable name="ProgressEmptyView">
         <attr name="easyLoadingView" />
@@ -17,6 +23,9 @@
     <!-- 这样可以引用系统样式 -->
     <declare-styleable name="EasyRecyclerViews">
         <attr name="EasyRecyclerViewStyle" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="EasyProgressLayouts">
+        <attr name="EasyProgressLayoutStyle" format="reference" />
     </declare-styleable>
     <declare-styleable name="ProgressEmptyViews">
         <attr name="ProgressEmptyViewStyle" format="reference" />
