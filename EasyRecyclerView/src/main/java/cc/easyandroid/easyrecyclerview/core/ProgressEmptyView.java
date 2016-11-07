@@ -8,13 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.R;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 
 /**
  */
-public class ProgressEmptyView extends FrameLayout implements EasyRecyclerView.ProgressHander {
+public class ProgressEmptyView extends FrameLayout implements ProgressHander {
 
     private View mLoadingView;
 

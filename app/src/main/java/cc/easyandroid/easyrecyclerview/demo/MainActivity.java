@@ -13,8 +13,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 //        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment()).commit();
-//        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment_2()).commit();
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment_3()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment_2()).commit();
+//        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment_3()).commit();
 
     }
 
