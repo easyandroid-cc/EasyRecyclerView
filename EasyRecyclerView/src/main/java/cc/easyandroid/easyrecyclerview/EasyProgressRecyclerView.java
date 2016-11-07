@@ -18,16 +18,15 @@ import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 public class EasyProgressRecyclerView extends RecyclerView {
 
     public EasyProgressRecyclerView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public EasyProgressRecyclerView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs ,0);
     }
 
     public EasyProgressRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
         ProgressEmptyView progressEmptyView = new ProgressEmptyView(context, attrs, defStyle);
         setProgressHander(progressEmptyView);
 
