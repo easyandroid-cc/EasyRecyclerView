@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
 import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
-import cc.easyandroid.easyrecyclerview.core.ProgressHander;
+import cc.easyandroid.easyrecyclerview.core.IProgressHander;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 
 /**
@@ -32,12 +32,12 @@ public class EasyProgressRecyclerView extends RecyclerView {
 
     }
 
-    public void setProgressHander(ProgressHander progressHander) {
+    public void setProgressHander(IProgressHander progressHander) {
         mProgressHander = progressHander;
         setEmptyView(progressHander.getView());
     }
 
-    private ProgressHander mProgressHander;
+    private IProgressHander mProgressHander;
 
     public void setAdapter(Adapter adapter) {
 

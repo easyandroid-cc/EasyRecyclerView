@@ -7,7 +7,7 @@ import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 /**
  * Created by cgpllx on 2016/11/7.
  */
-public interface ProgressHander {
+public interface IProgressHander {
     View getView();
 
     void showLoadingView();

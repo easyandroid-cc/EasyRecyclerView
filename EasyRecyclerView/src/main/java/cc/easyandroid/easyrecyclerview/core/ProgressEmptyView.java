@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 
 import cc.easyandroid.easyrecyclerview.R;
@@ -13,13 +14,15 @@ import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 
 /**
  */
-public class ProgressEmptyView extends FrameLayout implements ProgressHander {
+public class ProgressEmptyView implements IProgressHander {
 
     private View mLoadingView;
 
     private View mEmptyView;
 
     private View mErrorView;
+
+    private ViewGroup mEmptyContainer;
 
     private OnEasyProgressClickListener mOnEasyProgressClickListener;
 
@@ -32,7 +35,6 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
     }
 
     public ProgressEmptyView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
         LayoutInflater mLayoutInflater = LayoutInflater.from(context);
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ProgressEmptyView, defStyleAttr, 0);
@@ -40,18 +42,27 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
         int loadingViewResId = a.getResourceId(R.styleable.ProgressEmptyView_easyLoadingView, R.layout.easyloadingview);// 正在加载的view
         int emptyViewResId = a.getResourceId(R.styleable.ProgressEmptyView_easyEmptyView, R.layout.easyemptyview);// 空数据的view
         int errorViewResId = a.getResourceId(R.styleable.ProgressEmptyView_easyErrorView, R.layout.easyerrorview);// 错误的view
+        int easyEmptyContainerId = a.getResourceId(R.styleable.ProgressEmptyView_easyErrorView, 0);// 错误的view
 
         if (loadingViewResId > 0) {
             mLoadingView = mLayoutInflater.inflate(loadingViewResId, null);
         }
+        
         if (emptyViewResId > 0) {
             mEmptyView = mLayoutInflater.inflate(emptyViewResId, null);
         }
+
         if (errorViewResId > 0) {
             mErrorView = mLayoutInflater.inflate(errorViewResId, null);
         }
+
+        if (easyEmptyContainerId > 0) {
+            mEmptyContainer = (ViewGroup) mLayoutInflater.inflate(easyEmptyContainerId, null);
+        } else {
+            mEmptyContainer = new FrameLayout(context, attrs, defStyleAttr);
+            mEmptyContainer.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        }
         a.recycle();
-        setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         initProgress();
     }
 
@@ -64,11 +75,11 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
 
     private void setupLoadingView() {
         if (mLoadingView != null) {
-            mLoadingView.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-            this.addView(mLoadingView);
+            mLoadingView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            mEmptyContainer.addView(mLoadingView);
             View view = mLoadingView.findViewById(R.id.progressCanClickView);
             if (view != null) {
-                view.setOnClickListener(new OnClickListener() {
+                view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (mOnEasyProgressClickListener != null) {
@@ -77,7 +88,7 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
                     }
                 });
             } else {
-                mLoadingView.setOnClickListener(new OnClickListener() {
+                mLoadingView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (mOnEasyProgressClickListener != null) {
@@ -92,10 +103,10 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
 
     private void setupErrorView() {
         if (mErrorView != null) {
-            this.addView(mErrorView);
+            mEmptyContainer.addView(mErrorView);
             View view = mErrorView.findViewById(R.id.progressCanClickView);
             if (view != null) {
-                view.setOnClickListener(new OnClickListener() {
+                view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (mOnEasyProgressClickListener != null) {
@@ -104,7 +115,7 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
                     }
                 });
             } else {
-                mErrorView.setOnClickListener(new OnClickListener() {
+                mErrorView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (mOnEasyProgressClickListener != null) {
@@ -119,10 +130,10 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
 
     private void setupEmtpyView() {
         if (mEmptyView != null) {
-            this.addView(mEmptyView);
+            mEmptyContainer.addView(mEmptyView);
             View view = mEmptyView.findViewById(R.id.progressCanClickView);
             if (view != null) {
-                view.setOnClickListener(new OnClickListener() {
+                view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (mOnEasyProgressClickListener != null) {
@@ -131,7 +142,7 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
                     }
                 });
             } else {
-                mEmptyView.setOnClickListener(new OnClickListener() {
+                mEmptyView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (mOnEasyProgressClickListener != null) {
@@ -150,7 +161,7 @@ public class ProgressEmptyView extends FrameLayout implements ProgressHander {
 
     @Override
     public View getView() {
-        return this;
+        return mEmptyContainer;
     }
 
     public void showLoadingView() {

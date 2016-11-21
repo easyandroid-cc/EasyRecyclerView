@@ -6,11 +6,13 @@
         <attr name="easyLoadingView" />
         <attr name="easyEmptyView" />
         <attr name="easyErrorView" />
+        <attr name="easyEmptyContainer" />
     </declare-styleable>
 
     <declare-styleable name="EasyProgressViewGroup">
         <attr name="easyLoadingView" />
         <attr name="easyEmptyView" />
+        <attr name="easyEmptyContainer" />
         <attr name="easyErrorView" />
     </declare-styleable>
 
@@ -19,6 +21,7 @@
         <attr name="easyLoadingView" />
         <attr name="easyEmptyView" />
         <attr name="easyErrorView" />
+        <attr name="easyEmptyContainer" />
     </declare-styleable>
     <!-- 这样可以引用系统样式 -->
     <declare-styleable name="EasyRecyclerViews">
@@ -33,4 +36,5 @@
     <attr name="easyLoadingView" format="reference" />
     <attr name="easyEmptyView" format="reference" />
     <attr name="easyErrorView" format="reference" />
+    <attr name="easyEmptyContainer" format="reference" />
 </resources>

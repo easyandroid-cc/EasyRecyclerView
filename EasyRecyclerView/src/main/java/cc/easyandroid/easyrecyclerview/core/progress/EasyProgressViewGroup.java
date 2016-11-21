@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 
 import cc.easyandroid.easyrecyclerview.R;
 import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
-import cc.easyandroid.easyrecyclerview.core.ProgressHander;
+import cc.easyandroid.easyrecyclerview.core.IProgressHander;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 
 public class EasyProgressViewGroup extends ViewGroup implements EasyProgressLayout {
 
-    private ProgressHander mProgressHander;
+    private IProgressHander mProgressHander;
 
     public EasyProgressViewGroup(Context context) {
         this(context, null);
@@ -76,7 +76,7 @@ public class EasyProgressViewGroup extends ViewGroup implements EasyProgressLayo
 
     }
 
-    void setProgressHander(ProgressHander progressHander) {
+    void setProgressHander(IProgressHander progressHander) {
         mProgressHander = progressHander;
         setEmptyView(mProgressHander.getView());
     }
