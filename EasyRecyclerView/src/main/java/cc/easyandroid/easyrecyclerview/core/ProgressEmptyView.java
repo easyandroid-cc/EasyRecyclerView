@@ -60,9 +60,8 @@ public class ProgressEmptyView implements IProgressHander {
             mEmptyContainer = (ViewGroup) mLayoutInflater.inflate(easyEmptyContainerId, null);
         } else {
             mEmptyContainer = new FrameLayout(context, attrs, defStyleAttr);
-            mEmptyContainer.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }
-
+        mEmptyContainer.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         a.recycle();
 
         initProgress();
