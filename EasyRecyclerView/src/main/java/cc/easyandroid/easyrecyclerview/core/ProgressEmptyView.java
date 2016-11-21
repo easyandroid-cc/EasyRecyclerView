@@ -42,7 +42,7 @@ public class ProgressEmptyView implements IProgressHander {
         int loadingViewResId = a.getResourceId(R.styleable.ProgressEmptyView_easyLoadingView, R.layout.easyloadingview);// 正在加载的view
         int emptyViewResId = a.getResourceId(R.styleable.ProgressEmptyView_easyEmptyView, R.layout.easyemptyview);// 空数据的view
         int errorViewResId = a.getResourceId(R.styleable.ProgressEmptyView_easyErrorView, R.layout.easyerrorview);// 错误的view
-        int easyEmptyContainerId = a.getResourceId(R.styleable.ProgressEmptyView_easyErrorView, R.layout.easyemptycontainer);// 错误的view
+        int easyEmptyContainerId = a.getResourceId(R.styleable.ProgressEmptyView_easyEmptyContainer, R.layout.easyemptycontainer);// 错误的view
 
         if (loadingViewResId > 0) {
             mLoadingView = mLayoutInflater.inflate(loadingViewResId, null);
