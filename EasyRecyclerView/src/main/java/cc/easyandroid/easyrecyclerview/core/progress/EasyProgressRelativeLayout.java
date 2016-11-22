@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import cc.easyandroid.easyrecyclerview.R;
-import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
 import cc.easyandroid.easyrecyclerview.core.IProgressHander;
+import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 
 public class EasyProgressRelativeLayout extends RelativeLayout implements EasyProgressLayout {
@@ -26,7 +26,7 @@ public class EasyProgressRelativeLayout extends RelativeLayout implements EasyPr
 
     public EasyProgressRelativeLayout(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        ProgressEmptyView progressEmptyView = new ProgressEmptyView(context, attrs, defStyle);
+        ProgressEmptyView progressEmptyView = new ProgressEmptyView(this, attrs, defStyle);
         setProgressHander(progressEmptyView);
     }
 
@@ -70,6 +70,7 @@ public class EasyProgressRelativeLayout extends RelativeLayout implements EasyPr
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+
     }
 
     void setProgressHander(IProgressHander progressHander) {

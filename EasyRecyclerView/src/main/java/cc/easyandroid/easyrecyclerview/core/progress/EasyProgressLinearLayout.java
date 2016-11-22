@@ -26,7 +26,7 @@ public class EasyProgressLinearLayout extends LinearLayout implements EasyProgre
 
     public EasyProgressLinearLayout(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        ProgressEmptyView progressEmptyView = new ProgressEmptyView(context, attrs, defStyle);
+        ProgressEmptyView progressEmptyView = new ProgressEmptyView(this, attrs, defStyle);
         setProgressHander(progressEmptyView);
     }
 

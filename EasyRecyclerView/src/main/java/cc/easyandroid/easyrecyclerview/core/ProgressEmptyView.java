@@ -1,13 +1,11 @@
 package cc.easyandroid.easyrecyclerview.core;
 
-import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.FrameLayout;
 
 import cc.easyandroid.easyrecyclerview.R;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
@@ -26,18 +24,10 @@ public class ProgressEmptyView implements IProgressHander {
 
     private OnEasyProgressClickListener mOnEasyProgressClickListener;
 
-    public ProgressEmptyView(Context context) {
-        this(context, null);
-    }
+    public ProgressEmptyView(View view, AttributeSet attrs, int defStyleAttr) {
+        LayoutInflater mLayoutInflater = LayoutInflater.from(view.getContext());
 
-    public ProgressEmptyView(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.ProgressEmptyViewStyle);
-    }
-
-    public ProgressEmptyView(Context context, AttributeSet attrs, int defStyleAttr) {
-        LayoutInflater mLayoutInflater = LayoutInflater.from(context);
-
-        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ProgressEmptyView, defStyleAttr, 0);
+        TypedArray a = view.getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.ProgressEmptyView, defStyleAttr, 0);
 
         int loadingViewResId = a.getResourceId(R.styleable.ProgressEmptyView_easyLoadingView, R.layout.easyloadingview);// 正在加载的view
         int emptyViewResId = a.getResourceId(R.styleable.ProgressEmptyView_easyEmptyView, R.layout.easyemptyview);// 空数据的view
@@ -56,10 +46,13 @@ public class ProgressEmptyView implements IProgressHander {
             mErrorView = mLayoutInflater.inflate(errorViewResId, null);
         }
 
-        if (easyEmptyContainerId > 0) {
+        ViewGroup viewGroup = (ViewGroup) view.getParent();
+
+        if (viewGroup != null) {
+            mEmptyContainer = (ViewGroup) viewGroup.findViewById(easyEmptyContainerId);
+        }
+        if (mEmptyContainer == null && easyEmptyContainerId > 0) {
             mEmptyContainer = (ViewGroup) mLayoutInflater.inflate(easyEmptyContainerId, null);
-        } else {
-            mEmptyContainer = new FrameLayout(context, attrs, defStyleAttr);
         }
         mEmptyContainer.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         a.recycle();
