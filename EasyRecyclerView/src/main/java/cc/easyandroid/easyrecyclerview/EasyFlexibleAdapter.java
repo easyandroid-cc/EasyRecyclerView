@@ -300,6 +300,21 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         }
     }
 
+    public void updateItem(@NonNull T item, @Nullable Object payload) {
+        updateItem(getGlobalPositionOf(item), item, payload);
+    }
+
+    public void updateItem(@IntRange(from = 0) int position, @NonNull T item,
+                           @Nullable Object payload) {
+        if (position < 0 || position >= mItems.size()) {
+            Log.e(TAG, "Cannot updateItem on position out of OutOfBounds!");
+            return;
+        }
+        mItems.set(position, item);
+        if (DEBUG) Log.v(TAG, "updateItem notifyItemChanged on position " + position);
+        notifyItemChanged(position, payload);
+    }
+
     public boolean addItem(T item) {
         if (item == null) {
             Log.e(TAG, "No items to add!");
@@ -469,7 +484,6 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
             }
         }
     };
-
 
 
     public IHeader getSectionHeader(@IntRange(from = 0) int position) {
