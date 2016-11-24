@@ -310,9 +310,13 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
             Log.e(TAG, "Cannot updateItem on position out of OutOfBounds!");
             return;
         }
-        mItems.set(position, item);
+        mItems.set(GlobalPositionToNormalPosition(position), item);
         if (DEBUG) Log.v(TAG, "updateItem notifyItemChanged on position " + position);
         notifyItemChanged(position, payload);
+    }
+
+    public int GlobalPositionToNormalPosition(int globalPosition) {
+        return globalPosition - getHeaderItemCount() - getFirstHeaderViewCount();
     }
 
     public boolean addItem(T item) {
