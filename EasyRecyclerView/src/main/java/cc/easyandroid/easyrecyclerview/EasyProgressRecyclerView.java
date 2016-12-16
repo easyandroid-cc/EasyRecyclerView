@@ -22,7 +22,7 @@ public class EasyProgressRecyclerView extends RecyclerView {
     }
 
     public EasyProgressRecyclerView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs ,0);
+        this(context, attrs ,R.attr.EasyRecyclerViewStyle);
     }
 
     public EasyProgressRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
