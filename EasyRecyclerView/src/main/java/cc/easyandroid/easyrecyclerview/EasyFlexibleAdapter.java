@@ -36,9 +36,9 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     /**
      * The main container for ALL items.
      */
-    private List<T> mItems = new ArrayList<>();
-    private List<IFlexible> mHeaderItems = new ArrayList<>();
-    private List<IFlexible> mFooterItems = new ArrayList<>();
+    protected List<T> mItems = new ArrayList<>();
+    protected List<IFlexible> mHeaderItems = new ArrayList<>();
+    protected List<IFlexible> mFooterItems = new ArrayList<>();
     private IFlexible mLastFooterItem = null;//加载的footer
     private IFlexible mFirstHeaderItem = null;//刷新的header
 
@@ -219,6 +219,11 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         return headersSticky;
     }
 
+    /**
+     * 获取全部悬浮的header
+     *
+     * @return
+     */
     @NonNull
     public List<IHeader> getHeaderItems() {
         List<IHeader> headers = new ArrayList<>();
@@ -227,6 +232,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
                 headers.add((IHeader) item);
         }
         return headers;
+    }
+
+    public List<T> getItems() {
+        return mItems;
     }
 
     public boolean isHeader(IFlexible item) {
