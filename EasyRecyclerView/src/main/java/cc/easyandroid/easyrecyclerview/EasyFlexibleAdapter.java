@@ -107,7 +107,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     }
 
 
-    public final IFlexible getItem(int position) {
+    public IFlexible getItem(int position) {
         if (position < getFirstHeaderViewCount()) {
             return mFirstHeaderItem;
         } else if (position < getHeaderItemCount() + getFirstHeaderViewCount()) {
@@ -145,7 +145,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
 
 
     @Override
-    public final int getItemCount() {
+    public int getItemCount() {
         return getHeaderItemCount() + getNormalItemCount() + getFooterItemCount() + getLastFooterViewCount() + getFirstHeaderViewCount();
     }
 
