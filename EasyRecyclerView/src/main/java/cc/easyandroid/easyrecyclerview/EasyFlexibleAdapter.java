@@ -92,8 +92,15 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         mItems.clear();
         //notifyItemRangeRemoved(getHeaderCount(), oldcount);
         mItems.addAll(items);
-        notifyDataSetChanged();
         mLastAnimatedPosition = mRecyclerView.getChildCount();
+        notifyDataSetChanged();
+    }
+    public void setItemsAndNotifyChanged(List<T> items) {
+        mItems.clear();
+        //notifyItemRangeRemoved(getHeaderCount(), oldcount);
+        mItems.addAll(items);
+        mLastAnimatedPosition = mRecyclerView.getChildCount();
+        notifyDataSetChanged();
     }
 
     public EasyFlexibleAdapter initializeListeners(@Nullable Object listeners) {
@@ -211,6 +218,12 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     }
 
 
+    /**
+     * item 在adapter的真实位置
+     *
+     * @param item
+     * @return
+     */
     public int getGlobalPositionOf(@NonNull IFlexible item) {
         return item != null && mItems != null && !mItems.isEmpty() ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : -1;
     }
@@ -337,6 +350,42 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         List<T> items = new ArrayList<>(1);
         items.add(item);
         return addItems(items);
+    }
+
+    public boolean removeItem(IFlexible item) {
+        if (item == null) {
+            Log.e(TAG, "No items to remove!");
+            return false;
+        }
+        //Insert Items
+        int posion = getGlobalPositionOf(item);
+        mItems.remove(item);
+        //Notify range addition
+        notifyItemRangeRemoved(posion, 1);//
+        return true;
+    }
+
+    public boolean removeHeaderItem(IFlexible item) {
+        if (item == null) {
+            Log.e(TAG, "No items to remove!");
+            return false;
+        }
+        //Insert Items
+        int posion = getGlobalPositionOf(item);
+        mHeaderItems.remove(item);
+        //Notify range addition
+        notifyItemRangeRemoved(posion, 1);//
+        return true;
+    }
+
+    public boolean removeItem(int globalPosition) {
+        IFlexible item = getItem(globalPosition);
+        return removeItem(item);
+    }
+
+    public boolean removeHeaderItem(int globalPosition) {
+        IFlexible item = getItem(globalPosition);
+        return removeHeaderItem(item);
     }
 
     public boolean addHeaderItem(IFlexible headerItem) {

@@ -42,19 +42,19 @@ public class ListFragment_2 extends Fragment {
         adapter = new EasyFlexibleAdapter();
         adapter.setMode(EasyFlexibleAdapter.MODE_IDLE);
 
-        adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
-            @Override
-            public boolean onItemClick(int position) {
-                if (toast != null) {
-                    toast.setText(position + "");
-                } else {
-                    toast = Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT);
-                }
-                toast.show();
-
-                return false;
-            }
-        });
+//        adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
+//            @Override
+//            public boolean onItemClick(int position) {
+//                if (toast != null) {
+//                    toast.setText(position + "");
+//                } else {
+//                    toast = Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT);
+//                }
+//                toast.show();
+//
+//                return false;
+//            }
+//        });
 
         adapter.setItemAnimation(new AlphaInAnimation());
         initView(view);
@@ -86,7 +86,7 @@ public class ListFragment_2 extends Fragment {
                         adapter.addItems(items);
                         recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
                     }
-                }, 3000);
+                }, 1000);
             }
         });
     }
@@ -116,7 +116,7 @@ public class ListFragment_2 extends Fragment {
                         adapter.setItems(items);
                         recyclerView.finishRefresh(true);
                     }
-                }, 5000);
+                }, 1000);
             }
 
         });

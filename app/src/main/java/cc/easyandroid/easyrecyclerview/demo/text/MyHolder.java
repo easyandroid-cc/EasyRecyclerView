@@ -1,6 +1,5 @@
 package cc.easyandroid.easyrecyclerview.demo.text;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import cc.easyandroid.easyrecyclerview.items.IFlexible;
 /**
  * Created by cgpllx on 2016/9/9.
  */
-public class MyHolder implements IFlexible {
+public class MyHolder implements IFlexible<MyHolder.ViewHolder> {
     @Override
     public boolean isEnabled() {
         return true;
@@ -50,13 +49,14 @@ public class MyHolder implements IFlexible {
     }
 
     @Override
-    public RecyclerView.ViewHolder createViewHolder(EasyFlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
+    public MyHolder.ViewHolder createViewHolder(EasyFlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
         return new ViewHolder(inflater.inflate(getLayoutRes(), parent, false),adapter);
     }
 
     @Override
-    public void bindViewHolder(EasyFlexibleAdapter adapter, RecyclerView.ViewHolder viewHolder, int position, List payloads) {
+    public void bindViewHolder(EasyFlexibleAdapter adapter, MyHolder.ViewHolder viewHolder, int position, List payloads) {
 //        get
+        viewHolder.setData(this);
 //        adapter.get
         if (viewHolder instanceof MyHolder.ViewHolder) {
             ViewHolder viewHolder1 = (ViewHolder) viewHolder;
@@ -74,7 +74,10 @@ public class MyHolder implements IFlexible {
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
         }
-
+        MyHolder holder;
+        public void setData(MyHolder holder){
+            this.holder=holder;
+        }
         @Override
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
@@ -83,6 +86,7 @@ public class MyHolder implements IFlexible {
         @Override
         public void onClick(View view) {
             super.onClick(view);
+            mAdapter.removeItem(holder);
             if (toast != null) {
                 toast.setText( getAdapterPosition() + "");
             } else {
