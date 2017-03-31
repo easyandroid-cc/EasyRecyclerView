@@ -67,7 +67,7 @@ public class ListFragment_2 extends Fragment {
         recyclerView.getRecycledViewPool().setMaxRecycledViews(R.layout.fragment_item, 0);
         setupEasyRecyclerView(recyclerView);
         setupRefreshListener(recyclerView);
-        setupLoadMoreListener(recyclerView);
+//        setupLoadMoreListener(recyclerView);
         recyclerView.autoRefresh();
 
     }

@@ -7,7 +7,7 @@
     <string name="easyrecyclerview_refresh_success">刷新成功</string>
     <string name="easyrecyclerview_refresh_fail">刷新失敗</string>
     <string name="easyrecyclerview_click_to_loadmore">點擊加載更多</string>
-    <string name="easyrecyclerview_loadmoreing">正在加载中...</string>
+    <string name="easyrecyclerview_loadmoreing">正在加載中...</string>
     <string name="easyrecyclerview_loadmorefail_click_to_loadmore">加載失敗，點擊重新加載</string>
     <string name="easyrecyclerview_loadmore_fullcompleted">已經全部加載完成</string>
 

@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="点击加载更多"
+            android:text="@string/easyrecyclerview_click_to_loadmore"
             android:textColor="#a5a5a5"
             android:textSize="14sp" />
     </LinearLayout>
