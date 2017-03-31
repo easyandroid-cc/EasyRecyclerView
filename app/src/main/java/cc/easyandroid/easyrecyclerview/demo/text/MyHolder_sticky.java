@@ -11,11 +11,12 @@ import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 import cc.easyandroid.easyrecyclerview.demo.R;
 import cc.easyandroid.easyrecyclerview.holders.FlexibleViewHolder;
 import cc.easyandroid.easyrecyclerview.items.IHeader;
+import cc.easyandroid.easyrecyclerview.items.IHeaderSpanFill;
 
 /**
  * Created by cgpllx on 2016/9/9.
  */
-public class MyHolder_sticky implements IHeader {
+public class MyHolder_sticky implements IHeader, IHeaderSpanFill {
     @Override
     public boolean isEnabled() {
         return true;
@@ -49,7 +50,7 @@ public class MyHolder_sticky implements IHeader {
 
     @Override
     public RecyclerView.ViewHolder createViewHolder(EasyFlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new ViewHolder(inflater.inflate(getLayoutRes(), parent, false),adapter);
+        return new ViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
     }
 
     @Override
@@ -72,8 +73,8 @@ public class MyHolder_sticky implements IHeader {
 //        public final TextView mIdView;
 //        public final TextView mContentView;
 
-        public ViewHolder(View view,EasyFlexibleAdapter adapter) {
-            super(view,adapter,true);
+        public ViewHolder(View view, EasyFlexibleAdapter adapter) {
+            super(view, adapter, true);
 //            mIdView = (TextView) view.findViewById(R.id.id);
 //            mContentView = (TextView) view.findViewById(R.id.content);
         }

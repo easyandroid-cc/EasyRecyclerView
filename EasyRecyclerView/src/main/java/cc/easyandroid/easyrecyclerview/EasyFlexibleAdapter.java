@@ -5,7 +5,9 @@ import android.animation.AnimatorSet;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
 import cc.easyandroid.easyrecyclerview.helper.StickyHeaderHelper;
 import cc.easyandroid.easyrecyclerview.items.IFlexible;
 import cc.easyandroid.easyrecyclerview.items.IHeader;
+import cc.easyandroid.easyrecyclerview.items.IHeaderSpanFill;
 import cc.easyandroid.easyrecyclerview.items.RefreshOrLoadmoreFlexible;
 
 public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter implements IEasyAdapter {
@@ -95,6 +98,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         mLastAnimatedPosition = mRecyclerView.getChildCount();
         notifyDataSetChanged();
     }
+
     public void setItemsAndNotifyChanged(List<T> items) {
         mItems.clear();
         //notifyItemRangeRemoved(getHeaderCount(), oldcount);
@@ -570,11 +574,6 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         ViewHelper.clear(holder.itemView);
     }
 
-    @Override
-    public void onViewAttachedToWindow(RecyclerView.ViewHolder viewHolder) {
-        super.onViewAttachedToWindow(viewHolder);
-        addAnimation(viewHolder);
-    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads) {
@@ -601,6 +600,22 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
                 easyRecyclerView.addHeaderHeightChangedListener(headerHeightChangedListener);
             }
         }
+
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (manager instanceof GridLayoutManager) {
+            final GridLayoutManager gridManager = ((GridLayoutManager) manager);
+            gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    IFlexible iFlexible = getItem(position);
+                    if (iFlexible != null && iFlexible instanceof IHeaderSpanFill) {
+                        return gridManager.getSpanCount();
+                    } else {
+                        return 1;
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -617,6 +632,20 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         mRecyclerView = null;
     }
 
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        addAnimation(holder);
+        ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+        if (lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+            int position = holder.getLayoutPosition();
+            IFlexible iFlexible = getItem(position);
+            if (iFlexible != null && iFlexible instanceof IHeaderSpanFill) {
+                StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) lp;
+                p.setFullSpan(true);
+            }
+        }
+    }
 
     /**
      * Observer Class responsible to recalculate Selection and Expanded positions.

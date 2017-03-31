@@ -10,9 +10,9 @@ import java.util.List;
 import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 
 /**
- * 一个空接口，用来区分是header
+ *
  */
-public class RefreshOrLoadmoreFlexible extends AbstractEasyFlexibleItem {
+public class RefreshOrLoadmoreFlexible extends AbstractEasyFlexibleItem implements IHeaderSpanFill {
     private View mRefreshOrLoadmore;
 
     public RefreshOrLoadmoreFlexible(View refreshOrLoadmore) {
