@@ -3,6 +3,7 @@
     <declare-styleable name="EasyRecyclerView">
         <attr name="refreshEnabled" format="boolean" />
         <attr name="loadMoreEnabled" format="boolean" />
+        <attr name="autoloadMore" format="boolean" />
         <attr name="easyLoadingView" />
         <attr name="easyEmptyView" />
         <attr name="easyErrorView" />

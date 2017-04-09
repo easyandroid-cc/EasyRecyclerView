@@ -48,6 +48,8 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
 
     private boolean mLoadMoreEnabled;
 
+    private boolean mAutoLoadMore = true;
+
     private OnRefreshListener mOnRefreshListener;
 
     private OnLoadMoreListener mOnLoadMoreListener;
@@ -107,9 +109,11 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.EasyRecyclerView, defStyle, 0);
         boolean refreshEnabled;
         boolean loadMoreEnabled;
+        boolean autoloadMore;
         try {
             refreshEnabled = a.getBoolean(R.styleable.EasyRecyclerView_refreshEnabled, true);
             loadMoreEnabled = a.getBoolean(R.styleable.EasyRecyclerView_loadMoreEnabled, true);
+            autoloadMore = a.getBoolean(R.styleable.EasyRecyclerView_autoloadMore, true);
 
         } finally {
             a.recycle();
@@ -119,6 +123,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         easyOnScrollListener = new EasyOnScrollListener(this);
         setRefreshEnabled(refreshEnabled);
         setLoadMoreEnabled(loadMoreEnabled);
+        setAutoLoadMore(autoloadMore);
         setStatus(STATUS_DEFAULT);//开始设置为默认
     }
 
@@ -542,6 +547,14 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         }
     }
 
+    public void setAutoLoadMore(boolean autoLoadMore) {
+        mAutoLoadMore = autoLoadMore;
+    }
+
+    public boolean isAutoLoadMore() {
+        return mAutoLoadMore;
+    }
+
     public void setOnRefreshListener(OnRefreshListener listener) {
         this.mOnRefreshListener = listener;
     }
@@ -717,7 +730,9 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         public void onScrollStateChanged(android.support.v7.widget.RecyclerView recyclerView, int newState) {
             //刷新时候滚蛋地步不让自动加载
             if (newState == RecyclerView.SCROLL_STATE_IDLE && (isScollBottom(recyclerView) || canTriggerLoadMore(easyRecyclerView)) && !easyRecyclerView.isRefreshIng() && isFillParent()) {
-                easyRecyclerView.loadMore();
+               if(easyRecyclerView.isAutoLoadMore()){
+                   easyRecyclerView.loadMore();
+               }
             }
         }
 
