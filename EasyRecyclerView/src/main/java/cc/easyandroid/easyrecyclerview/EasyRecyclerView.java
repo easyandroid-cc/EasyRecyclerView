@@ -601,7 +601,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         setRefreshHeaderView(headerHander.getView());
     }
 
-    public void setFooterHander(DefaultFooterHander footerHander) {
+    public void setFooterHander(FooterHander footerHander) {
         mFooterHander = footerHander;
         setLoadMoreFooterView(footerHander.getView());
     }
