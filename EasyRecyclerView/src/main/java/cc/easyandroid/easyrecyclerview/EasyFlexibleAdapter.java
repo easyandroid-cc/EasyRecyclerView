@@ -93,15 +93,13 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
 
     public void setItems(List<T> items) {
         mItems.clear();
-        //notifyItemRangeRemoved(getHeaderCount(), oldcount);
         mItems.addAll(items);
         mLastAnimatedPosition = mRecyclerView.getChildCount();
-        notifyDataSetChanged();
+        //notifyDataSetChanged();//use setItemsAndNotifyChanged
     }
 
     public void setItemsAndNotifyChanged(List<T> items) {
         mItems.clear();
-        //notifyItemRangeRemoved(getHeaderCount(), oldcount);
         mItems.addAll(items);
         mLastAnimatedPosition = mRecyclerView.getChildCount();
         notifyDataSetChanged();
@@ -228,8 +226,8 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      * @param item
      * @return
      */
-    public int getGlobalPositionOf(@NonNull IFlexible item) {
-        return item != null && mItems != null && !mItems.isEmpty() ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : -1;
+    public @IntRange(from = 0) int getGlobalPositionOf(@NonNull IFlexible item) {
+        return item != null && mItems != null && !mItems.isEmpty() ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : 0;
     }
 
     public boolean areHeadersSticky() {
