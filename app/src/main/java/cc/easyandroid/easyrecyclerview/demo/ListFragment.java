@@ -90,7 +90,7 @@ public class ListFragment extends Fragment {
     private void setupEasyRecyclerView(EasyRecyclerView recyclerView) {
 //        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
 //          recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(), 2));
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setRestItemCountToLoadMore(100);
 
         recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线
