@@ -40,5 +40,5 @@ publish {
     artifactId = 'EasyRecyclerView'     //compile引用时的第2部分项目名
     publishVersion = '1.0.0'    //compile引用时的第3部分版本号
     desc = 'Very convenient to use RecyclerView'
-    website = 'https://github.com/cgpllx/EasyRecyclerView'
+    website = 'https://github.com/easyandroid-cc/EasyRecyclerView'
 }
