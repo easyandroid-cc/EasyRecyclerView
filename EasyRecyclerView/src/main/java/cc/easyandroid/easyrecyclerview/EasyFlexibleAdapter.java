@@ -240,7 +240,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      * @return
      */
     @NonNull
-    public List<IHeader> getHeaderItems() {
+    public List<IHeader> getStickyHeaderItems() {
         List<IHeader> headers = new ArrayList<>();
         for (T item : mItems) {
             if (isHeader(item))
@@ -251,6 +251,12 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
 
     public List<T> getItems() {
         return mItems;
+    }
+    public List<IFlexible> getHeaderItems() {
+        return mHeaderItems;
+    }
+    public List<IFlexible> getmFooterItems() {
+        return mFooterItems;
     }
 
     public boolean isHeader(IFlexible item) {
