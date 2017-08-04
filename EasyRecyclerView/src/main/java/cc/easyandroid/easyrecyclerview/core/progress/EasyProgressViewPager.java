@@ -1,35 +1,31 @@
-package cc.easyandroid.easyrecyclerview;
+package cc.easyandroid.easyrecyclerview.core.progress;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import android.database.DataSetObserver;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import cc.easyandroid.easyrecyclerview.R;
 import cc.easyandroid.easyrecyclerview.core.IEmptyAdapter;
 import cc.easyandroid.easyrecyclerview.core.IProgressHander;
 import cc.easyandroid.easyrecyclerview.core.ProgressEmptyView;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 
 /**
- * EasyProgressRecyclerView
+ * EasyProgressViewPager
  */
-public class EasyProgressRecyclerView extends RecyclerView {
-
-    public EasyProgressRecyclerView(Context context) {
+public class EasyProgressViewPager extends ViewPager {
+    public EasyProgressViewPager(Context context) {
         this(context, null);
     }
 
-    public EasyProgressRecyclerView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs ,R.attr.EasyRecyclerViewStyle);
-    }
-
-    public EasyProgressRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        ProgressEmptyView progressEmptyView = new ProgressEmptyView(this, attrs, defStyle);
+    public EasyProgressViewPager(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        ProgressEmptyView progressEmptyView = new ProgressEmptyView(this, attrs, R.attr.EasyRecyclerViewStyle);
         setProgressHander(progressEmptyView);
-
     }
 
     public void setProgressHander(IProgressHander progressHander) {
@@ -39,14 +35,14 @@ public class EasyProgressRecyclerView extends RecyclerView {
 
     private IProgressHander mProgressHander;
 
-    public void setAdapter(Adapter adapter) {
 
-        Adapter oldAdapter = getAdapter();
+    public void setAdapter(PagerAdapter adapter) {
+        PagerAdapter oldAdapter = getAdapter();
         if (oldAdapter != null) {
-            oldAdapter.unregisterAdapterDataObserver(emptyObserver);
+            oldAdapter.unregisterDataSetObserver(emptyObserver);
         }
         if (adapter != null) {
-            adapter.registerAdapterDataObserver(emptyObserver);
+            adapter.registerDataSetObserver(emptyObserver);
         }
         super.setAdapter(adapter);
         emptyObserver.onChanged();
@@ -90,37 +86,28 @@ public class EasyProgressRecyclerView extends RecyclerView {
 
     private View emptyView;
 
-    private AdapterDataObserver emptyObserver = new AdapterDataObserver() {
-        public void onItemRangeChanged(int positionStart, int itemCount) {
-            updata();
-        }
-
-        public void onItemRangeInserted(int positionStart, int itemCount) {
-            updata();
-        }
-
-        public void onItemRangeRemoved(int positionStart, int itemCount) {
-            updata();
-        }
-
-        public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+    private DataSetObserver emptyObserver = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            super.onChanged();
             updata();
         }
 
         @Override
-        public void onChanged() {
+        public void onInvalidated() {
+            super.onInvalidated();
             updata();
         }
     };
 
     void updata() {
-        Adapter<?> adapter = getAdapter();
+        PagerAdapter adapter = getAdapter();
         if (adapter != null) {
             if (adapter instanceof IEmptyAdapter) {
                 IEmptyAdapter iEmptyAdapter = (IEmptyAdapter) adapter;
                 if (!iEmptyAdapter.isEmpty() && emptyView != null) {
                     emptyView.setVisibility(View.GONE);
-                    EasyProgressRecyclerView.this.setVisibility(View.VISIBLE);
+                    EasyProgressViewPager.this.setVisibility(View.VISIBLE);
                     return;
                 }
             }
@@ -128,7 +115,7 @@ public class EasyProgressRecyclerView extends RecyclerView {
         }
         if (emptyView != null) {
             emptyView.setVisibility(View.VISIBLE);
-            EasyProgressRecyclerView.this.setVisibility(View.GONE);
+            EasyProgressViewPager.this.setVisibility(View.GONE);
         }
 
     }

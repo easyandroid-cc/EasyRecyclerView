@@ -19,7 +19,6 @@ import android.widget.Scroller;
 
 import java.util.ArrayList;
 
-import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
 import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
 import cc.easyandroid.easyrecyclerview.core.RefreshHeaderLayout;
@@ -730,9 +729,9 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         public void onScrollStateChanged(android.support.v7.widget.RecyclerView recyclerView, int newState) {
             //刷新时候滚蛋地步不让自动加载
             if (newState == RecyclerView.SCROLL_STATE_IDLE && (isScollBottom(recyclerView) || canTriggerLoadMore(easyRecyclerView)) && !easyRecyclerView.isRefreshIng() && isFillParent()) {
-               if(easyRecyclerView.isAutoLoadMore()){
-                   easyRecyclerView.loadMore();
-               }
+                if (easyRecyclerView.isAutoLoadMore()) {
+                    easyRecyclerView.loadMore();
+                }
             }
         }
 
@@ -752,8 +751,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
          * @return boolean
          */
         private boolean isFillParent() {
-            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) easyRecyclerView.mLoadMoreFooterContainer.getLayoutParams();
-            return easyRecyclerView.mLoadMoreFooterContainer.getBottom() + layoutParams.bottomMargin >= easyRecyclerView.getBottom();
+            return easyRecyclerView.mLoadMoreFooterContainer.getY() + easyRecyclerView.mLoadMoreFooterContainer.getHeight() >= easyRecyclerView.getHeight();
         }
 
         private boolean canTriggerLoadMore(EasyRecyclerView recyclerView) {
