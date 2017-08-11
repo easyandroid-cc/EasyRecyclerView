@@ -3,6 +3,8 @@ package cc.easyandroid.easyrecyclerview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
@@ -20,6 +22,7 @@ import android.widget.Scroller;
 import java.util.ArrayList;
 
 import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
+import cc.easyandroid.easyrecyclerview.core.IStateAdapter;
 import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
 import cc.easyandroid.easyrecyclerview.core.RefreshHeaderLayout;
 import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
@@ -854,5 +857,32 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
 
     public interface HeaderHeightChangedListener {
         void onChanged(int headerHeight);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof Bundle)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+        Bundle bundle = (Bundle) state;
+        super.onRestoreInstanceState(bundle.getParcelable("super_data"));
+        Adapter adapter = getAdapter();
+        if (adapter != null && adapter instanceof IStateAdapter) {
+            IStateAdapter iStateAdapter = (IStateAdapter) adapter;//让adapter有恢复数据的功能
+            iStateAdapter.onRestoreInstanceState(bundle);
+        }
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("super_data", super.onSaveInstanceState());
+        Adapter adapter = getAdapter();
+        if (adapter != null && adapter instanceof IStateAdapter) {
+            IStateAdapter iStateAdapter = (IStateAdapter) adapter;//让adapter有保存
+            iStateAdapter.onSaveInstanceState(bundle);
+        }
+        return bundle;
     }
 }

@@ -17,10 +17,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import cc.easyandroid.easyrecyclerview.core.IStateAdapter;
+
 /**
  * This class provides a set of standard methods to handle the selection on the items of an Adapter.
  */
-public abstract class SelectableAdapter extends RecyclerView.Adapter {
+public abstract class SelectableAdapter extends RecyclerView.Adapter implements IStateAdapter {
 
     private static final String TAG = SelectableAdapter.class.getSimpleName();
     public static boolean DEBUG = true;
@@ -305,6 +307,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter {
      *
      * @param outState Current state
      */
+
     public void onSaveInstanceState(Bundle outState) {
         outState.putIntegerArrayList(TAG, new ArrayList<Integer>(mSelectedPositions));
     }
