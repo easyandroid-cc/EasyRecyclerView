@@ -3,6 +3,7 @@ package cc.easyandroid.easyrecyclerview;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -760,20 +761,19 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            try {
-                ArrayList items = savedInstanceState.getParcelableArrayList(NORMAL_KEY);
-                ArrayList headerItems = savedInstanceState.getParcelableArrayList(HEADER_KEY);
-                ArrayList footerItems = savedInstanceState.getParcelableArrayList(FOOTER_KEY);
-
+            ArrayList items = savedInstanceState.getParcelableArrayList(NORMAL_KEY);
+            ArrayList headerItems = savedInstanceState.getParcelableArrayList(HEADER_KEY);
+            ArrayList footerItems = savedInstanceState.getParcelableArrayList(FOOTER_KEY);
+            if (items != null && items.size() > 0) {
                 mItems.addAll(items);
-                mHeaderItems.addAll(headerItems);
-                mFooterItems.addAll(footerItems);
-
-                notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-
+            if (headerItems != null && headerItems.size() > 0) {
+                mHeaderItems.addAll(items);
+            }
+            if (footerItems != null && footerItems.size() > 0) {
+                mFooterItems.addAll(items);
+            }
+            notifyDataSetChanged();
         }
 
     }
@@ -782,20 +782,35 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (outState != null) {
-            try {//如果希望有自动恢复数据功能，T必须实现Parcelable
-                ArrayList items = new ArrayList<>(mItems);
-                ArrayList headerItems = new ArrayList<>(mHeaderItems);
-                ArrayList footerItems = new ArrayList<>(mFooterItems);
-
+            ArrayList items = new ArrayList<>(mItems);
+            ArrayList headerItems = new ArrayList<>(mHeaderItems);
+            ArrayList footerItems = new ArrayList<>(mFooterItems);
+            if (isParcelableArray(items)) {
                 outState.putParcelableArrayList(NORMAL_KEY, items);
+            }
+            if (isParcelableArray(headerItems)) {
                 outState.putParcelableArrayList(HEADER_KEY, headerItems);
+            }
+            if (isParcelableArray(footerItems)) {
                 outState.putParcelableArrayList(FOOTER_KEY, footerItems);
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
+
+    /**
+     * 检测类型 如果希望有自动恢复数据功能，T必须实现Parcelable
+     */
+    boolean isParcelableArray(ArrayList arrayList) {
+        if (arrayList != null && arrayList.size() > 0) {
+            for (Object object : arrayList) {
+                if (!(object instanceof Parcelable)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
 
 }
