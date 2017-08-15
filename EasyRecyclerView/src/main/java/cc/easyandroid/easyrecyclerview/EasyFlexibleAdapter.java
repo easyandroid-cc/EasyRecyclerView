@@ -768,10 +768,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
                 mItems.addAll(items);
             }
             if (headerItems != null && headerItems.size() > 0) {
-                mHeaderItems.addAll(items);
+                mHeaderItems.addAll(headerItems);
             }
             if (footerItems != null && footerItems.size() > 0) {
-                mFooterItems.addAll(items);
+                mFooterItems.addAll(footerItems);
             }
             notifyDataSetChanged();
         }
