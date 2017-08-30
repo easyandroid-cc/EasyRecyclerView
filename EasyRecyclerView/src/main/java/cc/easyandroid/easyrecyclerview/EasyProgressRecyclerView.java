@@ -22,7 +22,7 @@ public class EasyProgressRecyclerView extends RecyclerView {
     }
 
     public EasyProgressRecyclerView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs ,R.attr.EasyRecyclerViewStyle);
+        this(context, attrs, R.attr.EasyRecyclerViewStyle);
     }
 
     public EasyProgressRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
@@ -54,15 +54,27 @@ public class EasyProgressRecyclerView extends RecyclerView {
 
 
     public void showLoadingView() {
-        mProgressHander.showLoadingView();
+        showLoadingView(null);
     }
 
     public void showEmptyView() {
-        mProgressHander.showEmptyView();
+        showEmptyView();
     }
 
     public void showErrorView() {
-        mProgressHander.showErrorView();
+        showErrorView();
+    }
+
+    public void showLoadingView(String message) {
+        mProgressHander.showLoadingView(message);
+    }
+
+    public void showEmptyView(String message) {
+        mProgressHander.showEmptyView(message);
+    }
+
+    public void showErrorView(String message) {
+        mProgressHander.showErrorView(message);
     }
 
     public void setOnEasyProgressClickListener(OnEasyProgressClickListener listener) {

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="progressCanClickView" type="id" />
+    <item name="progressMessageTextView" type="id" />
 </resources>
