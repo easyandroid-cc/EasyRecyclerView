@@ -58,11 +58,11 @@ public class EasyProgressRecyclerView extends RecyclerView {
     }
 
     public void showEmptyView() {
-        showEmptyView();
+        showEmptyView(null);
     }
 
     public void showErrorView() {
-        showErrorView();
+        showErrorView(null);
     }
 
     public void showLoadingView(String message) {

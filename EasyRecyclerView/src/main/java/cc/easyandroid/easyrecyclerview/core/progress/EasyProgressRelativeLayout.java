@@ -31,19 +31,32 @@ public class EasyProgressRelativeLayout extends RelativeLayout implements EasyPr
     }
 
     public void showLoadingView() {
-        updata(false);
-        mProgressHander.showLoadingView();
+        showLoadingView(null);
     }
 
     public void showEmptyView() {
-        updata(false);
-        mProgressHander.showEmptyView();
+        showEmptyView(null);
     }
 
     public void showErrorView() {
-        updata(false);
-        mProgressHander.showErrorView();
+        showErrorView(null);
     }
+
+    public void showLoadingView(String message) {
+        updata(false);
+        mProgressHander.showLoadingView(message);
+    }
+
+    public void showEmptyView(String message) {
+        updata(false);
+        mProgressHander.showEmptyView(message);
+    }
+
+    public void showErrorView(String message) {
+        updata(false);
+        mProgressHander.showErrorView(message);
+    }
+
 
     public void showContentView() {
         updata(true);

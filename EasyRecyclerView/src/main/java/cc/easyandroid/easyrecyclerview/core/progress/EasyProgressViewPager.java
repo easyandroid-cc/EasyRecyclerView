@@ -49,16 +49,29 @@ public class EasyProgressViewPager extends ViewPager {
     }
 
 
+
     public void showLoadingView() {
-        mProgressHander.showLoadingView();
+        showLoadingView(null);
     }
 
     public void showEmptyView() {
-        mProgressHander.showEmptyView();
+        showEmptyView(null);
     }
 
     public void showErrorView() {
-        mProgressHander.showErrorView();
+        showErrorView(null);
+    }
+
+    public void showLoadingView(String message) {
+        mProgressHander.showLoadingView(message);
+    }
+
+    public void showEmptyView(String message) {
+        mProgressHander.showEmptyView(message);
+    }
+
+    public void showErrorView(String message) {
+        mProgressHander.showErrorView(message);
     }
 
     public void setOnEasyProgressClickListener(OnEasyProgressClickListener listener) {
