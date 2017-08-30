@@ -1,11 +1,13 @@
 package cc.easyandroid.easyrecyclerview.core;
 
 import android.content.res.TypedArray;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.TextView;
 
 import cc.easyandroid.easyrecyclerview.R;
 import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
@@ -162,19 +164,23 @@ public class ProgressEmptyView implements IProgressHander {
         return mEmptyContainer;
     }
 
-    public void showLoadingView() {
-        showView(State.LOADING);
+    @Override
+    public void showEmptyView(String message) {
+        showView(State.EMPTY, message);
     }
 
-    public void showEmptyView() {
-        showView(State.EMPTY);
+    @Override
+    public void showErrorView(String message) {
+        showView(State.ERROR, message);
     }
 
-    public void showErrorView() {
-        showView(State.ERROR);
+    @Override
+
+    public void showLoadingView(String message) {
+        showView(State.LOADING, message);
     }
 
-    public void showView(int state) {
+    public void showView(int state, String message) {
 
         boolean showLoadingView = false;
         boolean showEmptyView = false;
@@ -194,14 +200,36 @@ public class ProgressEmptyView implements IProgressHander {
 
         if (mLoadingView != null) {
             mLoadingView.setVisibility(showLoadingView ? View.VISIBLE : View.GONE);
+            if (!TextUtils.isEmpty(message)) {
+                TextView loadingTextView = (TextView) mLoadingView.findViewById(R.id.progressMessageTextView);
+                if (loadingTextView != null) {
+                    loadingTextView.setText(message);
+                }
+            }
+
         }
 
         if (mEmptyView != null) {
             mEmptyView.setVisibility(showEmptyView ? View.VISIBLE : View.GONE);
+            if (!TextUtils.isEmpty(message)) {
+                TextView emptyViewTextView = (TextView) mEmptyView.findViewById(R.id.progressMessageTextView);
+
+                if (emptyViewTextView != null) {
+                    emptyViewTextView.setText(message);
+                }
+            }
+
         }
 
         if (mErrorView != null) {
             mErrorView.setVisibility(showErrorView ? View.VISIBLE : View.GONE);
+            if (!TextUtils.isEmpty(message)) {
+                TextView errorViewTextView = (TextView) mErrorView.findViewById(R.id.progressMessageTextView);
+                if (errorViewTextView != null) {
+                    errorViewTextView.setText(message);
+                }
+            }
+
         }
     }
 

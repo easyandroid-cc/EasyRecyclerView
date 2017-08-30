@@ -2,6 +2,8 @@ package cc.easyandroid.easyrecyclerview;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,6 +32,9 @@ import cc.easyandroid.easyrecyclerview.items.IHeader;
 import cc.easyandroid.easyrecyclerview.items.IHeaderSpanFill;
 import cc.easyandroid.easyrecyclerview.items.RefreshOrLoadmoreFlexible;
 
+/**
+ * @param <T> 如果希望有自动恢复数据功能，请把T 实现Parcelable
+ */
 public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter implements IEasyAdapter {
     public static boolean DEBUG = true;
 
@@ -39,9 +44,9 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     /**
      * The main container for ALL items.
      */
-    protected List<T> mItems = new ArrayList<>();
-    protected List<IFlexible> mHeaderItems = new ArrayList<>();
-    protected List<IFlexible> mFooterItems = new ArrayList<>();
+    protected ArrayList<T> mItems = new ArrayList<>();
+    protected ArrayList<IFlexible> mHeaderItems = new ArrayList<>();
+    protected ArrayList<IFlexible> mFooterItems = new ArrayList<>();
     private IFlexible mLastFooterItem = null;//加载的footer
     private IFlexible mFirstHeaderItem = null;//刷新的header
 
@@ -226,7 +231,9 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      * @param item
      * @return
      */
-    public @IntRange(from = 0) int getGlobalPositionOf(@NonNull IFlexible item) {
+    public
+    @IntRange(from = 0)
+    int getGlobalPositionOf(@NonNull IFlexible item) {
         return item != null && mItems != null && !mItems.isEmpty() ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : 0;
     }
 
@@ -252,9 +259,11 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     public List<T> getItems() {
         return mItems;
     }
+
     public List<IFlexible> getHeaderItems() {
         return mHeaderItems;
     }
+
     public List<IFlexible> getmFooterItems() {
         return mFooterItems;
     }
@@ -742,4 +751,66 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
          */
         void onStickyHeaderChange(int sectionIndex);
     }
+
+    public static final String NORMAL_KEY = "normalkey";
+    public static final String HEADER_KEY = "Headerkey";
+    public static final String FOOTER_KEY = "Footerkey";
+
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            ArrayList items = savedInstanceState.getParcelableArrayList(NORMAL_KEY);
+            ArrayList headerItems = savedInstanceState.getParcelableArrayList(HEADER_KEY);
+            ArrayList footerItems = savedInstanceState.getParcelableArrayList(FOOTER_KEY);
+            if (items != null && items.size() > 0) {
+                mItems.addAll(items);
+            }
+            if (headerItems != null && headerItems.size() > 0) {
+                mHeaderItems.addAll(headerItems);
+            }
+            if (footerItems != null && footerItems.size() > 0) {
+                mFooterItems.addAll(footerItems);
+            }
+            notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (outState != null) {
+            ArrayList items = new ArrayList<>(mItems);
+            ArrayList headerItems = new ArrayList<>(mHeaderItems);
+            ArrayList footerItems = new ArrayList<>(mFooterItems);
+            if (isParcelableArray(items)) {
+                outState.putParcelableArrayList(NORMAL_KEY, items);
+            }
+            if (isParcelableArray(headerItems)) {
+                outState.putParcelableArrayList(HEADER_KEY, headerItems);
+            }
+            if (isParcelableArray(footerItems)) {
+                outState.putParcelableArrayList(FOOTER_KEY, footerItems);
+            }
+        }
+    }
+
+    /**
+     * 检测类型 如果希望有自动恢复数据功能，T必须实现Parcelable
+     */
+    boolean isParcelableArray(ArrayList arrayList) {
+        if (arrayList != null && arrayList.size() > 0) {
+            for (Object object : arrayList) {
+                if (!(object instanceof Parcelable)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+
 }

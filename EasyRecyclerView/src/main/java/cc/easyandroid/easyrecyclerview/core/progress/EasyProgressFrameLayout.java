@@ -31,18 +31,30 @@ public class EasyProgressFrameLayout extends FrameLayout implements EasyProgress
     }
 
     public void showLoadingView() {
-        updata(false);
-        mProgressHander.showLoadingView();
+        showLoadingView(null);
     }
 
     public void showEmptyView() {
-        updata(false);
-        mProgressHander.showEmptyView();
+        showEmptyView(null);
     }
 
     public void showErrorView() {
+        showErrorView(null);
+    }
+
+    public void showLoadingView(String message) {
         updata(false);
-        mProgressHander.showErrorView();
+        mProgressHander.showLoadingView(message);
+    }
+
+    public void showEmptyView(String message) {
+        updata(false);
+        mProgressHander.showEmptyView(message);
+    }
+
+    public void showErrorView(String message) {
+        updata(false);
+        mProgressHander.showErrorView(message);
     }
 
     public void showContentView() {

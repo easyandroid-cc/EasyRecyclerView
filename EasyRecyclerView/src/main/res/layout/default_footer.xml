@@ -25,6 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:freezesText="true"
+            android:saveEnabled="true"
             android:text="@string/easyrecyclerview_click_to_loadmore"
             android:textColor="#a5a5a5"
             android:textSize="14sp" />

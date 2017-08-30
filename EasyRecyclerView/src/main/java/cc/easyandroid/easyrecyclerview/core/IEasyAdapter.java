@@ -5,13 +5,11 @@ import android.view.View;
 /**
  * Created by cgp
  */
-public interface IEasyAdapter {
+public interface IEasyAdapter extends IEmptyAdapter {
 
 
     void addFooterViewToLast(View lastFooterView);
 
     void addHeaderViewToFirst(View firstHeaderView);
-
-    boolean isEmpty();
 
 }

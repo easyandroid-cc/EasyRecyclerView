@@ -10,11 +10,11 @@ import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener;
 public interface IProgressHander {
     View getView();
 
-    void showLoadingView();
+    void showLoadingView(String  message);
 
-    void showEmptyView();
+    void showEmptyView(String  message);
 
-    void showErrorView();
+    void showErrorView(String  message);
 
     void setOnEasyProgressClickListener(OnEasyProgressClickListener listener);
 }
