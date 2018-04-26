@@ -731,7 +731,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         @Override
         public void onScrollStateChanged(android.support.v7.widget.RecyclerView recyclerView, int newState) {
             //刷新时候滚蛋地步不让自动加载
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && (isScollBottom(recyclerView) || canTriggerLoadMore(easyRecyclerView)) && !easyRecyclerView.isRefreshIng() && isFillParent()) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && (isScollBottom(recyclerView) || canTriggerLoadMore(easyRecyclerView)) && !easyRecyclerView.isRefreshIng()) {
                 if (easyRecyclerView.isAutoLoadMore()) {
                     easyRecyclerView.loadMore();
                 }
@@ -746,15 +746,6 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
          */
         private boolean isScollBottom(RecyclerView recyclerView) {
             return !isCanScollVertically(recyclerView);
-        }
-
-        /**
-         * item 是否充满父容器了
-         *
-         * @return boolean
-         */
-        private boolean isFillParent() {
-            return easyRecyclerView.mLoadMoreFooterContainer.getY() + easyRecyclerView.mLoadMoreFooterContainer.getHeight() >= easyRecyclerView.getHeight();
         }
 
         private boolean canTriggerLoadMore(EasyRecyclerView recyclerView) {

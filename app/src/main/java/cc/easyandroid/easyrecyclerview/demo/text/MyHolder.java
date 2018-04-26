@@ -86,7 +86,11 @@ public class MyHolder implements IFlexible<MyHolder.ViewHolder> {
         @Override
         public void onClick(View view) {
             super.onClick(view);
-            mAdapter.removeItem(holder);
+
+            int count = mAdapter.getGlobalPositionOf(holder);
+//            int count = mAdapter.getGlobalPositionOf(MyHolder.this);
+            System.out.println("cgp count="+count);
+            mAdapter.removeItem(MyHolder.this);
             if (toast != null) {
                 toast.setText( getAdapterPosition() + "");
             } else {

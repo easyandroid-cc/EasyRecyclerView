@@ -231,10 +231,9 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      * @param item
      * @return
      */
-    public
     @IntRange(from = 0)
-    int getGlobalPositionOf(@NonNull IFlexible item) {
-        return item != null && mItems != null && !mItems.isEmpty() ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : 0;
+    public int getGlobalPositionOf(@NonNull IFlexible item) {
+        return (item != null && mItems != null && !mItems.isEmpty()) ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : 0;
     }
 
     public boolean areHeadersSticky() {

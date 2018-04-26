@@ -41,7 +41,8 @@ public class ListFragment_2 extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         adapter = new EasyFlexibleAdapter();
-        adapter.setMode(EasyFlexibleAdapter.MODE_IDLE);
+        adapter.setMode(EasyFlexibleAdapter.MODE_MULTI);
+//        adapter.set
 
 //        adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
 //            @Override
@@ -64,7 +65,7 @@ public class ListFragment_2 extends Fragment {
 
     private void initView(View view) {
         EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.list);
-        recyclerView.getRecycledViewPool().setMaxRecycledViews(R.layout.fragment_item, 0);
+//        recyclerView.getRecycledViewPool().setMaxRecycledViews(R.layout.fragment_item, 0);
         setupEasyRecyclerView(recyclerView);
         setupRefreshListener(recyclerView);
 //        setupLoadMoreListener(recyclerView);
@@ -114,8 +115,9 @@ public class ListFragment_2 extends Fragment {
                         }
 //                        adapter.addHeaderItem(new MyHolder_sticky(22));
                         items.add(new MyHolder_sticky(22));
-                        adapter.setItems(items);
                         recyclerView.finishRefresh(true);
+                        adapter.setItems(items);
+                        adapter.notifyDataSetChanged();
                     }
                 }, 1000);
             }
