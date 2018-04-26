@@ -69,7 +69,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter implements 
     /*----------------*/
 
     /**
-     * Call this once, to enable or disable DEBUG logs.<br/>
+     * Call this once, to enable or disable DEBUG logs.
      * DEBUG logs are disabled by default.
      *
      * @param enable true to show DEBUG logs in verbose mode, false to hide them.
@@ -167,7 +167,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter implements 
      * Checks if the current item has the property {@code selectable = true}.
      *
      * @param position the current position of the item to check
-     * @return true if the item property </i>selectable</i> is true, false otherwise
+     * @return true if the item property selectable is true, false otherwise
      */
     public abstract boolean isSelectable(int position);
 
@@ -213,8 +213,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter implements 
 
     /**
      * Clears the selection status for all items one by one and it doesn't stop animations in the items.
-     * <br/><br/>
-     * <b>Note 1:</b> Items are invalidated and rebound!<br/>
+     * <b>Note 1:</b> Items are invalidated and rebound!
      * <b>Note 2:</b> This method use java.util.Iterator to avoid java.util.ConcurrentModificationException.
      */
     public void clearSelection() {

@@ -30,7 +30,7 @@ public interface IFlexible<VH extends RecyclerView.ViewHolder> {
     void setEnabled(boolean enabled);
 
     /**
-     * Returns if the item can be selected.<br/>
+     * Returns if the item can be selected.
      *
      * @return (default) true for a Selectable item, false otherwise
      */
