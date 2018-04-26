@@ -730,8 +730,8 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
 
         @Override
         public void onScrollStateChanged(android.support.v7.widget.RecyclerView recyclerView, int newState) {
-            //刷新时候滚蛋地步不让自动加载
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && (isScollBottom(recyclerView) || canTriggerLoadMore(easyRecyclerView)) && !easyRecyclerView.isRefreshIng()) {
+            //1.刷新时候滚动到底部不让自动加载 2.刷新前面
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && (isScollBottom(recyclerView) || canTriggerLoadMore(easyRecyclerView)) && !easyRecyclerView.isRefreshIng() && !isFirstItemVisible(easyRecyclerView)) {
                 if (easyRecyclerView.isAutoLoadMore()) {
                     easyRecyclerView.loadMore();
                 }
@@ -748,12 +748,29 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
             return !isCanScollVertically(recyclerView);
         }
 
+        /**
+         * 列表中第一个item显示的时候也不让他自动加载
+         *
+         * @param recyclerView
+         * @return
+         */
         private boolean canTriggerLoadMore(EasyRecyclerView recyclerView) {
             View lastChild = recyclerView.getChildAt(recyclerView.getChildCount() - 1);//recyclerView 中的最后一个item
             int position = recyclerView.getChildLayoutPosition(lastChild);//recyclerView 中的最后一个position
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             int totalItemCount = layoutManager.getItemCount();//全部item的个数
             return totalItemCount - recyclerView.getRestItemCountToLoadMore() <= position + 1;//滚动到最后一个了
+        }
+
+        /**
+         * 第一个Item 是否显示，防止刷新的时候加载被调用
+         * @param recyclerView
+         * @return
+         */
+        private boolean isFirstItemVisible(EasyRecyclerView recyclerView) {
+            View firstChild = recyclerView.getChildAt(0);//recyclerView 中的第一个item
+            int position = recyclerView.getChildLayoutPosition(firstChild);//recyclerView 中的第一个itemposition
+            return position == 0;//第一个Item 是否显示
         }
 
         private boolean isCanScollVertically(RecyclerView recyclerView) {
