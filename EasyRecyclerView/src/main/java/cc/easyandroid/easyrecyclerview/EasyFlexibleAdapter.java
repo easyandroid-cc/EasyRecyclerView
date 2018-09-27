@@ -233,6 +233,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      */
     @IntRange(from = 0)
     public int getGlobalPositionOf(@NonNull IFlexible item) {
+        int headerIndex = mHeaderItems.indexOf(item);
+        if (headerIndex >= 0) {
+            return headerIndex + 1;
+        }
         return (item != null && mItems != null && !mItems.isEmpty()) ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : 0;
     }
 

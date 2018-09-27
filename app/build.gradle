@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "cc.easyandroid.easyrecyclerview.demo"
@@ -20,11 +20,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
 //    compile 'com.android.support:support-v4:23.4.0'
 //    compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile project(':EasyRecyclerView')
+    implementation project(':EasyRecyclerView')
 //    compile 'jp.wasabeef:recyclerview-animators:2.2.3'
 }
