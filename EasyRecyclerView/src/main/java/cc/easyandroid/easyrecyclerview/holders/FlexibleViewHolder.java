@@ -49,7 +49,7 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
                 toggleSelection(position);
                 toggleActivation(position);
             }
-            mAdapter.mItemClickListener.onItemClick(position);
+            mAdapter.mItemClickListener.onItemClick(view,position);
         }
     }
 
@@ -72,7 +72,7 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
                 toggleSelection(position);
                 toggleActivation(position);
             }
-            mAdapter.mItemLongClickListener.onItemLongClick(position);
+            mAdapter.mItemLongClickListener.onItemLongClick(view,position);
             return true;
         }
         return false;
@@ -82,7 +82,7 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
     protected void toggleActivation(int position) {
         boolean selected = mAdapter.isSelected(position);
         System.out.println("selected=" + selected + "  position=" + position);
-//        itemView.setActivated(selected);
+ //       itemView.setActivated(selected);
     }
 
     public void toggleSelection(int position) {

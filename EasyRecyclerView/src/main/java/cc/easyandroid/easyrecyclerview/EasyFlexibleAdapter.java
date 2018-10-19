@@ -734,12 +734,12 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
 
     public interface OnItemClickListener {
 
-        boolean onItemClick(int position);
+        boolean onItemClick(View view,int position);
     }
 
     public interface OnItemLongClickListener {
 
-        void onItemLongClick(int position);
+        void onItemLongClick(View view,int position);
     }
 
     /**
