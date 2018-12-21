@@ -37,6 +37,11 @@ public class MyHolder implements IFlexible<MyHolder.ViewHolder> {
 
     }
 
+    @Override
+    public int getSpanSize(int spanCount, int position) {
+        return 1;
+    }
+
     private int iiii = 0;
 
     public MyHolder(int i) {
@@ -90,7 +95,7 @@ public class MyHolder implements IFlexible<MyHolder.ViewHolder> {
             int count = mAdapter.getGlobalPositionOf(holder);
 //            int count = mAdapter.getGlobalPositionOf(MyHolder.this);
             System.out.println("cgp count="+count);
-            mAdapter.removeItem(MyHolder.this);
+           // mAdapter.removeItem(MyHolder.this);
             if (toast != null) {
                 toast.setText( getAdapterPosition() + "");
             } else {

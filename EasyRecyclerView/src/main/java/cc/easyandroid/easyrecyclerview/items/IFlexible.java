@@ -1,5 +1,6 @@
 package cc.easyandroid.easyrecyclerview.items;
 
+import android.support.annotation.IntRange;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 
 /**
  * 自定义的ViewHolder
+ *
  * @param <VH>
  */
 public interface IFlexible<VH extends RecyclerView.ViewHolder> {
@@ -43,13 +45,16 @@ public interface IFlexible<VH extends RecyclerView.ViewHolder> {
      */
     void setSelectable(boolean selectable);
 
-	@LayoutRes
-	int getLayoutRes();
+    @IntRange(from = 1)
+    int getSpanSize(int spanCount, int position);
+
+    @LayoutRes
+    int getLayoutRes();
 
 
-	VH createViewHolder(EasyFlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent);
+    VH createViewHolder(EasyFlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent);
 
 
-	void bindViewHolder(EasyFlexibleAdapter adapter, VH holder, int position, List payloads);
+    void bindViewHolder(EasyFlexibleAdapter adapter, VH holder, int position, List payloads);
 
 }

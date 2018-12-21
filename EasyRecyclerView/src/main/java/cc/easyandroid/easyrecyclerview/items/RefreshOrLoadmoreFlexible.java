@@ -20,6 +20,11 @@ public class RefreshOrLoadmoreFlexible extends AbstractEasyFlexibleItem implemen
     }
 
     @Override
+    public int getSpanSize(int spanCount, int position) {
+        return spanCount;
+    }
+
+    @Override
     public int getLayoutRes() {
         return hashCode();
     }

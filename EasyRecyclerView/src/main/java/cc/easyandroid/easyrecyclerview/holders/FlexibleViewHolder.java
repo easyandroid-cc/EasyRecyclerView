@@ -1,6 +1,7 @@
 package cc.easyandroid.easyrecyclerview.holders;
 
 import android.support.annotation.CallSuper;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -82,7 +83,11 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
     protected void toggleActivation(int position) {
         boolean selected = mAdapter.isSelected(position);
         System.out.println("selected=" + selected + "  position=" + position);
- //       itemView.setActivated(selected);
+        if (!mAdapter.isSelectable(position)) return;
+        // [De]Activate the view
+//        if (getContentView().isActivated() && !selected || !getContentView().isActivated() && selected) {
+//            getContentView().setActivated(selected);
+//        }
     }
 
     public void toggleSelection(int position) {

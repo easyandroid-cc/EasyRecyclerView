@@ -12,12 +12,14 @@ import android.widget.Checkable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import cc.easyandroid.easyrecyclerview.core.IStateAdapter;
+import cc.easyandroid.easyrecyclerview.holders.FlexibleViewHolder;
 
 /**
  * This class provides a set of standard methods to handle the selection on the items of an Adapter.
@@ -48,7 +50,8 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter implements 
     public @interface Mode {
     }
 
-    private Set<Integer> mSelectedPositions;
+    private final Set<Integer> mSelectedPositions;
+    private final Set<FlexibleViewHolder> mBoundViewHolders;
     private int mMode;
     protected RecyclerView mRecyclerView;
 
@@ -61,6 +64,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter implements 
      */
     public SelectableAdapter() {
         mSelectedPositions = new TreeSet<Integer>();
+        mBoundViewHolders = new HashSet<>();
         mMode = MODE_IDLE;
     }
 
@@ -177,7 +181,8 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter implements 
     public void toggleSelection(int position) {
         if (position < 0) return;
         if (mMode == MODE_SINGLE) {
-            mSelectedPositions.clear();
+//            mSelectedPositions.clear();
+            clearSelection();
         }
 
         boolean contains = mSelectedPositions.contains(position);
@@ -248,6 +253,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter implements 
      * choice mode is active.
      */
     void updateOnScreenCheckedViews() {
+
         final int count = getRecyclerView().getChildCount();
         final boolean useActivated = getRecyclerView().getContext().getApplicationInfo().targetSdkVersion
                 >= android.os.Build.VERSION_CODES.HONEYCOMB;

@@ -45,6 +45,11 @@ public abstract class AbstractEasyFlexibleItem<VH extends RecyclerView.ViewHolde
     }
 
     @Override
+    public int getSpanSize(int spanCount, int position) {
+        return spanCount;
+    }
+
+    @Override
     public void setSelectable(boolean selectable) {
         mSelectable = selectable;
     }
