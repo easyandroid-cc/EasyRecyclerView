@@ -3,6 +3,9 @@ package cc.easyandroid.easyrecyclerview;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -27,6 +30,7 @@ import cc.easyandroid.easyrecyclerview.animation.BaseAnimation;
 import cc.easyandroid.easyrecyclerview.animation.ViewHelper;
 import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
 import cc.easyandroid.easyrecyclerview.helper.StickyHeaderHelper;
+import cc.easyandroid.easyrecyclerview.items.IExpandable;
 import cc.easyandroid.easyrecyclerview.items.IFlexible;
 import cc.easyandroid.easyrecyclerview.items.IHeader;
 import cc.easyandroid.easyrecyclerview.items.IHeaderSpanFill;
@@ -75,7 +79,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     private BaseAnimation mAnimation = null;//
 
     private boolean headersSticky = false;
-
+    /* Deleted items and RestoreList (Undo) */
     protected OnStickyHeaderChangeListener mStickyHeaderChangeListener;
 
     private Object mEasyTag;
@@ -94,6 +98,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         initializeListeners(listeners);
         //Get notified when items are inserted or removed (it adjusts selected positions)
         registerAdapterDataObserver(new AdapterDataObserver());
+
     }
 
     public void setItems(List<T> items) {
@@ -485,6 +490,180 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     }
 
     /**
+     * Collapses an {@code IExpandable} item that is already expanded <u>and</u> if no subItem
+     * is selected.
+     * <p>Multilevel option behaviours:
+     * <ul>
+     * <li>{@code IExpandable} subItems, that are expanded, can be recursively collapsed,
+     * <li>You can set the minimum level to auto-collapse siblings,
+     * </ul></p>
+     * Parent won't be notified.
+     *
+     * @param position the position of the item to collapse
+     * @return the number of subItems collapsed
+     * @since 5.0.0-b1
+     */
+    public int collapse(@IntRange(from = 0) int position) {
+        return collapse(position, false);
+    }
+
+    /**
+     * Same behaviors as {@link #collapse(int)} with possibility to notify/update the parent.
+     * TODO //使用child Item 的不能使用单选和多选模式
+     *
+     * @param position     the position of the item to collapse
+     * @param notifyParent notify the parent with {@link Payload#COLLAPSED}
+     * @return the number of subItems collapsed
+     * @since 5.0.0-b1
+     */
+    public int collapse(@IntRange(from = 0) int position, boolean notifyParent) {
+        IFlexible item = getItem(position);
+        if (!isExpandable(item)) return 0;
+
+        IExpandable expandable = (IExpandable) item;
+        // Take the current subList (will improve the performance when collapseAll)
+        List<T> subItems = getExpandableList(expandable, true);
+        int subItemsCount = subItems.size();
+
+        if (expandable.isExpanded() && subItemsCount > 0) {
+
+            mItems.removeAll(subItems);
+            subItemsCount = subItems.size();
+            // Save expanded state
+            expandable.setExpanded(false);
+
+            // Collapse!
+            if (notifyParent) notifyItemChanged(position, Payload.COLLAPSED);
+            notifyItemRangeRemoved(position + 1, subItemsCount);
+
+        }
+        return subItemsCount;
+    }
+
+
+    public int expand(@IntRange(from = 0) int position) {
+        return expand(position, false);
+    }
+
+    public int expand(@IntRange(from = 0) int position, boolean notifyParent) {
+        return expand(position, false, false, notifyParent);
+    }
+
+    public int expand(T item) {
+        return expand(getGlobalPositionOf(item), false, false, true);
+    }
+
+
+    public int expand(T item, boolean init) {
+        return expand(getGlobalPositionOf(item), false, init, false);
+    }
+
+    private int expand(int position, boolean expandAll, boolean init, boolean notifyParent) {
+        IFlexible item = getItem(position);
+        if (!isExpandable(item)) return 0;
+
+        IExpandable expandable = (IExpandable) item;
+        if (!hasSubItems(expandable)) {
+            expandable.setExpanded(false); // Clear the expanded flag
+            return 0;
+        }
+
+        int subItemsCount = 0;
+        if (init || !expandable.isExpanded()) {
+
+            // Collapse others expandable if configured so Skip when expanding all is requested
+            // Fetch again the new position after collapsing all!!
+            if (!expandAll) {
+                position = getGlobalPositionOf(item);
+            }
+
+            // Every time an expansion is requested, subItems must be taken from the
+            // original Object and without the subItems marked hidden (removed)
+            List<T> subItems = getExpandableList(expandable, true);
+            mItems.addAll(position, subItems);
+            subItemsCount = subItems.size();
+            // Save expanded state
+            expandable.setExpanded(true);
+
+            // Expand!
+            if (notifyParent) notifyItemChanged(position, Payload.EXPANDED);
+            notifyItemRangeInserted(position, subItemsCount);
+        }
+        return subItemsCount;
+    }
+
+
+    /**
+     * @param expandable the parent item
+     * @return the list of the subItems not hidden
+     * @since 5.0.0-b1
+     */
+    @NonNull
+    private List<T> getExpandableList(IExpandable expandable, boolean isRecursive) {
+        List<T> subItems = new ArrayList<>();
+        if (expandable != null && hasSubItems(expandable)) {
+            List<T> allSubItems = expandable.getSubItems();
+            for (T subItem : allSubItems) {
+                // Pick up only no hidden items (doesn't get into account the filtered items)
+                if (!subItem.isHidden()) {
+                    // Add the current subitem
+                    subItems.add(subItem);
+                    // If expandable, expanded, and of non-zero size, recursively add sub-subItems
+                    if (isRecursive && isExpanded(subItem) &&
+                            ((IExpandable) subItem).getSubItems().size() > 0) {
+                        subItems.addAll(getExpandableList((IExpandable) subItem, true));
+                    }
+                }
+            }
+        }
+        return subItems;
+    }
+
+
+    public boolean hasSubItems(IExpandable expandable) {
+        return expandable != null && expandable.getSubItems() != null &&
+                expandable.getSubItems().size() > 0;
+    }
+
+    /**
+     * Checks if the provided item is an {@link IExpandable} instance and is expanded.
+     *
+     * @param item the item to check
+     * @return true if the item implements {@link IExpandable} interface and its property has
+     * {@code expanded = true}
+     * @since 5.0.0-b1
+     */
+    public boolean isExpanded(@Nullable IFlexible item) {
+        return isExpandable(item) && ((IExpandable) item).isExpanded();
+    }
+
+    /**
+     * @param position the position of the item to check
+     * @return true if the item implements {@link IExpandable} interface and its property has
+     * {@code expanded = true}
+     * @since 5.0.0-b1
+     */
+    public boolean isExpanded(@IntRange(from = 0) int position) {
+        return isExpanded(getItem(position));
+    }
+
+    /**
+     * Checks if the provided item is an {@link IExpandable} instance.
+     *
+     * @param item the item to check
+     * @return true if the item implements {@link IExpandable} interface, false otherwise
+     * @since 5.0.0-b1
+     */
+    public boolean isExpandable(@Nullable IFlexible item) {
+        return item instanceof IExpandable;
+    }
+
+    public boolean isItemEnabled(int position) {
+        IFlexible item = getItem(position);
+        return item != null && item.isEnabled();
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param position Position of the item to toggle the selection status for.
@@ -734,12 +913,12 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
 
     public interface OnItemClickListener {
 
-        boolean onItemClick(View view,int position);
+        boolean onItemClick(View view, int position);
     }
 
     public interface OnItemLongClickListener {
 
-        void onItemLongClick(View view,int position);
+        void onItemLongClick(View view, int position);
     }
 
     /**
@@ -754,5 +933,26 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
          */
         void onStickyHeaderChange(int sectionIndex);
     }
+
+
+    /**
+     * Retrieves all the original children of the specified parent, filtering out all the
+     * deleted children if any.
+     *
+     * @param expandable the parent item
+     * @return a non-null list of the original children minus the deleted children if some are
+     * pending removal.
+     * @since 5.0.0-b1
+     */
+    @NonNull
+    public final List<T> getCurrentChildren(@Nullable IExpandable expandable) {
+        // Check item and subItems existence
+        if (expandable == null || !hasSubItems(expandable))
+            return new ArrayList<>();
+        // Take a copy of the subItems list
+        List<T> subItems = new ArrayList<>(expandable.getSubItems());
+        return subItems;
+    }
+
 
 }

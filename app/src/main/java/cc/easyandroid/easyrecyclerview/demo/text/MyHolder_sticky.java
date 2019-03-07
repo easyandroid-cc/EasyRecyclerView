@@ -28,6 +28,16 @@ public class MyHolder_sticky implements IHeader, IHeaderSpanFill {
     }
 
     @Override
+    public boolean isHidden() {
+        return false;
+    }
+
+    @Override
+    public void setHidden(boolean hidden) {
+
+    }
+
+    @Override
     public boolean isSelectable() {
         return false;
     }

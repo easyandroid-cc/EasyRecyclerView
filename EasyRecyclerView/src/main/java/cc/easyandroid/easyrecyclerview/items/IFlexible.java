@@ -30,7 +30,22 @@ public interface IFlexible<VH extends RecyclerView.ViewHolder> {
      * @param enabled false to disable all operations on this item
      */
     void setEnabled(boolean enabled);
+    /**
+     * (Internal usage).
+     * When and item has been deleted (with Undo) or has been filtered out by the
+     * adapter, then, it has hidden status.
+     *
+     * @return true for hidden item, (default) false for the shown one.
+     */
+    boolean isHidden();
 
+    /**
+     * Setter to change hidden behaviour. Useful while filtering this item.
+     * Default value is false.
+     *
+     * @param hidden true if this item should remain hidden, false otherwise
+     */
+    void setHidden(boolean hidden);
     /**
      * Returns if the item can be selected.
      *

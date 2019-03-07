@@ -19,6 +19,7 @@ public class RefreshOrLoadmoreFlexible extends AbstractEasyFlexibleItem implemen
         this.mRefreshOrLoadmore = refreshOrLoadmore;
     }
 
+
     @Override
     public int getSpanSize(int spanCount, int position) {
         return spanCount;

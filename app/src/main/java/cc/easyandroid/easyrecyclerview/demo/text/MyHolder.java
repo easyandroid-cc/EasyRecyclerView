@@ -28,6 +28,16 @@ public class MyHolder implements IFlexible<MyHolder.ViewHolder> {
     }
 
     @Override
+    public boolean isHidden() {
+        return false;
+    }
+
+    @Override
+    public void setHidden(boolean hidden) {
+
+    }
+
+    @Override
     public boolean isSelectable() {
         return true;
     }
@@ -46,6 +56,21 @@ public class MyHolder implements IFlexible<MyHolder.ViewHolder> {
 
     public MyHolder(int i) {
         iiii = i;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MyHolder myHolder = (MyHolder) o;
+
+        return iiii == myHolder.iiii;
+    }
+
+    @Override
+    public int hashCode() {
+        return iiii;
     }
 
     @Override

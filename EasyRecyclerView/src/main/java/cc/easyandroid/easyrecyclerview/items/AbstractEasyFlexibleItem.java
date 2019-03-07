@@ -17,7 +17,7 @@ public abstract class AbstractEasyFlexibleItem<VH extends RecyclerView.ViewHolde
     private static final String MAPPING_ILLEGAL_STATE = " is not implemented. If you want EasyFlexibleAdapter creates and binds ViewHolder for you, you must override and implement the method ";
 
     /* Item flags recognized by the FlexibleAdapter */
-    protected boolean mEnabled = true, mSelectable = true;
+    protected boolean mEnabled = true, mSelectable = true, mHidden = false;
 
     @Override
     public boolean equals(Object o) {
@@ -52,6 +52,16 @@ public abstract class AbstractEasyFlexibleItem<VH extends RecyclerView.ViewHolde
     @Override
     public void setSelectable(boolean selectable) {
         mSelectable = selectable;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return mHidden;
+    }
+
+    @Override
+    public void setHidden(boolean hidden) {
+        this.mHidden = hidden;
     }
 
     /**

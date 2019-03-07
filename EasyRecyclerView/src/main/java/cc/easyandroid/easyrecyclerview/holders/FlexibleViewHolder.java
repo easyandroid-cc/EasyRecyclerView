@@ -46,11 +46,12 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
             if (EasyFlexibleAdapter.DEBUG)
                 Log.v(TAG, "onClick on position " + position);
             //Get the permission to activate the View from user
-            if (position != RecyclerView.NO_POSITION) {
-                toggleSelection(position);
-                toggleActivation(position);
+            if (mAdapter.mItemClickListener.onItemClick(view, position)) {
+                if (position != RecyclerView.NO_POSITION) {
+                    toggleSelection(position);
+                    toggleActivation(position);
+                }
             }
-            mAdapter.mItemClickListener.onItemClick(view,position);
         }
     }
 
@@ -73,7 +74,7 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
                 toggleSelection(position);
                 toggleActivation(position);
             }
-            mAdapter.mItemLongClickListener.onItemLongClick(view,position);
+            mAdapter.mItemLongClickListener.onItemLongClick(view, position);
             return true;
         }
         return false;
