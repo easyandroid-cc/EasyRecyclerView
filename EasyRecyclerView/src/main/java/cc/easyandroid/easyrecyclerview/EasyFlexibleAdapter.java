@@ -587,7 +587,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
 
             // Expand!
             if (notifyParent) notifyItemChanged(position, Payload.EXPANDED);
-            notifyItemRangeInserted(position, subItemsCount);
+            notifyItemRangeInserted(position+1, subItemsCount);
         }
         return subItemsCount;
     }
