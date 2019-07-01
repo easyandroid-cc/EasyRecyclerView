@@ -41,6 +41,10 @@ public class EasyProgressViewGroup extends ViewGroup implements EasyProgressLayo
         showErrorView(null);
     }
 
+    public View getEmptyView() {
+        return emptyView;
+    }
+
     public void showLoadingView(String message) {
         updata(false);
         mProgressHander.showLoadingView(message);

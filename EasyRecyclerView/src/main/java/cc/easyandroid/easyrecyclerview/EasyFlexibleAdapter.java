@@ -236,13 +236,12 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      * @param item
      * @return
      */
-    @IntRange(from = 0)
     public int getGlobalPositionOf(@NonNull IFlexible item) {
         int headerIndex = mHeaderItems.indexOf(item);
         if (headerIndex >= 0) {
-            return headerIndex + 1;
+            return headerIndex + getFirstHeaderViewCount();
         }
-        return (item != null && mItems != null && !mItems.isEmpty()) ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : 0;
+        return (item != null && mItems != null && !mItems.isEmpty()) ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : -1;
     }
 
     public boolean areHeadersSticky() {
@@ -367,14 +366,16 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     }
 
     public boolean addItem(T item) {
+        return addItems(Collections.singletonList(item));
+    }
+
+    public boolean addItem(@IntRange(from = 0) int position, @NonNull T item) {
         if (item == null) {
-            Log.e(TAG, "No items to add!");
+            Log.e(TAG, "addItem No item to add!");
             return false;
         }
-        if (DEBUG) Log.v(TAG, "addItem delegates addition to addItems!");
-        List<T> items = new ArrayList<>(1);
-        items.add(item);
-        return addItems(items);
+        Log.v(TAG, "addItem delegates addition to addItems!");
+        return addItems(position, Collections.singletonList(item));
     }
 
     public boolean removeItem(IFlexible item) {
@@ -473,16 +474,37 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      * @return boolean
      */
     public boolean addItems(List<T> items) {
+        return addItems(getItemCount()  -getLastFooterViewCount() - getFooterItemCount(), items);
+    }
 
+    public boolean addItems(@IntRange(from = 0) int position, @NonNull List<T> items) {
         if (items == null || items.isEmpty()) {
-            Log.e(TAG, "No items to add!");
+            Log.e(TAG, "addItems No items to add!");
             return false;
         }
-        //Insert Items
-        mItems.addAll(items);
-        //Notify range addition
-        notifyItemRangeInserted(getItemCount() - items.size() - getFooterItemCount(), items.size());//
+        int initialCount = getItemCount(); // Count only main items!
+        if (position < 0) {
+            Log.w(TAG, "addItems Position is negative! adding items to the end");
+            position = initialCount;
+        }
+        // Insert the items properly
+        performInsert(position, items, true);
         return true;
+    }
+
+    private void performInsert(int position, List<T> items, boolean notify) {
+        int itemCount = getItemCount();
+        if (position < itemCount) {
+            mItems.addAll(position, items);
+        } else {
+            mItems.addAll(items);
+            position = itemCount;
+        }
+        // Notify range addition
+        if (notify) {
+            //Log.d(TAG,"addItems on position=%s itemCount=%s", position, items.size());
+            notifyItemRangeInserted(position, items.size());
+        }
     }
 
     public void setItemAnimationEnable(boolean enable) {
@@ -587,7 +609,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
 
             // Expand!
             if (notifyParent) notifyItemChanged(position, Payload.EXPANDED);
-            notifyItemRangeInserted(position+1, subItemsCount);
+            notifyItemRangeInserted(position + 1, subItemsCount);
         }
         return subItemsCount;
     }

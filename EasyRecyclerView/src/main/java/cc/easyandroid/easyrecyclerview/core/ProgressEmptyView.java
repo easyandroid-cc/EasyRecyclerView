@@ -57,6 +57,7 @@ public class ProgressEmptyView implements IProgressHander {
             mEmptyContainer = (ViewGroup) mLayoutInflater.inflate(easyEmptyContainerId, null);
         }
         mEmptyContainer.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        mEmptyContainer.setVisibility(View.GONE);
         a.recycle();
 
         initProgress();
@@ -175,7 +176,6 @@ public class ProgressEmptyView implements IProgressHander {
     }
 
     @Override
-
     public void showLoadingView(String message) {
         showView(State.LOADING, message);
     }

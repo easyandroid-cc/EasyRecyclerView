@@ -102,6 +102,10 @@ public class EasyProgressRecyclerView extends RecyclerView {
 
     private View emptyView;
 
+    public View getEmptyView() {
+        return emptyView;
+    }
+
     private AdapterDataObserver emptyObserver = new AdapterDataObserver() {
         public void onItemRangeChanged(int positionStart, int itemCount) {
             updata();
@@ -136,13 +140,11 @@ public class EasyProgressRecyclerView extends RecyclerView {
                     return;
                 }
             }
-
+            if (emptyView != null) {
+                emptyView.setVisibility(View.VISIBLE);
+                EasyProgressRecyclerView.this.setVisibility(View.GONE);
+            }
         }
-        if (emptyView != null) {
-            emptyView.setVisibility(View.VISIBLE);
-            EasyProgressRecyclerView.this.setVisibility(View.GONE);
-        }
-
     }
 
 

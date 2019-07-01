@@ -99,6 +99,11 @@ public class EasyProgressViewPager extends ViewPager {
 
     private View emptyView;
 
+
+    public View getEmptyView() {
+        return emptyView;
+    }
+
     private DataSetObserver emptyObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
