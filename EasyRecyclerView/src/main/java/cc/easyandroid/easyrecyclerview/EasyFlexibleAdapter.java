@@ -495,10 +495,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     private void performInsert(int position, List<T> items, boolean notify) {
         int itemCount = getItemCount();
         if (position < itemCount) {
-            mItems.addAll(position, items);
+            mItems.addAll(position-getHeaderItemCount()-getFirstHeaderViewCount(), items);
         } else {
             mItems.addAll(items);
-            position = itemCount;
+            position = itemCount+getFirstHeaderViewCount()+getHeaderItemCount();
         }
         // Notify range addition
         if (notify) {
