@@ -1,10 +1,9 @@
 package cc.easyandroid.easyrecyclerview.demo.text;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +11,9 @@ import java.util.List;
 import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 import cc.easyandroid.easyrecyclerview.demo.R;
 import cc.easyandroid.easyrecyclerview.holders.ExpandableViewHolder;
-import cc.easyandroid.easyrecyclerview.holders.FlexibleViewHolder;
-import cc.easyandroid.easyrecyclerview.items.AbstractEasyFlexibleItem;
 import cc.easyandroid.easyrecyclerview.items.AbstractExpandableItem;
-import cc.easyandroid.easyrecyclerview.items.IExpandable;
 import cc.easyandroid.easyrecyclerview.items.IFlexible;
 import cc.easyandroid.easyrecyclerview.items.IHeader;
-import cc.easyandroid.easyrecyclerview.items.IHeaderSpanFill;
 
 /**
  * Created by cgpllx on 2016/9/9.

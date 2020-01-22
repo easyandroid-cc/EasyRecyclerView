@@ -1,12 +1,9 @@
 package cc.easyandroid.easyrecyclerview.holders;
 
-import android.support.annotation.CallSuper;
+import androidx.annotation.CallSuper;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 
 import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
-import cc.easyandroid.easyrecyclerview.Payload;
 
 
 public abstract class ExpandableViewHolder extends FlexibleViewHolder {

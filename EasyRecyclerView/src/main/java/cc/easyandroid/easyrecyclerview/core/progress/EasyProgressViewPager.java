@@ -2,8 +2,8 @@ package cc.easyandroid.easyrecyclerview.core.progress;
 
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;

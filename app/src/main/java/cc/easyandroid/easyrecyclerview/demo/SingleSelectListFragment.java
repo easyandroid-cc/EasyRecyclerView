@@ -1,10 +1,10 @@
 package cc.easyandroid.easyrecyclerview.demo;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +20,9 @@ import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
 import cc.easyandroid.easyrecyclerview.demo.anim.AlphaInAnimation;
-import cc.easyandroid.easyrecyclerview.demo.dummy.DummyContent;
 import cc.easyandroid.easyrecyclerview.demo.text.MyHolder;
 import cc.easyandroid.easyrecyclerview.demo.text.MyHolder_sticky;
 import cc.easyandroid.easyrecyclerview.items.IFlexible;
-import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
-import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
 public class SingleSelectListFragment extends Fragment implements EasyFlexibleAdapter.OnItemClickListener {
     Toast toast;

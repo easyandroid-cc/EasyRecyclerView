@@ -1,8 +1,8 @@
 package cc.easyandroid.easyrecyclerview.items;
 
-import android.support.annotation.IntRange;
-import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.IntRange;
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
