@@ -3,6 +3,7 @@ package cc.easyandroid.easyrecyclerview.demo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -89,8 +90,8 @@ public class ListFragment extends Fragment {
 
     private void setupEasyRecyclerView(EasyRecyclerView recyclerView) {
 //        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-//          recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(), 2));
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
+          recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(), 3));
+//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setRestItemCountToLoadMore(100);
 
         recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线

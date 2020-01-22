@@ -60,6 +60,12 @@ public interface IFlexible<VH extends RecyclerView.ViewHolder> {
      */
     void setSelectable(boolean selectable);
 
+    /**
+     *  Individual item's span size to use only with {@code GridLayoutManager}.
+     * @param spanCount
+     * @param position
+     * @return
+     */
     @IntRange(from = 1)
     int getSpanSize(int spanCount, int position);
 

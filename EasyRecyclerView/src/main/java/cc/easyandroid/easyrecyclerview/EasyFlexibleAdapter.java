@@ -241,6 +241,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         if (headerIndex >= 0) {
             return headerIndex + getFirstHeaderViewCount();
         }
+        int footerIndex = mFooterItems.indexOf(item);
+        if (footerIndex >= 0) {
+            return getFirstHeaderViewCount() + getHeaderItemCount() + getNormalItemCount() + footerIndex;
+        }
         return (item != null && mItems != null && !mItems.isEmpty()) ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : -1;
     }
 
@@ -385,7 +389,16 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         }
         //Insert Items
         int posion = getGlobalPositionOf(item);
-        mItems.remove(item);
+        if (posion < 0 || posion > getItemCount()) {
+            return false;
+        }
+        if (posion < getFirstHeaderViewCount() + getHeaderItemCount()) {
+            mHeaderItems.remove(item);
+        } else if (posion < getFirstHeaderViewCount() + getHeaderItemCount() + getNormalItemCount()) {
+            mItems.remove(item);
+        } else {
+            mFooterItems.remove(item);
+        }
         //Notify range addition
         notifyItemRangeRemoved(posion, 1);//
         return true;
@@ -412,6 +425,9 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     public boolean removeHeaderItem(int globalPosition) {
         IFlexible item = getItem(globalPosition);
         return removeHeaderItem(item);
+    }
+    public void doWorks(Object o){
+
     }
 
     public boolean addHeaderItem(IFlexible headerItem) {
@@ -444,11 +460,28 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
             Log.e(TAG, "No items to add!");
             return false;
         }
+        int position = getHeaderItemCount() + getFirstHeaderViewCount();
+        return addHeaderItems(position, items);
+    }
+
+    /**
+     * @param items items
+     */
+    public boolean addHeaderItems(@IntRange(from = 0) int position, List<IFlexible> items) {
+        if (items == null || items.isEmpty()) {
+            Log.e(TAG, "No items to add!");
+            return false;
+        }
         //Insert Items
-        mHeaderItems.addAll(items);
+        int itemCount = mHeaderItems.size();
+        if (position - getFirstHeaderViewCount() < itemCount) {
+            mHeaderItems.addAll(position - getFirstHeaderViewCount(), items);
+        } else {
+            mHeaderItems.addAll(items);
+        }
 
         //Notify range addition
-        notifyItemRangeInserted(getHeaderItemCount() - getFirstHeaderViewCount() - 1, items.size());
+        notifyItemRangeInserted(position, items.size());
         return true;
     }
 
@@ -460,10 +493,21 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
             Log.e(TAG, "No items to add!");
             return false;
         }
+        return addFooterItems(getItemCount() - getLastFooterViewCount(), items);
+    }
+
+    /**
+     * @param items items
+     */
+    public boolean addFooterItems(@IntRange(from = 0) int position, List<IFlexible> items) {
+        if (items == null || items.isEmpty()) {
+            Log.e(TAG, "No items to add!");
+            return false;
+        }
         //Insert Items
-        mFooterItems.addAll(items);
+        mFooterItems.addAll(position - getFirstHeaderViewCount() - getHeaderItemCount() - getNormalItemCount(), items);
         //Notify range addition
-        notifyItemInserted(getItemCount() - 1);//
+        notifyItemInserted(position);//
         return true;
     }
 
@@ -474,7 +518,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      * @return boolean
      */
     public boolean addItems(List<T> items) {
-        return addItems(getItemCount()  -getLastFooterViewCount() - getFooterItemCount(), items);
+        return addItems(getItemCount() - getLastFooterViewCount() - getFooterItemCount(), items);
     }
 
     public boolean addItems(@IntRange(from = 0) int position, @NonNull List<T> items) {
@@ -495,10 +539,10 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     private void performInsert(int position, List<T> items, boolean notify) {
         int itemCount = getItemCount();
         if (position < itemCount) {
-            mItems.addAll(position-getHeaderItemCount()-getFirstHeaderViewCount(), items);
+            mItems.addAll(position - getHeaderItemCount() - getFirstHeaderViewCount(), items);
         } else {
             mItems.addAll(items);
-            position = itemCount+getFirstHeaderViewCount()+getHeaderItemCount();
+            position = itemCount + getFirstHeaderViewCount() + getHeaderItemCount();
         }
         // Notify range addition
         if (notify) {
@@ -728,9 +772,26 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     }
 
     public void clearItems() {
-        if (getNormalItemCount() > 0) {
+        int count = getNormalItemCount();
+        if (count > 0) {
             mItems.clear();
-            notifyDataSetChanged();
+            notifyItemRangeRemoved(getFirstHeaderViewCount() + getHeaderItemCount(), count);
+        }
+    }
+
+    public void clearFooters() {
+        int count = getFooterItemCount();
+        if (count > 0) {
+            mFooterItems.clear();
+            notifyItemRangeRemoved(getFirstHeaderViewCount() + getHeaderItemCount() + getNormalItemCount(), count);
+        }
+    }
+
+    public void clearHeaders() {
+        int count = getHeaderItemCount();
+        if (count > 0) {
+            mHeaderItems.clear();
+            notifyItemRangeRemoved(getFirstHeaderViewCount(), count);
         }
     }
 
@@ -825,11 +886,12 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
                 @Override
                 public int getSpanSize(int position) {
                     IFlexible iFlexible = getItem(position);
-                    if (iFlexible != null && iFlexible instanceof IHeaderSpanFill) {
-                        return gridManager.getSpanCount();
-                    } else {
-                        return 1;
-                    }
+                    return iFlexible.getSpanSize(gridManager.getSpanCount(), position);
+//                    if (iFlexible != null && iFlexible instanceof IHeaderSpanFill) {
+//                        return gridManager.getSpanCount();
+//                    } else {
+//                        return 1;
+//                    }
                 }
             });
         }

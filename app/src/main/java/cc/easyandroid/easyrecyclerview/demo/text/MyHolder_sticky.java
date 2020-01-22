@@ -49,7 +49,7 @@ public class MyHolder_sticky implements IHeader, IHeaderSpanFill {
 
     @Override
     public int getSpanSize(int spanCount, int position) {
-        return 1;
+        return spanCount;
     }
 
     private int iiii = 0;

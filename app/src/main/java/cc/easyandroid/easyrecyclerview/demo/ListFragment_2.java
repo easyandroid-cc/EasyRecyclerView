@@ -3,6 +3,7 @@ package cc.easyandroid.easyrecyclerview.demo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -42,7 +43,6 @@ public class ListFragment_2 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         adapter = new EasyFlexibleAdapter();
         adapter.setMode(EasyFlexibleAdapter.MODE_MULTI);
-//        adapter.set
 
 //        adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
 //            @Override
@@ -59,16 +59,18 @@ public class ListFragment_2 extends Fragment {
 //        });
 
         adapter.setItemAnimation(new AlphaInAnimation());
+
         initView(view);
+
         adapter.setStickyHeaders(true);
     }
 
     private void initView(View view) {
-        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.list);
+        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.list1);
 //        recyclerView.getRecycledViewPool().setMaxRecycledViews(R.layout.fragment_item, 0);
         setupEasyRecyclerView(recyclerView);
         setupRefreshListener(recyclerView);
-//        setupLoadMoreListener(recyclerView);
+      setupLoadMoreListener(recyclerView);
         recyclerView.autoRefresh();
 
     }
@@ -82,7 +84,7 @@ public class ListFragment_2 extends Fragment {
                     @Override
                     public void run() {
                         List<MyHolder> items = new ArrayList<MyHolder>();
-                        for (int i = 0; i < 100; i++) {
+                        for (int i = 0; i < 10; i++) {
                             items.add(new MyHolder(i + 200));
                         }
                         adapter.addItems(items);
@@ -110,14 +112,14 @@ public class ListFragment_2 extends Fragment {
 //                        adapter.setDatas(DummyContent.ITEMS);
                         List<IFlexible> items = new ArrayList<IFlexible>();
                         items.add(new MyHolder_sticky(22));
-                        for (int i = 0; i < 10; i++) {
+                        for (int i = 0; i < 5; i++) {
                             items.add(new MyHolder(i + 200));
                         }
 //                        adapter.addHeaderItem(new MyHolder_sticky(22));
                         items.add(new MyHolder_sticky(22));
-                        recyclerView.finishRefresh(true);
                         adapter.setItems(items);
                         adapter.notifyDataSetChanged();
+                        recyclerView.finishRefresh(true);
                     }
                 }, 1000);
             }
@@ -126,15 +128,16 @@ public class ListFragment_2 extends Fragment {
     }
 
     private void setupEasyRecyclerView(EasyRecyclerView recyclerView) {
-//        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-//          recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-          recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+//          recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+          recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+//          recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        recyclerView.setAdapter(adapter);
+
         recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线
         recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
         recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
 //        setupOnItemClickListener(adapter);
 //        recyclerView.getRecycledViewPool().setMaxRecycledViews();
     }

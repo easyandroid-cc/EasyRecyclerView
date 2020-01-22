@@ -11,17 +11,17 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            tools:context=".ListFragment"
-            tools:listitem="@layout/fragment_item" />
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/list"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--tools:context=".ListFragment"-->
+            <!--tools:listitem="@layout/fragment_item" />-->
 
         <cc.easyandroid.easyrecyclerview.EasyRecyclerView
             android:id="@+id/list1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             tools:context=".ListFragment"

@@ -14,8 +14,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 //      getSupportFragmentManager().beginTransaction().replace(R.id.content, new SingleSelectListFragment()).commit();
 //      getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment_5()).commit();
-       getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment()).commit();
- //       getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment_2()).commit();
+//       getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment_2()).commit();
 //        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment_3()).commit();
 
     }

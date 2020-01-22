@@ -12,7 +12,7 @@ import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 /**
  *
  */
-public class RefreshOrLoadmoreFlexible extends AbstractEasyFlexibleItem implements IHeaderSpanFill {
+public class RefreshOrLoadmoreFlexible extends AbstractEasyFlexibleItem  implements IHeaderSpanFill  {
     private View mRefreshOrLoadmore;
 
     public RefreshOrLoadmoreFlexible(View refreshOrLoadmore) {
