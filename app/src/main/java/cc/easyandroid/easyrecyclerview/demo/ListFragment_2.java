@@ -134,7 +134,9 @@ public class ListFragment_2 extends Fragment {
 
 
         recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线
-        recyclerView.setHeaderHander(new DefaultHeaderHander(getContext()));
+        DefaultHeaderHander defaultHeaderHander= new DefaultHeaderHander(getContext());
+        defaultHeaderHander.setLastUpdateTimeKey("key");
+        recyclerView.setHeaderHander(defaultHeaderHander);
         recyclerView.setFooterHander(new DefaultFooterHander(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);

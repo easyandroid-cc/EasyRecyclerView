@@ -33,7 +33,7 @@ public class DefaultHeaderHander implements EasyRecyclerView.HeaderHander {
     private ImageView headerArrow;
     private ProgressBar headerProgressbar;
 
-    public DefaultHeaderHander(Context context) {
+    public  DefaultHeaderHander(Context context) {
         this(context, R.drawable.progress_small, R.drawable.arrow);
     }
 
