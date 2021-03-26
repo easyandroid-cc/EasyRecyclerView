@@ -74,9 +74,18 @@ public class YourListFragment extends Fragment {
 
  
 ## 2. 调用
+
     //调用autoRefresh，他会立刻回调刷新方法，
     recyclerView.autoRefresh();
 
+
+## 修改默认 loading empty error view
+
+    <style name="easyRecyclerViewStyle">
+        <item name="easyLoadingView">@layout/loadingview</item>
+        <item name="easyEmptyView">@layout/emptyview</item>
+        <item name="easyErrorView">@layout/errorview</item>
+    </style>
 License
 -------
 
