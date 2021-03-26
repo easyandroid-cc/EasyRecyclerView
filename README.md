@@ -2,6 +2,7 @@ EasyRecyclerView
 ==========
 
 ![License MIT](https://img.shields.io/badge/Apache-2.0-brightgreen)
+![image](https://github.com/easyandroid-cc/EasyRecyclerView/blob/5dd3859d838b2b07c819fe5f3aee502173bd92c0/images/1.gif)
 
 
 ## 说明
