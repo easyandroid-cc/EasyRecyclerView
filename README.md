@@ -73,7 +73,7 @@ public class YourListFragment extends Fragment {
 ```
 
  
-##2. 调用
+## 2. 调用
     //调用autoRefresh，他会立刻回调刷新方法，
     recyclerView.autoRefresh();
 
