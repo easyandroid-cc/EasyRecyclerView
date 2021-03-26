@@ -131,8 +131,14 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
-        final int action = MotionEventCompat.getActionMasked(e);
-        final int actionIndex = MotionEventCompat.getActionIndex(e);
+
+        return super.onInterceptTouchEvent(e);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        final int action = e.getActionMasked();
+        final int actionIndex = e.getActionIndex();
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 mActivePointerId = MotionEventCompat.getPointerId(e, 0);
@@ -147,26 +153,10 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
                 mLastTouchY = (int) (MotionEventCompat.getY(e, actionIndex) + 0.5f);
             }
             break;
-            case MotionEventCompat.ACTION_POINTER_UP: {
+            case MotionEvent.ACTION_POINTER_UP: {
                 onPointerUp(e);
             }
             break;
-        }
-        return super.onInterceptTouchEvent(e);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        final int action = MotionEventCompat.getActionMasked(e);
-        switch (action) {
-            case MotionEvent.ACTION_DOWN: {
-//                if (!mScroller.isFinished()) {
-//                    mScroller.abortAnimation();
-//                }
-//                firstMove = true;
-//                needResetAnim = false;      //按下的时候关闭回弹
-//                return true;
-            }
         }
         return super.onTouchEvent(e);
     }

@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 import cc.easyandroid.easyrecyclerview.EasyRecycleViewDivider;
@@ -42,26 +43,23 @@ public class ListFragment_2 extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         adapter = new EasyFlexibleAdapter();
-        adapter.setMode(EasyFlexibleAdapter.MODE_MULTI);
+        adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position) {
+                if (toast != null) {
+                    toast.setText(position + "");
+                } else {
+                    toast = Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT);
+                }
+                toast.show();
 
-//        adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
-//            @Override
-//            public boolean onItemClick(int position) {
-//                if (toast != null) {
-//                    toast.setText(position + "");
-//                } else {
-//                    toast = Toast.makeText(getContext(), position + "", Toast.LENGTH_SHORT);
-//                }
-//                toast.show();
-//
-//                return false;
-//            }
-//        });
+                return false;
+            }
+        });
 
         adapter.setItemAnimation(new AlphaInAnimation());
-
+//        setupOnItemClickListener(adapter);
         initView(view);
-
         adapter.setStickyHeaders(true);
     }
 
@@ -116,7 +114,7 @@ public class ListFragment_2 extends Fragment {
                             items.add(new MyHolder(i + 200));
                         }
 //                        adapter.addHeaderItem(new MyHolder_sticky(22));
-                        items.add(new MyHolder_sticky(22));
+                        items.add(new MyHolder_sticky(new Random().nextInt(10)));
                         adapter.setItems(items);
                         adapter.notifyDataSetChanged();
                         recyclerView.finishRefresh(true);
@@ -128,8 +126,8 @@ public class ListFragment_2 extends Fragment {
     }
 
     private void setupEasyRecyclerView(EasyRecyclerView recyclerView) {
-//          recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-          recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+          recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+//          recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
 //          recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
 

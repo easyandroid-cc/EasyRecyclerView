@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -59,6 +60,21 @@ public class MyHolder_sticky implements IHeader, IHeaderSpanFill {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MyHolder_sticky that = (MyHolder_sticky) o;
+
+        return iiii == that.iiii;
+    }
+
+    @Override
+    public int hashCode() {
+        return iiii;
+    }
+
+    @Override
     public int getLayoutRes() {
         return R.layout.fragment_item_header;
     }
@@ -74,7 +90,7 @@ public class MyHolder_sticky implements IHeader, IHeaderSpanFill {
 //        adapter.get
         if (viewHolder instanceof MyHolder_sticky.ViewHolder) {
             ViewHolder viewHolder1 = (ViewHolder) viewHolder;
-//            viewHolder1.mIdView.setText("item Header " + iiii+"--"+position);
+            viewHolder1.mIdView.setText("item Header " + iiii+"--"+position);
 //            viewHolder1.mContentView.setText(mValues);
         }
     }
@@ -85,12 +101,12 @@ public class MyHolder_sticky implements IHeader, IHeaderSpanFill {
     }
 
     public class ViewHolder extends FlexibleViewHolder {
-//        public final TextView mIdView;
+        public final TextView mIdView;
 //        public final TextView mContentView;
 
         public ViewHolder(View view, EasyFlexibleAdapter adapter) {
             super(view, adapter, true);
-//            mIdView = (TextView) view.findViewById(R.id.id);
+            mIdView = (TextView) view.findViewById(R.id.id);
 //            mContentView = (TextView) view.findViewById(R.id.content);
         }
 

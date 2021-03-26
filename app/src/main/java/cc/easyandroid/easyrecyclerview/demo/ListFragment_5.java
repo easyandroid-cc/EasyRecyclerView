@@ -65,11 +65,11 @@ public class ListFragment_5 extends Fragment {
     }
 
     private void initView(View view) {
-        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.list);
+        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.list1);
 //        recyclerView.getRecycledViewPool().setMaxRecycledViews(R.layout.fragment_item, 0);
         setupEasyRecyclerView(recyclerView);
         setupRefreshListener(recyclerView);
-//        setupLoadMoreListener(recyclerView);
+        setupLoadMoreListener(recyclerView);
         recyclerView.autoRefresh();
 
     }
@@ -132,9 +132,9 @@ public class ListFragment_5 extends Fragment {
     }
 
     private void setupEasyRecyclerView(EasyRecyclerView recyclerView) {
-//        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 //          recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
+//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
 
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new EasyRecycleViewDivider(getContext(), LinearLayoutManager.HORIZONTAL).setNotShowDividerCount(1, 1));//设置分割线

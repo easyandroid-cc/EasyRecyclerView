@@ -6,10 +6,10 @@
     android:layout_height="match_parent">
     <!--<cc.easyandroid.easyrecyclerview.EasyRecyclerView-->
     <!--<cc.easyandroid.easyrecyclerview.EasyRecyclerView-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="horizontal">-->
 
         <!--<android.support.v7.widget.RecyclerView-->
             <!--android:id="@+id/list"-->
@@ -26,8 +26,8 @@
             android:layout_weight="1"
             tools:context=".ListFragment"
             tools:listitem="@layout/fragment_item" />
-
-    </LinearLayout>
-
     <include layout="@layout/sticky_header_layout" />
+<!--    </LinearLayout>-->
+
+
 </FrameLayout>
