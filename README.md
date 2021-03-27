@@ -4,9 +4,8 @@ EasyRecyclerView
 ![License MIT](https://img.shields.io/badge/Apache-2.0-brightgreen)
 
 ## 效果图
-![image](https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif)
-![image](https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/2.gif)
-![image](https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/3.gif)
+ 
+
 
 <img src="https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif" width="30%" height="30%"/>
 <img src="https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif" width="30%" height="30%"/>
