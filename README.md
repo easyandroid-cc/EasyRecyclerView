@@ -8,9 +8,9 @@ EasyRecyclerView
 ![image](https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/2.gif)
 ![image](https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/3.gif)
 
-<img src="https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif" width="50%" height="50"/>
-<img src="https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif" width="50" height="50"/>
-<img src="https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif" width="50" height="50"/>
+<img src="https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif" width="30%" height="30%"/>
+<img src="https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif" width="30%" height="30%"/>
+<img src="https://raw.githubusercontent.com/easyandroid-cc/EasyRecyclerView/master/images/1.gif" width="30%" height="30%"/>
  
 ## 说明
 EasyRecyclerView 包含下拉刷新，Adapter的封装,LoadingView EmptyView ErrorView三个界面的配置 
