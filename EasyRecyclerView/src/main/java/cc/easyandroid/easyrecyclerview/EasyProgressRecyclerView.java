@@ -1,8 +1,10 @@
 package cc.easyandroid.easyrecyclerview;
 
 import android.content.Context;
+
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,16 +133,19 @@ public class EasyProgressRecyclerView extends RecyclerView {
 
     void updata() {
         Adapter<?> adapter = getAdapter();
-        if (adapter != null) {
+        if (emptyView != null) {
             if (adapter instanceof IEmptyAdapter) {
                 IEmptyAdapter iEmptyAdapter = (IEmptyAdapter) adapter;
-                if (!iEmptyAdapter.isEmpty() && emptyView != null) {
+                if (!iEmptyAdapter.isEmpty()) {
                     emptyView.setVisibility(View.GONE);
                     EasyProgressRecyclerView.this.setVisibility(View.VISIBLE);
                     return;
                 }
-            }
-            if (emptyView != null) {
+            } else if (adapter.getItemCount() > 0) {
+                emptyView.setVisibility(View.GONE);
+                EasyProgressRecyclerView.this.setVisibility(View.VISIBLE);
+                return;
+            } else {
                 emptyView.setVisibility(View.VISIBLE);
                 EasyProgressRecyclerView.this.setVisibility(View.GONE);
             }

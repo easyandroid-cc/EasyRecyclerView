@@ -20,6 +20,7 @@ import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
 /**
  * Created by cgp
  */
+@Deprecated
 public abstract class EasyRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IEasyAdapter {
 
     public static final int TYPE_NORMAL = 1;

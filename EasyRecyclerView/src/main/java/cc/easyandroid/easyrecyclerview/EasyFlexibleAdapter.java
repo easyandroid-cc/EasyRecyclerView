@@ -47,8 +47,8 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     protected ArrayList<T> mItems = new ArrayList<>();
     protected ArrayList<IFlexible> mHeaderItems = new ArrayList<>();
     protected ArrayList<IFlexible> mFooterItems = new ArrayList<>();
-    private IFlexible mLastFooterItem = null;//加载的footer
-    private IFlexible mFirstHeaderItem = null;//刷新的header
+    protected IFlexible mLastFooterItem = null;//加载的footer
+    protected IFlexible mFirstHeaderItem = null;//刷新的header
 
     private long mDuration = 300L;
     /**
@@ -854,8 +854,9 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         if (!autoMap) {
             throw new IllegalStateException("AutoMap is not active: super() cannot be called.");
         }
-        //When user scrolls, this line binds the correct selection status
+        //When user scrolls, this line binds the correct selection status  position=holder.getBindingAdapterPosition()
         holder.itemView.setActivated(isSelected(position));
+//        holder.itemView.setActivated(isSelected(position));
         //Bind the item
         IFlexible item = getItem(position);
         if (item != null) {

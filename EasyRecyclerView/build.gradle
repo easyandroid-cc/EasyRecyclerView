@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+//apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -47,15 +47,15 @@ allprojects {
 //}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-//    implementation 'androidx.recyclerview:recyclerview:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha01'
+//    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha01'
 }
-publish {
-    userOrg = 'cgpllx'      //bintray注册的用户名
-    groupId = 'cc.easyandroid'         //compile引用时的第1部分groupId
-    artifactId = 'EasyRecyclerView'     //compile引用时的第2部分项目名
-    publishVersion = '1.5.1'    //compile引用时的第3部分版本号
-    desc = 'Very convenient to use RecyclerView support androidx'
-    website = 'https://github.com/easyandroid-cc/EasyRecyclerView'
-}
+//publish {
+//    userOrg = 'cgpllx'      //bintray注册的用户名
+//    groupId = 'cc.easyandroid'         //compile引用时的第1部分groupId
+//    artifactId = 'EasyRecyclerView'     //compile引用时的第2部分项目名
+//    publishVersion = '1.5.1'    //compile引用时的第3部分版本号
+//    desc = 'Very convenient to use RecyclerView support androidx'
+//    website = 'https://github.com/easyandroid-cc/EasyRecyclerView'
+//}

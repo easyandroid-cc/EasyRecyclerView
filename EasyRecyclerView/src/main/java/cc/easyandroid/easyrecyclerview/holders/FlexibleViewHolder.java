@@ -83,7 +83,7 @@ public abstract class FlexibleViewHolder extends ContentViewHolder
     @CallSuper
     protected void toggleActivation(int position) {
         boolean selected = mAdapter.isSelected(position);
-        System.out.println("selected=" + selected + "  position=" + position);
+       // System.out.println("selected=" + selected + "  position=" + position);
         if (!mAdapter.isSelectable(position)) return;
         // [De]Activate the view
 //        if (getContentView().isActivated() && !selected || !getContentView().isActivated() && selected) {

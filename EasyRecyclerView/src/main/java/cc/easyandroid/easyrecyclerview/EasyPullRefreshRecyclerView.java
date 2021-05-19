@@ -1,14 +1,9 @@
 package cc.easyandroid.easyrecyclerview;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.Nullable;
-import androidx.core.view.MotionEventCompat;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,23 +11,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.FrameLayout;
 import android.widget.Scroller;
 
+import androidx.annotation.Nullable;
+import androidx.core.view.MotionEventCompat;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 import cc.easyandroid.easyrecyclerview.core.IEasyAdapter;
 import cc.easyandroid.easyrecyclerview.core.IStateAdapter;
 import cc.easyandroid.easyrecyclerview.core.PullViewHandle;
 import cc.easyandroid.easyrecyclerview.core.RefreshHeaderLayout;
-import cc.easyandroid.easyrecyclerview.listener.OnLoadMoreListener;
 import cc.easyandroid.easyrecyclerview.listener.OnRefreshListener;
 
 /**
- * 下拉刷新
+ * 下拉刷新 不包含 加载更多，加载更多建议使用paging 3
  */
-public class EasyRecyclerView extends EasyProgressRecyclerView implements PullViewHandle {
-    private static final String TAG = EasyRecyclerView.class.getSimpleName();
+public class EasyPullRefreshRecyclerView extends EasyProgressRecyclerView implements PullViewHandle {
+    private static final String TAG = EasyPullRefreshRecyclerView.class.getSimpleName();
 
     private static final int STATUS_DEFAULT = 0;//默认
 
@@ -48,21 +45,11 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
 
     private boolean mRefreshEnabled = false;
 
-    private boolean mLoadMoreEnabled;
-
-    private boolean mAutoLoadMore = true;
-
     private OnRefreshListener mOnRefreshListener;
-
-    private OnLoadMoreListener mOnLoadMoreListener;
 
     private RefreshHeaderLayout mRefreshHeaderContainer;
 
-    private FrameLayout mLoadMoreFooterContainer;
-
     private View mRefreshHeaderView;
-
-    private View mLoadMoreFooterView;
 
     private Scroller mScroller;
 
@@ -78,54 +65,38 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
 
     private boolean refreshIng;//是否在刷新中
 
-    private boolean loadMoreIng;//是否在加载中
+//    private boolean loadMoreIng;//是否在加载中
 
     private boolean firstMove;//headerview 第一次出现的时候需要
 
     private HeaderHander mHeaderHander;
 
-    private FooterHander mFooterHander;
-
-    private EasyOnScrollListener easyOnScrollListener;
-
     private final float resistance = 1.7f;
 
     private ArrayList<HeaderHeightChangedListener> mHeaderHeightChangedListeners;
 
-    /**
-     * 距离最后多少项时候开始自动加载
-     */
-    private int restItemCountToLoadMore = 0;
 
-    public EasyRecyclerView(Context context) {
+    public EasyPullRefreshRecyclerView(Context context) {
         this(context, null);
     }
 
-    public EasyRecyclerView(Context context, @Nullable AttributeSet attrs) {
+    public EasyPullRefreshRecyclerView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, R.attr.EasyRecyclerViewStyle);
     }
 
 
-    public EasyRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public EasyPullRefreshRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.EasyRecyclerView, defStyle, 0);
         boolean refreshEnabled;
-        boolean loadMoreEnabled;
-        boolean autoloadMore;
         try {
             refreshEnabled = a.getBoolean(R.styleable.EasyRecyclerView_refreshEnabled, true);
-            loadMoreEnabled = a.getBoolean(R.styleable.EasyRecyclerView_loadMoreEnabled, true);
-            autoloadMore = a.getBoolean(R.styleable.EasyRecyclerView_autoloadMore, true);
 
         } finally {
             a.recycle();
         }
-
         mScroller = new Scroller(context, new DecelerateInterpolator());
-        easyOnScrollListener = new EasyOnScrollListener(this);
         setRefreshEnabled(refreshEnabled);
-        setLoadMoreEnabled(loadMoreEnabled);
-        setAutoLoadMore(autoloadMore);
         setStatus(STATUS_DEFAULT);//开始设置为默认
     }
 
@@ -200,7 +171,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
                 }
             }
             break;
-            case MotionEventCompat.ACTION_POINTER_DOWN: {
+            case  MotionEvent.ACTION_POINTER_DOWN: {
                 final int index = MotionEventCompat.getActionIndex(e);
                 mActivePointerId = MotionEventCompat.getPointerId(e, index);
                 mLastTouchX = getMotionEventX(e, index);
@@ -247,7 +218,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
     private int getFirstVisiblePosition() {
         View firstView = getLayoutManager().getChildAt(0);
         if (firstView != null) {
-            return ((RecyclerView.LayoutParams) getLayoutManager().getChildAt(0).getLayoutParams()).getViewLayoutPosition();
+            return ((LayoutParams) getLayoutManager().getChildAt(0).getLayoutParams()).getViewLayoutPosition();
         }
         return 0;
     }
@@ -256,9 +227,6 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         return mHeaderHander;
     }
 
-    public FooterHander getFooterHander() {
-        return mFooterHander;
-    }
 
     /**
      * 是否是在拖动
@@ -292,7 +260,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         if (dy > 0 && mStatus == STATUS_SWIPING_TO_REFRESH) {//下拉
             //Not used
         } else if (dy < 0) {//上拉
-            if ((mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE || mStatus == STATUS_REFRESHING) && refreshHeaderContainerHeight <= 0) {//这几种状态要跳出，让至空间自己移动，不然会卡住
+            if ((mStatus == STATUS_SWIPING_TO_REFRESH || mStatus == STATUS_COMPLETE || mStatus == STATUS_REFRESHING) && refreshHeaderContainerHeight <= 0) {//这几种状态要跳出，让至控件自己移动，不然会卡住
                 if (mStatus == STATUS_COMPLETE) {//完成上拉 再下来一个是下拉刷新  //完成后再往上拉要恢复到默认状态
                     setStatus(STATUS_DEFAULT);
                 }
@@ -317,6 +285,10 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
 
         firstMove = false;
         return super.dispatchTouchEvent(e);
+    }
+
+    public RefreshHeaderLayout getRefreshHeaderContainer() {
+        return mRefreshHeaderContainer;
     }
 
     /**
@@ -364,7 +336,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
                 mHeaderHeightChangedListeners.get(i).onChanged(height);
             }
         }
-        getLayoutManager().scrollToPosition(0);//让回滚的时候先让header缩回去
+        Objects.requireNonNull(getLayoutManager()).scrollToPosition(0);//让回滚的时候先让header缩回去
 //        }
     }
 
@@ -403,16 +375,6 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         postInvalidate();
     }
 
-    void loadMore() {
-        if (mLoadMoreEnabled && mFooterHander != null && mFooterHander.onCanLoadMore() && !isLoadIng()) {
-            loadMoreIng = true;
-            mFooterHander.showLoading();
-            if (mOnLoadMoreListener != null) {
-                mOnLoadMoreListener.onLoadMore(mFooterHander);
-            }
-        }
-    }
-
 
     /**
      * 刷新
@@ -447,19 +409,16 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
      */
     public void finishRefresh(boolean refreshSuccess) {
         if (getFirstVisiblePosition() == 0) {
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    refreshIng = false;
-                    if (getFirstVisiblePosition() == 0) {
-                        //setStatus(STATUS_COMPLETE);//完成标识
-                        setStatus(STATUS_DEFAULT);//完成标识
-                        if (needResetAnim) {
-                            startScrollSwipingToRefreshStatusToDefaultStatus();
-                        }
-                    } else {
-                        setStatus(STATUS_DEFAULT);//完成标识
+            postDelayed(() -> {
+                refreshIng = false;
+                if (getFirstVisiblePosition() == 0) {
+                    //setStatus(STATUS_COMPLETE);//完成标识
+                    setStatus(STATUS_DEFAULT);//完成标识
+                    if (needResetAnim) {
+                        startScrollSwipingToRefreshStatusToDefaultStatus();
                     }
+                } else {
+                    setStatus(STATUS_DEFAULT);//完成标识
                 }
             }, 500);
         } else {
@@ -474,25 +433,8 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
     public void stopRefreshAndLoadMore() {
         setStatus(STATUS_DEFAULT);//完成标识
         refreshIng = false;
-        loadMoreIng = false;
+        //loadMoreIng = false;
 
-    }
-
-    public void finishLoadMore(int loadstatus) {
-        loadMoreIng = false;
-        if (mFooterHander != null) {
-            switch (loadstatus) {
-                case FooterHander.LOADSTATUS_COMPLETED:
-                    mFooterHander.showLoadCompleted();
-                    break;
-                case FooterHander.LOADSTATUS_FAIL:
-                    mFooterHander.showLoadFail();
-                    break;
-                case FooterHander.LOADSTATUS_FULLCOMPLETED:
-                    mFooterHander.showLoadFullCompleted();
-                    break;
-            }
-        }
     }
 
     @Override
@@ -531,29 +473,8 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         }
     }
 
-    public void setLoadMoreEnabled(boolean enabled) {
-        this.mLoadMoreEnabled = enabled;
-        if (mLoadMoreFooterContainer != null) {
-            mLoadMoreFooterContainer.setVisibility(mLoadMoreEnabled ? View.VISIBLE : View.GONE);
-            mLoadMoreFooterContainer.getLayoutParams().height = mLoadMoreEnabled ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
-            mLoadMoreFooterContainer.requestLayout();
-        }
-    }
-
-    public void setAutoLoadMore(boolean autoLoadMore) {
-        mAutoLoadMore = autoLoadMore;
-    }
-
-    public boolean isAutoLoadMore() {
-        return mAutoLoadMore;
-    }
-
     public void setOnRefreshListener(OnRefreshListener listener) {
         this.mOnRefreshListener = listener;
-    }
-
-    public void setOnLoadMoreListener(OnLoadMoreListener listener) {
-        this.mOnLoadMoreListener = listener;
     }
 
 
@@ -572,16 +493,11 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
             throw new AssertionError();
         }
         mRefreshHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @SuppressLint("NewApi")
             @Override
             public void onGlobalLayout() {
-                int height = mHeaderHander.getDragSpringHeight(EasyRecyclerView.this);
+                int height = mHeaderHander.getDragSpringHeight(EasyPullRefreshRecyclerView.this);
                 mHeaderViewHeight = height > 0 ? height : mRefreshHeaderView.getHeight();
-                if (android.os.Build.VERSION.SDK_INT >= 16) {
-                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
+                getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
         refreshHeaderView.setVisibility(mRefreshEnabled ? View.VISIBLE : View.GONE);
@@ -594,10 +510,6 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         setRefreshHeaderView(headerHander.getView());
     }
 
-    public void setFooterHander(FooterHander footerHander) {
-        mFooterHander = footerHander;
-        setLoadMoreFooterView(footerHander.getView());
-    }
 
     public void addHeaderHeightChangedListener(HeaderHeightChangedListener headerHeightChangedListener) {
         if (mHeaderHeightChangedListeners == null) {
@@ -618,41 +530,11 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         }
     }
 
-
-    private void setLoadMoreFooterView(View loadMoreFooterView) {
-        if (mLoadMoreFooterView != null) {
-            removeLoadMoreFooterView();
-        }
-        if (mLoadMoreFooterView != loadMoreFooterView) {
-            this.mLoadMoreFooterView = loadMoreFooterView;
-            this.mLoadMoreFooterView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mFooterHander.onCanLoadMore()) {
-                        loadMore();
-                    }
-                }
-            });
-            ensureLoadMoreFooterContainer();
-            mLoadMoreFooterContainer.addView(loadMoreFooterView);
-        }
-    }
-
-    public void setRestItemCountToLoadMore(int restItemCountToLoadMore) {
-        this.restItemCountToLoadMore = restItemCountToLoadMore;
-    }
-
-    public int getRestItemCountToLoadMore() {
-        return restItemCountToLoadMore;
-    }
-
     public void setAdapter(Adapter adapter) {
         ensureRefreshHeaderContainer();
-        ensureLoadMoreFooterContainer();
         if (adapter instanceof IEasyAdapter) {
             IEasyAdapter baseRecyclerAdapter = (IEasyAdapter) adapter;
-            baseRecyclerAdapter.addHeaderViewToFirst(mRefreshHeaderContainer);
-            baseRecyclerAdapter.addFooterViewToLast(mLoadMoreFooterContainer);
+           // baseRecyclerAdapter.addHeaderViewToFirst(mRefreshHeaderContainer);
         }
         super.setAdapter(adapter);
     }
@@ -664,23 +546,10 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         }
     }
 
-    private void ensureLoadMoreFooterContainer() {
-        if (mLoadMoreFooterContainer == null) {
-            mLoadMoreFooterContainer = new FrameLayout(getContext());
-            mLoadMoreFooterContainer.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mLoadMoreEnabled ? ViewGroup.LayoutParams.WRAP_CONTENT : 0));
-            mLoadMoreFooterContainer.setVisibility(mLoadMoreEnabled ? View.VISIBLE : View.GONE);
-        }
-    }
 
     private void removeRefreshHeaderView() {
         if (mRefreshHeaderContainer != null) {
             mRefreshHeaderContainer.removeView(mRefreshHeaderView);
-        }
-    }
-
-    private void removeLoadMoreFooterView() {
-        if (mLoadMoreFooterContainer != null) {
-            mLoadMoreFooterContainer.removeView(mLoadMoreFooterView);
         }
     }
 
@@ -689,10 +558,6 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
         this.mStatus = status;
     }
 
-    @Override
-    public boolean isLoadIng() {
-        return loadMoreIng;
-    }
 
     /**
      * 是否是手指按下起的第一次移动
@@ -704,6 +569,11 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
     }
 
     @Override
+    public boolean isLoadIng() {
+        return false;
+    }
+
+    @Override
     public boolean isRefreshIng() {
         return refreshIng;
     }
@@ -711,119 +581,7 @@ public class EasyRecyclerView extends EasyProgressRecyclerView implements PullVi
     /**
      * 滑动监听
      */
-    private static class EasyOnScrollListener extends RecyclerView.OnScrollListener {
-        private final EasyRecyclerView easyRecyclerView;
 
-        public EasyOnScrollListener(EasyRecyclerView easyRecyclerView) {
-            super();
-            this.easyRecyclerView = easyRecyclerView;
-        }
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            //1.刷新时候滚动到底部不让自动加载 2.刷新前面
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && (isScollBottom(recyclerView) || canTriggerLoadMore(easyRecyclerView)) && !easyRecyclerView.isRefreshIng() && !isFirstItemVisible(easyRecyclerView)) {
-                if (easyRecyclerView.isAutoLoadMore()) {
-                    easyRecyclerView.loadMore();
-                }
-            }
-        }
-
-        /**
-         * 是否滚动到了最底部
-         *
-         * @param recyclerView
-         * @return boolean
-         */
-        private boolean isScollBottom(RecyclerView recyclerView) {
-            return !isCanScollVertically(recyclerView);
-        }
-
-        /**
-         * 列表中第一个item显示的时候也不让他自动加载
-         *
-         * @param recyclerView
-         * @return
-         */
-        private boolean canTriggerLoadMore(EasyRecyclerView recyclerView) {
-            View lastChild = recyclerView.getChildAt(recyclerView.getChildCount() - 1);//recyclerView 中的最后一个item
-            int position = recyclerView.getChildLayoutPosition(lastChild);//recyclerView 中的最后一个position
-            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-            int totalItemCount = layoutManager.getItemCount();//全部item的个数
-            return totalItemCount - recyclerView.getRestItemCountToLoadMore() <= position + 1;//滚动到最后一个了
-        }
-
-        /**
-         * 第一个Item 是否显示，防止刷新的时候加载被调用
-         * @param recyclerView
-         * @return
-         */
-        private boolean isFirstItemVisible(EasyRecyclerView recyclerView) {
-            View firstChild = recyclerView.getChildAt(0);//recyclerView 中的第一个item
-            int position = recyclerView.getChildLayoutPosition(firstChild);//recyclerView 中的第一个itemposition
-            return position == 0;//第一个Item 是否显示
-        }
-
-        private boolean isCanScollVertically(RecyclerView recyclerView) {
-            if (android.os.Build.VERSION.SDK_INT < 14) {
-                return ViewCompat.canScrollVertically(recyclerView, 1) || recyclerView.getScrollY() < recyclerView.getHeight();
-            } else {
-                return ViewCompat.canScrollVertically(recyclerView, 1);
-            }
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-
-        }
-
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        addOnScrollListener(easyOnScrollListener);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        removeOnScrollListener(easyOnScrollListener);
-    }
-
-    public RefreshHeaderLayout getRefreshHeaderContainer() {
-        return mRefreshHeaderContainer;
-    }
-
-
-
-    public interface FooterHander {
-        int LOADSTATUS_COMPLETED = 0, LOADSTATUS_FAIL = 1, LOADSTATUS_FULLCOMPLETED = 2;
-
-        View getView();
-
-        /**
-         * 显示普通布局
-         */
-        void showLoadCompleted();
-
-        /**
-         * 显示已经加载完成，没有更多数据的布局
-         */
-        void showLoadFullCompleted();
-
-        /**
-         * 显示正在加载中的布局
-         */
-        void showLoading();
-
-        /**
-         * 显示加载失败的布局
-         */
-        void showLoadFail();
-
-        boolean onCanLoadMore();
-    }
 
     public interface HeaderHeightChangedListener {
         void onChanged(int headerHeight);

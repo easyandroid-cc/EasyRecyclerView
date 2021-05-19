@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config xmlns:android="http://schemas.android.com/apk/res/android">
+<base-config cleartextTrafficPermitted="true">
+    <trust-anchors>
+        <certificates src="system" overridePins="true" />
+        <certificates src="user" overridePins="true" />
+    </trust-anchors>
+</base-config>
+</network-security-config>
+    <!--    使用OkHttp3做网络请求框架时，如果是http请求而非https请求，会导致请求失败，因为Android P之后系统限制了明文的网络请求，非加密请求会被系统禁止掉。-->

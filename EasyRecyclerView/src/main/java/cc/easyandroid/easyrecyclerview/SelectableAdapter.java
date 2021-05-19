@@ -259,7 +259,7 @@ public abstract class SelectableAdapter extends RecyclerView.Adapter implements 
                 >= android.os.Build.VERSION_CODES.HONEYCOMB;
         for (int i = 0; i < count; i++) {
             final View child = getRecyclerView().getChildAt(i);
-            final int position = ((RecyclerView.LayoutParams) child.getLayoutParams()).getViewLayoutPosition();
+            final int position = ((RecyclerView.LayoutParams) child.getLayoutParams()).getBindingAdapterPosition();
 
             if (child instanceof Checkable) {
                 ((Checkable) child).setChecked(isSelected(position));

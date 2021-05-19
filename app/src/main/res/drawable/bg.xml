@@ -3,5 +3,6 @@
     <item android:drawable="@android:color/holo_red_dark" android:state_pressed="true"></item>
     <item android:drawable="@android:color/holo_red_dark" android:state_checked="true"></item>
     <item android:drawable="@android:color/holo_red_dark" android:state_selected="true"></item>
+    <item android:drawable="@android:color/holo_red_dark" android:state_activated="true"></item>
     <item android:drawable="@android:color/holo_blue_light"></item>
 </selector>

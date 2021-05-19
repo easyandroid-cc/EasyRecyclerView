@@ -9,9 +9,6 @@ import cc.easyandroid.easyrecyclerview.EasyFlexibleAdapter;
 /**
  * This Class separates the initialization of an eventual StickyHeader ViewHolder from a Normal
  * ViewHolder. It improves code readability of FlexibleViewHolder.
- *
- * @author Davide Steduto
- * @since 18/06/2016 Created
  */
 abstract class ContentViewHolder extends RecyclerView.ViewHolder {
 
@@ -52,18 +49,11 @@ abstract class ContentViewHolder extends RecyclerView.ViewHolder {
 	}
 
 	/**
-	 * Overcomes the situation of returning an unknown position (-1) of ViewHolders created out of
-	 * the LayoutManager (ex. StickyHeaders).
-	 * <p><b>NOTE:</b> Always call this method, instead of {@code getAdapterPosition()}, in case
-	 * of StickyHeaders use case.</p>
-	 *
-	 * @return the Adapter position result of {@link #getAdapterPosition()} OR the backup position
-	 * preset and known, if the previous result was {@link RecyclerView#NO_POSITION}.
-	 * @see #setBackupPosition(int)
-	 * @since 5.0.0-b6
+	 换成 getAbsoluteAdapterPosition 解决adapter 嵌套问题
+	 嵌套adapter onBindViewHolder(RecyclerView.ViewHolder holder, int position, List payloads)  这里的position 并不是item 在列表中的位置 ,他在在他自己的adapter 中的位置
 	 */
 	public int getFlexibleAdapterPosition() {
-		int position = getAdapterPosition();
+		int position = getBindingAdapterPosition();
 		if (position == RecyclerView.NO_POSITION) {
 			position = mBackupPosition;
 		}
