@@ -43,6 +43,7 @@ public class ListFragment_5 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         adapter = new EasyFlexibleAdapter();
         adapter.setMode(EasyFlexibleAdapter.MODE_MULTI);
+
 //        adapter.set
 
 //        adapter.initializeListeners(new EasyFlexibleAdapter.OnItemClickListener() {
@@ -123,6 +124,7 @@ public class ListFragment_5 extends Fragment {
                         items.add(new MyHolder_sticky(22));
                         recyclerView.finishRefresh(true);
                         adapter.setItems(items);
+                        adapter.expandItemsAtStartUp();
                         adapter.notifyDataSetChanged();
                     }
                 }, 1000);

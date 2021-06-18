@@ -18,9 +18,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 /**
- * 这个是pei
+ * 这个是paging 3 的adapter，继承了EasyFlexibleAdapter
  */
-abstract class EasyAda<T  : IFlexible<*>> @JvmOverloads constructor(
+abstract class EasyPagingDataAdapter<T  : IFlexible<*>> @JvmOverloads constructor(
         diffCallback: DiffUtil.ItemCallback<T>,
         mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
         workerDispatcher: CoroutineDispatcher = Dispatchers.Default
@@ -47,7 +47,7 @@ abstract class EasyAda<T  : IFlexible<*>> @JvmOverloads constructor(
 
         fun considerAllowingStateRestoration() {
             if (stateRestorationPolicy == PREVENT && !userSetRestorationPolicy) {
-                this@EasyAda.stateRestorationPolicy = ALLOW
+                this@EasyPagingDataAdapter.stateRestorationPolicy = ALLOW
             }
         }
 

@@ -16,23 +16,18 @@
 
 package cc.easyandroid.easyrecyclerview.demo.viewmodel
 
-import android.view.ViewGroup
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.paging.LoadType
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DiffUtil
-import cc.easyandroid.easyrecyclerview.demo.data.RedditPost
-import cc.easyandroid.easyrecyclerview.demo.kt.MyAdapt
-import cc.easyandroid.easyrecyclerview.demo.kt.MyAdapt2
-import com.house101.app1.kt.adapter.EasyAda
+import com.house101.app1.kt.adapter.EasyPagingDataAdapter
 
 /**
  * A simple adapter implementation that shows Reddit posts.
  */
 class PostsAdapter()
-    : EasyAda<IFHolder_Kt>(POST_COMPARATOR) {
+    : EasyPagingDataAdapter<IFHolder_Kt>(POST_COMPARATOR) {
 
 //    override fun onBindViewHolder(holder: RedditPostViewHolder, position: Int) {
 //        holder.bind(getItem(position))

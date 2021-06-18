@@ -28,7 +28,10 @@ public class MyHolder_Expand extends AbstractExpandableItem implements IHeader {
         }
         items.add(new MyHolder_Expand2());
         setSubItems(items);
+        setExpanded(true);
     }
+
+
 
     @Override
     public int getLayoutRes() {

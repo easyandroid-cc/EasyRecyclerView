@@ -16,7 +16,9 @@ import cc.easyandroid.easyrecyclerview.EasyPullRefreshRecyclerView
 import cc.easyandroid.easyrecyclerview.SelectableAdapter.MODE_MULTI
 import cc.easyandroid.easyrecyclerview.demo.source.InMemoryByPageKeyRepository
 import cc.easyandroid.easyrecyclerview.demo.viewmodel.*
+import cc.easyandroid.easyrecyclerview.listener.OnEasyProgressClickListener
 import com.android.example.paging.pagingwithnetwork.reddit.api.RedditApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 
 class ListFragment_kt : Fragment() {
@@ -38,17 +40,18 @@ class ListFragment_kt : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_item_list_kt, container, false)
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView(view)
-        lifecycleScope.launchWhenCreated {
-            viewModel.posts.collectLatest { it ->
-                myPagingAdapter.submitData(it)
+            this.lifecycleScope.launchWhenCreated {
+                viewModel.posts.collectLatest { it ->
+                    myPagingAdapter.submitData(it)
 
+                }
             }
-        }
-        viewModel.showSubreddit("android")
+            viewModel.showSubreddit("android")
+            println("cgp onViewCreated ")
+
     }
 
 
@@ -60,6 +63,20 @@ class ListFragment_kt : Fragment() {
             true;
         })
         val list: EasyPullRefreshRecyclerView = view.findViewById(R.id.list1)
+        list.setOnEasyProgressClickListener(object :OnEasyProgressClickListener{
+            override fun onLoadingViewClick() {
+
+            }
+
+            override fun onEmptyViewClick() {
+
+            }
+
+            override fun onErrorViewClick() {
+                myPagingAdapter.refresh()
+            }
+
+        })
 //        loadState is LoadState.Loading || loadState is LoadState.Error
         myPagingAdapter.addLoadStateListener {
             when (it.refresh) {

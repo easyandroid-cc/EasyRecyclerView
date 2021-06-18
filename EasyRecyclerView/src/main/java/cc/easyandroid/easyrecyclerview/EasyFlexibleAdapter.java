@@ -610,6 +610,24 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     public int expand(@IntRange(from = 0) int position, boolean notifyParent) {
         return expand(position, false, false, notifyParent);
     }
+    /**
+     * Maps and expands items that are initially configured to be shown as expanded.
+     * <p>This method should be called during the creation of the Activity/Fragment, useful also
+     * after a screen rotation.</p>
+     */
+    public EasyFlexibleAdapter<T> expandItemsAtStartUp() {
+        int position = 0;
+        while (position < getItemCount()) {
+            IFlexible item = getItem(position);
+            if (isExpanded(item)) {
+                // All subItems will be added recursively if they result to be expanded at start up
+                position += expand(position, false, true, false);
+            } else {
+                position++;
+            }
+        }
+        return this;
+    }
 
     public int expand(T item) {
         return expand(getGlobalPositionOf(item), false, false, true);

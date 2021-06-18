@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 //apply plugin: 'com.novoda.bintray-release'
+//apply plugin: 'com.github.panpf.bintray-publish'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -55,7 +56,7 @@ dependencies {
 //    userOrg = 'cgpllx'      //bintray注册的用户名
 //    groupId = 'cc.easyandroid'         //compile引用时的第1部分groupId
 //    artifactId = 'EasyRecyclerView'     //compile引用时的第2部分项目名
-//    publishVersion = '1.5.1'    //compile引用时的第3部分版本号
+//    publishVersion = '1.5.2'    //compile引用时的第3部分版本号
 //    desc = 'Very convenient to use RecyclerView support androidx'
 //    website = 'https://github.com/easyandroid-cc/EasyRecyclerView'
 //}

@@ -46,14 +46,14 @@ class SubRedditViewModel(private val repository: InMemoryByPageKeyRepository, pr
 //
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val posts = flowOf(
-           // clearListCh.receiveAsFlow().map { PagingData.empty<RedditPost>() },
+             clearListCh.receiveAsFlow().map { PagingData.empty<IFHolder_Kt>() },
             savedStateHandle.getLiveData<String>(KEY_SUBREDDIT)
                     .asFlow()
                     .flatMapLatest { repository.postsOfSubreddit(it, 8) }
                     // cachedIn() shares the paging state across multiple consumers of posts,
                     // e.g. different generations of UI across rotation config change
                     .cachedIn(viewModelScope)
-    ).flattenMerge(1)
+    ).flattenMerge(2)
 
 
 
