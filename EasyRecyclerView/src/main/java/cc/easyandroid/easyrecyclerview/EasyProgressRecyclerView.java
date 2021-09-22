@@ -140,14 +140,10 @@ public class EasyProgressRecyclerView extends RecyclerView {
                     emptyView.setVisibility(View.GONE);
                     EasyProgressRecyclerView.this.setVisibility(View.VISIBLE);
                     return;
+                } else {
+                    emptyView.setVisibility(View.VISIBLE);
+                    EasyProgressRecyclerView.this.setVisibility(View.GONE);
                 }
-            } else if (adapter.getItemCount() > 0) {
-                emptyView.setVisibility(View.GONE);
-                EasyProgressRecyclerView.this.setVisibility(View.VISIBLE);
-                return;
-            } else {
-                emptyView.setVisibility(View.VISIBLE);
-                EasyProgressRecyclerView.this.setVisibility(View.GONE);
             }
         }
     }

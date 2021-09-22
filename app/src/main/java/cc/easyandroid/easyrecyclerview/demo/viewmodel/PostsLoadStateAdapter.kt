@@ -33,9 +33,9 @@ class PostsLoadStateAdapter(
         }
     }
 
-//    override fun displayLoadStateAsItem(loadState: LoadState): Boolean {
-//        return  true
-//    }
+    override fun displayLoadStateAsItem(loadState: LoadState): Boolean {
+        return  true
+    }
 
 
 }

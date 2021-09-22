@@ -141,7 +141,8 @@ class ListFragment_kt : Fragment() {
 //        myPagingAdapter.stickySectionHeadersHolder
        //  ada.addAdapter(0, RefreshAdapter(myPagingAdapter))
 //        ada.addAdapter(0, PostsLoadStateAdapter(myPagingAdapter))
-        list.adapter = ada
+//        list.adapter = ada
+        list.adapter = myPagingAdapter
 //        list.adapter = myPagingAdapter.withLoadStateHeaderAndFooter(
 //                header = RefreshAdapter2( list),
 //                footer = PostsLoadStateAdapter(myPagingAdapter)
