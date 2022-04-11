@@ -39,7 +39,7 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
             } else if (it is ConcatAdapter) {
                 val adapters = it.adapters
                 adapters.forEach { childAdapter ->
-                    if (it is IEmptyAdapter) {
+                    if (childAdapter is IEmptyAdapter) {
                         if (childAdapter.hasObservers()) {
                             childAdapter.unregisterAdapterDataObserver(emptyObserver)
                         }
@@ -54,7 +54,7 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
             } else if (it is ConcatAdapter) {
                 val adapters = it.adapters
                 adapters.forEach { childAdapter ->
-                    if (it is IEmptyAdapter) {
+                    if (childAdapter is IEmptyAdapter) {
                         childAdapter.registerAdapterDataObserver(emptyObserver)
                     }
                 }
