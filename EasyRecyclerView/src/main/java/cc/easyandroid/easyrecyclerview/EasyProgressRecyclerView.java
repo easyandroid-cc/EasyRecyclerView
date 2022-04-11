@@ -108,7 +108,7 @@ public class EasyProgressRecyclerView extends RecyclerView {
         return emptyView;
     }
 
-    private AdapterDataObserver emptyObserver = new AdapterDataObserver() {
+    protected AdapterDataObserver emptyObserver = new AdapterDataObserver() {
         public void onItemRangeChanged(int positionStart, int itemCount) {
             updata();
         }

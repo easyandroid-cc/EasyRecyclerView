@@ -22,8 +22,8 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment fragment=getSupportFragmentManager().findFragmentByTag( "aaa");
         if(fragment==null){
-//            fragment=new   ListFragment_kt();
-            fragment=new ListFragment_5();
+            fragment=new   ListFragment_kt();
+//            fragment=new ListFragment_5();
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment,"aaa").commit();
 //       getSupportFragmentManager().beginTransaction().replace(R.id.content, new ListFragment()).commit();

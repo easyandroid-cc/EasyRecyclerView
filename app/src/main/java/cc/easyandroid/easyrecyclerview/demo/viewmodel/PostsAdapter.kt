@@ -77,6 +77,7 @@ class PostsAdapter()
 //            return oldItem.copy(score = newItem.score) == newItem
         }
     }
+
     fun withLoadStateHeader1(
             header: LoadStateAdapter<*>
     ): ConcatAdapter {

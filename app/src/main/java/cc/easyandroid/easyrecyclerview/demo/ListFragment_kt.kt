@@ -135,14 +135,14 @@ class ListFragment_kt : Fragment() {
         //list.adapter=myPagingAdapter
         val ada: ConcatAdapter = myPagingAdapter.withLoadStateHeaderAndFooter(
                header = RefreshAdapter2( ),
-                footer = PostsLoadStateAdapter(myPagingAdapter)
+               footer = PostsLoadStateAdapter(myPagingAdapter)
         );
      //   myPagingAdapter.stateRestorationPolicy= RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 //        myPagingAdapter.stickySectionHeadersHolder
        //  ada.addAdapter(0, RefreshAdapter(myPagingAdapter))
 //        ada.addAdapter(0, PostsLoadStateAdapter(myPagingAdapter))
-//        list.adapter = ada
-        list.adapter = myPagingAdapter
+        list.adapter = ada
+//        list.adapter = myPagingAdapter
 //        list.adapter = myPagingAdapter.withLoadStateHeaderAndFooter(
 //                header = RefreshAdapter2( list),
 //                footer = PostsLoadStateAdapter(myPagingAdapter)

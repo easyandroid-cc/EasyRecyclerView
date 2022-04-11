@@ -30,6 +30,9 @@ class RefreshAdapter2( ) : LoadStateAdapter<RecyclerView.ViewHolder>() {
     }
 
     override fun displayLoadStateAsItem(loadState: LoadState): Boolean {
+        if(loadState is LoadState.Error){
+           loadState.error.message
+        }
         return loadState is LoadState.Loading || loadState is LoadState.Error || loadState.endOfPaginationReached
     }
 

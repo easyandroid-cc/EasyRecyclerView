@@ -27,11 +27,7 @@ import com.android.example.paging.pagingwithnetwork.reddit.api.RedditApi
 import retrofit2.HttpException
 import java.io.IOException
 
-/**
- * A [PagingSource] that uses the before/after keys returned in page requests.
- *
- * @see ItemKeyedSubredditPagingSource
- */
+
 class PageKeyedSubredditPagingSource(
     private val redditApi: RedditApi,
     private val subredditName: String
