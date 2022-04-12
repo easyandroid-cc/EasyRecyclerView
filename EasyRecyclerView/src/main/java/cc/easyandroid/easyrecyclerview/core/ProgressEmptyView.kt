@@ -120,7 +120,7 @@ class ProgressEmptyView(view: View, attrs: AttributeSet?, defStyleAttr: Int) : I
 
         mErrorView?.let {
             it.visibility = if (showErrorView) View.VISIBLE else View.GONE
-            if (!TextUtils.isEmpty(message) && showEmptyView) {
+            if (!TextUtils.isEmpty(message) && showErrorView) {
                 val errorViewTextView =
                     it.findViewById<TextView>(R.id.progressMessageTextView)
                 if (errorViewTextView != null) {
