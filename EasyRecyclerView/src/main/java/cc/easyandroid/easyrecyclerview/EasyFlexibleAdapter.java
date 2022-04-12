@@ -6,9 +6,11 @@ import android.animation.AnimatorSet;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 import cc.easyandroid.easyrecyclerview.animation.BaseAnimation;
 import cc.easyandroid.easyrecyclerview.animation.ViewHelper;
@@ -422,7 +425,8 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         IFlexible item = getItem(globalPosition);
         return removeHeaderItem(item);
     }
-    public void doWorks(Object o){
+
+    public void doWorks(Object o) {
 
     }
 
@@ -610,6 +614,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     public int expand(@IntRange(from = 0) int position, boolean notifyParent) {
         return expand(position, false, false, notifyParent);
     }
+
     /**
      * Maps and expands items that are initially configured to be shown as expanded.
      * <p>This method should be called during the creation of the Activity/Fragment, useful also
@@ -900,13 +905,22 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
             gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    IFlexible iFlexible = getItem(position);
-                    return iFlexible.getSpanSize(gridManager.getSpanCount(), position);
-//                    if (iFlexible != null && iFlexible instanceof IHeaderSpanFill) {
-//                        return gridManager.getSpanCount();
-//                    } else {
-//                        return 1;
-//                    }
+                    RecyclerView.Adapter adapter = recyclerView.getAdapter();//获取recyclerView绑定的adapter
+                    if (adapter instanceof ConcatAdapter) {
+                        List<? extends RecyclerView.Adapter<? extends RecyclerView.ViewHolder>> adapters = ((ConcatAdapter) adapter).getAdapters();
+                        for (RecyclerView.Adapter<? extends RecyclerView.ViewHolder> childAdapter : adapters) {
+                            if (position >= childAdapter.getItemCount()) {
+                                position = position - childAdapter.getItemCount();
+                            } else if (childAdapter instanceof EasyFlexibleAdapter) {
+                                IFlexible iFlexible = getItem(position);
+                                return iFlexible.getSpanSize(gridManager.getSpanCount(), position);
+                            }
+                        }
+                    } else if (adapter instanceof EasyFlexibleAdapter) {
+                        IFlexible iFlexible = getItem(position);
+                        return iFlexible.getSpanSize(gridManager.getSpanCount(), position);
+                    }
+                    return gridManager.getSpanCount();
                 }
             });
         }
@@ -1021,14 +1035,12 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     }
 
     /**
-     * @since 05/03/2016
+     *
      */
     public interface OnStickyHeaderChangeListener {
         /**
          * Called when the current sticky header changed.
-         *
          * @param sectionIndex the position of header, -1 if no header is sticky
-         * @since 5.0.0-b1
          */
         void onStickyHeaderChange(int sectionIndex);
     }
@@ -1041,7 +1053,6 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
      * @param expandable the parent item
      * @return a non-null list of the original children minus the deleted children if some are
      * pending removal.
-     * @since 5.0.0-b1
      */
     @NonNull
     public final List<T> getCurrentChildren(@Nullable IExpandable expandable) {

@@ -302,4 +302,8 @@ abstract class EasyPagingDataAdapter<T  : IFlexible<*>> @JvmOverloads constructo
         }
         return ConcatAdapter(header, this, footer)
     }
+
+    override fun isEmpty(): Boolean {
+        return itemCount==0
+    }
 }

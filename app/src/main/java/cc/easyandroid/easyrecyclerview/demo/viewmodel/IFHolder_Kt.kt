@@ -33,7 +33,7 @@ class IFHolder_Kt(val redditPost: RedditPost) : IFlexible<IFHolder_Kt.ViewHolder
 
     override fun setSelectable(selectable: Boolean) {}
     override fun getSpanSize(spanCount: Int, position: Int): Int {
-        return 1
+        return spanCount
     }
 
     override fun getLayoutRes(): Int {
