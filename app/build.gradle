@@ -3,12 +3,12 @@ plugins {
     id 'kotlin-android'
 }
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
 
     defaultConfig {
         applicationId "cc.easyandroid.easyrecyclerview.demo"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
     }
