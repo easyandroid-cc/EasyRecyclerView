@@ -355,17 +355,31 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
 
     public void updateItem(@IntRange(from = 0) int position, @NonNull T item,
                            @Nullable Object payload) {
-        if (position < 0 || position >= mItems.size()) {
+        if (position < 0 || position >= getItemCount()) {
             Log.e(TAG, "Cannot updateItem on position out of OutOfBounds!");
             return;
         }
-        mItems.set(GlobalPositionToNormalPosition(position), item);
+        if (globalPositionToHeaderPosition(position) < getHeaderItemCount()) {
+            mHeaderItems.set(globalPositionToHeaderPosition(position), item);
+        } else if (globalPositionToNormalPosition(position) < getNormalItemCount()) {
+            mItems.set(globalPositionToNormalPosition(position), item);
+        } else {
+            mFooterItems.set(globalPositionToFooterPosition(position), item);
+        }
         if (DEBUG) Log.v(TAG, "updateItem notifyItemChanged on position " + position);
         notifyItemChanged(position, payload);
     }
 
-    public int GlobalPositionToNormalPosition(int globalPosition) {
+    public int globalPositionToNormalPosition(int globalPosition) {
         return globalPosition - getHeaderItemCount() - getFirstHeaderViewCount();
+    }
+
+    public int globalPositionToFooterPosition(int globalPosition) {
+        return globalPosition - getFirstHeaderViewCount() - getHeaderItemCount() - getNormalItemCount();
+    }
+
+    public int globalPositionToHeaderPosition(int globalPosition) {
+        return globalPosition - getFirstHeaderViewCount();
     }
 
     public boolean addItem(T item) {
@@ -1040,6 +1054,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
     public interface OnStickyHeaderChangeListener {
         /**
          * Called when the current sticky header changed.
+         *
          * @param sectionIndex the position of header, -1 if no header is sticky
          */
         void onStickyHeaderChange(int sectionIndex);
