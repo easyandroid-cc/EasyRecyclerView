@@ -28,7 +28,7 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
         ProgressEmptyView(this, attrs, defStyle)
     }
 
-    private val emptyView: View by lazy{
+     open val emptyView: View by lazy{
         mProgressHander.view
     }
 
