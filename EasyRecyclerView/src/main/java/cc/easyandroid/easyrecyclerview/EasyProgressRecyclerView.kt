@@ -22,13 +22,16 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = R.attr.EasyRecyclerViewStyle,
 ) : RecyclerView(
-    context!!, attrs, defStyle) {
+    context!!, attrs, defStyle
+) {
 
-    open val mProgressHander :IProgressHander by lazy{
-        ProgressEmptyView(this, attrs, defStyle)
+    private val mProgressHander: IProgressHander
+
+    init {
+        mProgressHander = ProgressEmptyView(this, attrs, defStyle)
     }
 
-     open val emptyView: View by lazy{
+    open val emptyView: View by lazy {
         mProgressHander.view
     }
 

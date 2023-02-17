@@ -84,7 +84,7 @@ public class Item_houseSource_Details_Header2 implements IFlexible<Item_houseSou
             headerView = view.findViewById(R.id.headerView);
             headerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
             headerView.setAdapter(easyFlexibleAdapter);
-            headerView.showEmptyView();
+//            headerView.showEmptyView();
 //            easyFlexibleAdapter.addHeaderItem(new Item_HouseSource_Details_UploadImage_AddItem());
 
         }
