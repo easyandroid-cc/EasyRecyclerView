@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="104dp"
+    android:background="#FFFFFF"
+    tools:layout_editor_absoluteY="25dp">
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#F6F7FB"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:onClick="openUpLoadImage"
+        android:text="當前暫無圖片,請上載圖片"
+        android:textColor="#FF9399A5"
+        android:textSize="12sp" />
+
+</LinearLayout>

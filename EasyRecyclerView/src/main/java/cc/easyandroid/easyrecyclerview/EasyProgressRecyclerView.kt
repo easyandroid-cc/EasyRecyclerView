@@ -23,12 +23,15 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
     defStyle: Int = R.attr.EasyRecyclerViewStyle,
 ) : RecyclerView(
     context!!, attrs, defStyle) {
-    fun setProgressHander(progressHander: IProgressHander) {
-        mProgressHander = progressHander
-        emptyView = progressHander.view
+
+    open val mProgressHander :IProgressHander by lazy{
+        ProgressEmptyView(this, attrs, defStyle)
     }
 
-    private var mProgressHander: IProgressHander? = null
+    private val emptyView: View by lazy{
+        mProgressHander.view
+    }
+
     override fun setAdapter(adapter: Adapter<*>?) {
         val oldAdapter = getAdapter()
         oldAdapter?.let {//先取消注册
@@ -66,28 +69,27 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
 
     @JvmOverloads
     fun showLoadingView(message: String? = null) {
-        mProgressHander!!.showLoadingView(message)
+        mProgressHander.showLoadingView(message)
     }
 
     @JvmOverloads
     fun showEmptyView(message: String? = null) {
-        mProgressHander!!.showEmptyView(message)
+        mProgressHander.showEmptyView(message)
     }
 
     @JvmOverloads
     fun showErrorView(message: String? = null) {
-        mProgressHander!!.showErrorView(message)
+        mProgressHander.showErrorView(message)
     }
 
     fun setOnEasyProgressClickListener(listener: OnEasyProgressClickListener?) {
-        mProgressHander!!.setOnEasyProgressClickListener(listener)
+        mProgressHander.setOnEasyProgressClickListener(listener)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         // 要添加在window后才能找到parent
         val parent = parent as ViewGroup
-            ?: throw IllegalStateException(javaClass.simpleName + " is not attached to parent view.")
         if (emptyView != null) {
             parent.removeView(emptyView)
             parent.addView(emptyView)
@@ -98,8 +100,8 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
-    var emptyView: View? = null
-    var emptyObserver: AdapterDataObserver = object : AdapterDataObserver() {
+
+    private var emptyObserver: AdapterDataObserver = object : AdapterDataObserver() {
         override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
             updata()
         }
@@ -140,10 +142,10 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
         if (ada is IEmptyAdapter) {
             val iEmptyAdapter = ada as IEmptyAdapter
             if (!iEmptyAdapter.isEmpty) {
-                emptyView!!.visibility = GONE
+                emptyView.visibility = GONE
                 this@EasyProgressRecyclerView.visibility = VISIBLE
             } else {
-                emptyView!!.visibility = VISIBLE
+                emptyView.visibility = VISIBLE
                 this@EasyProgressRecyclerView.visibility = GONE
             }
             return true
@@ -151,8 +153,4 @@ open class EasyProgressRecyclerView @JvmOverloads constructor(
         return false
     }
 
-    init {
-        val progressEmptyView = ProgressEmptyView(this, attrs, defStyle)
-        setProgressHander(progressEmptyView)
-    }
 }

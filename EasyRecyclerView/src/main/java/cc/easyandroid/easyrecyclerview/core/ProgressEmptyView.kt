@@ -29,7 +29,7 @@ class ProgressEmptyView(view: View, attrs: AttributeSet?, defStyleAttr: Int) : I
                     mOnEasyProgressClickListener!!.onLoadingViewClick()
                 }
             }
-            it.visibility = View.GONE
+            it.visibility = View.VISIBLE//默认第一次显示loadingView
         }
     }
 

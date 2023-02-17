@@ -20,6 +20,7 @@ import cc.easyandroid.easyrecyclerview.EasyRecyclerView;
 import cc.easyandroid.easyrecyclerview.core.DefaultFooterHander;
 import cc.easyandroid.easyrecyclerview.core.DefaultHeaderHander;
 import cc.easyandroid.easyrecyclerview.demo.anim.AlphaInAnimation;
+import cc.easyandroid.easyrecyclerview.demo.text.Item_houseSource_Details_Header2;
 import cc.easyandroid.easyrecyclerview.demo.text.MyHolder;
 import cc.easyandroid.easyrecyclerview.demo.text.MyHolder_Expand;
 import cc.easyandroid.easyrecyclerview.demo.text.MyHolder_sticky;
@@ -80,6 +81,7 @@ public class ListFragment_5 extends Fragment {
             @Override
             public void onLoadMore(final EasyRecyclerView.FooterHander loadMoreView) {
                 recyclerView.finishRefresh(true);
+
                 recyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -87,8 +89,10 @@ public class ListFragment_5 extends Fragment {
                         for (int i = 0; i < 100; i++) {
                             items.add(new MyHolder(i + 200));
                         }
-                        adapter.addItems(items);
-                        recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
+//                        adapter.addItems(items);
+                        adapter.clearItems();
+                        recyclerView.showEmptyView();
+//                        recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
                     }
                 }, 1000);
             }
@@ -105,12 +109,13 @@ public class ListFragment_5 extends Fragment {
             @Override
             public void onRefresh() {
                 recyclerView.finishLoadMore(EasyRecyclerView.FooterHander.LOADSTATUS_COMPLETED);
-                recyclerView.showLoadingView();
+//                recyclerView.showLoadingView();
                 recyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
 //                        adapter.setDatas(DummyContent.ITEMS);
                         List<IFlexible> items = new ArrayList<IFlexible>();
+                        items.add(new Item_houseSource_Details_Header2());
 //                        items.add(new MyHolder_Expand());
                         items.add(new MyHolder_sticky(22));
 

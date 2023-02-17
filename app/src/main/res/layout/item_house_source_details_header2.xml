@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:minHeight="92dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="16dp"
+        android:background="#FF0000">
+
+        <cc.easyandroid.easyrecyclerview.EasyRecyclerView
+            android:id="@+id/headerView"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingLeft="10dp"
+            app:easyEmptyView="@layout/progress_emptyview_add_image"
+            app:easyLoadingView="@layout/progress_emptyview_add_image"
+            android:paddingRight="16dp"
+           />
+    </FrameLayout>
+</FrameLayout>
