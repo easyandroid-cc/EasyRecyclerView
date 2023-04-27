@@ -244,7 +244,7 @@ public class EasyFlexibleAdapter<T extends IFlexible> extends SelectableAdapter 
         if (footerIndex >= 0) {
             return getFirstHeaderViewCount() + getHeaderItemCount() + getNormalItemCount() + footerIndex;
         }
-        return (item != null && mItems != null && !mItems.isEmpty()) ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : -1;
+        return (item != null && mItems != null && !mItems.isEmpty() && mItems.indexOf(item) >= 0) ? mItems.indexOf(item) + getHeaderItemCount() + getFirstHeaderViewCount() : -1;
     }
 
     public boolean areHeadersSticky() {
